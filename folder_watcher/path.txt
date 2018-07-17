@@ -1,0 +1,8 @@
+Import map path
+//172.16.1.2/Copyediting/02_Training/Team/Maestro_qs/XML_ImportMap/Settings/
+
+generic stylesheet path
+//172.16.1.2/Copyediting/02_Training/Team/Maestro_qs/Standard__Client_StyleSheets/TF_STEM_StylesNames.xlsx
+
+template path
+//172.16.1.2/Copyediting/02_Training/Team/Maestro_qs/Template
