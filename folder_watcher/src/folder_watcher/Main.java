@@ -399,6 +399,8 @@ public class Main
 										consoleLog.log("URL response : " + webResponse);
 									}
 								}
+
+								
 								else 
 								{
 									if (mailTriggNet2) // mail trigger once
