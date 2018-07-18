@@ -307,9 +307,18 @@ public class watchDir implements Runnable
         		initProcessing();
         		initFlag = true;
         		
-//        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId);
-//				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
-//				postValThread.start();
+        		if(!new File(pathString+"/ERROR/").exists())
+				{
+					File theDir = new File(pathString+"/ERROR/");
+		        	if (!theDir.exists()) 
+					{
+		        		theDir.mkdir();
+					}
+				}
+        		
+        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId);
+				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
+				postValThread.start();
         		
         		//template path or stylesheet path or map path is missing
         		System.out.println("jobId:"+jobId);
@@ -594,14 +603,14 @@ public class watchDir implements Runnable
 		//boolean procStatus = false;
     	try 
     	{
-    		if(pathString.indexOf("ERROR") != -1)
-    		{
-    			//TimeUnit.SECONDS.sleep(2);
-    			System.out.println("pathString:"+pathString);
-    			//postValidation(pathString);
-    		}
-    		else
-    		{
+//    		if(pathString.indexOf("ERROR") != -1)
+//    		{
+//    			//TimeUnit.SECONDS.sleep(2);
+//    			System.out.println("pathString:"+pathString);
+//    			//postValidation(pathString);
+//    		}
+//    		else
+//    		{
     			int processStatus;
     			//watch thread job
 	    	    //this.jobId = jobId;
@@ -666,6 +675,10 @@ public class watchDir implements Runnable
 	    			
 	    			System.out.println("Job finished with SUCCESS at "+dateString2+" for jobId:"+jobId+", clientId:"+clientId+" and folder location:"+pathString);
 	             	consoleLog.log("Job finished with success at "+dateString2+" for jobId:\""+jobId+"\", clientId:\""+clientId+"\" and folder location:\""+pathString+"\"");
+	             	
+//	             	//deleting "ERROR" folder
+//	             	utilities.delete(new File(pathString+"/ERROR/"));
+//	             	utilities.delete(new File(pathString+"/ERROR/"));
 	    		}
 	    		else
 	    		{
@@ -694,7 +707,14 @@ public class watchDir implements Runnable
 	    		
 	         	job j1 = new job();
 	         	j1.job_update(jobId);
-			}
+	         	
+	         	if((processStatus == 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)) && (!jobFailErrorFun()))
+	    		{
+		         	//deleting "ERROR" folder
+	             	utilities.delete(new File(pathString+"/ERROR/"));
+	             	utilities.delete(new File(pathString+"/INVALID_FILES/"));
+	    		}
+			//}
     	}
     	catch (IOException e) 
     	{
@@ -719,7 +739,7 @@ public class watchDir implements Runnable
 			{
 				e1.printStackTrace();
 			}
-		} 
+		}
 //    	catch (InterruptedException e) 
 //    	{
 //			// TODO Auto-generated catch block

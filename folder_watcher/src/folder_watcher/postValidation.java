@@ -25,7 +25,7 @@ public class postValidation implements Runnable
 	{
 		try 
 		{
-			String jobFolder = pathString.substring(0, pathString.lastIndexOf("/ERROR"));
+			String jobFolder = pathString.substring(0, pathString.lastIndexOf("ERROR"));
 	        //String[] strList = folder.list();
 	        //listOfFiles.length
 	        
@@ -33,7 +33,8 @@ public class postValidation implements Runnable
 			//consoleLog.log("Processing already present files in Job folder...\n");
 			
 			job j1 = new job();
-			System.out.println("Job status:"+j1.job_status(jobId));
+			System.out.println("Job status(PV):"+j1.job_status(jobId));
+			System.out.println("pathString:"+pathString);
 			
          	//boolean jobError =false;
 			//job_restart:
@@ -64,7 +65,7 @@ public class postValidation implements Runnable
 			    				
 							if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".docx") > 0))
 							{
-								String chName =  utilities.getFileNameWithoutExtension(listOfFiles[i]),inDStyleMap,exportMap;
+								String chName =  utilities.getFileNameWithoutExtension(listOfFiles[i]);
 								
 								//System.out.println("(Thread 2)Docx File : " +chName);
 								
@@ -75,20 +76,65 @@ public class postValidation implements Runnable
 								//http://172.16.1.25:8080/maestro/getValStageDetails?jobId=9781482298697_Yu&clientId=TF_HSS&chapter=9781138598928_Willard+Bohn_BM01
 						    	String preEditResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getValStageDetails?"+urlParams,"GET","");        		
 						        
-						    	//consoleLog.log("preEditResponse(Thread 2):"+preEditResponse+"\n");
-						        //System.out.println("preEditResponse(Thread 2):"+preEditResponse+"\n");
+						    	//consoleLog.log("URL:\"http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams + "\", type:\"GET\"\n");
+					    		//System.out.println("URL:\"http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams + "\", type:\"GET\"\n");
+					    		
+					        	String eqnResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams,"GET","");        		
+					            
+					        	System.out.println("eqnResponse(PV):"+json_pretty_print(eqnResponse)+"\n");
+					        	consoleLog.log("eqnResponse(PV):"+json_pretty_print(eqnResponse)+"\n");
 						        
+					        	consoleLog.log("preEditResponse(PV):"+json_pretty_print(preEditResponse)+"\n");
+						        System.out.println("preEditResponse(PV):"+json_pretty_print(preEditResponse)+"\n");
+					        	
 						        if((preEditResponse != null) && (!preEditResponse.isEmpty()) && (!preEditResponse.equals("")))
 								{
+						        	String styleSheetfileStatus,inDStyleMap,exportMap,eqnStatus,preeditStatus;
+						        	Boolean eqnFolderStatus =  false;
 						        	JSONParser parser = new JSONParser();
 									Object preEditObj = parser.parse(preEditResponse);
 							        JSONObject jo = (JSONObject) preEditObj;
 								    inDStyleMap = (String) jo.get("inDStyleMap");
 								    exportMap = (String) jo.get("wdExportMap");
+								    preeditStatus = (String) jo.get("status");
+								    
+								    //Equation validation
+								    JSONParser parser1 = new JSONParser();
+									Object eqnObj = parser1.parse(eqnResponse);
+							        JSONObject jo1 = (JSONObject) eqnObj;
+								    eqnStatus = (String) jo1.get("isEquationExists");
+								    
+								    System.out.println("eqnStatus:"+eqnStatus);
+								    
+								    if(eqnStatus.equals("true"))
+								    {
+								    	if(new File(pathString+"/Equations/"+chName).isDirectory())
+								    	{
+								    		consoleLog.log("(PV)This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
+								    		System.out.println("(PV)This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
+								    		eqnFolderStatus = true;
+								    	}
+								    	else
+								    	{
+								    		consoleLog.log("(PV)This chapter has \"Equations\" but equations are not present in "+pathString+"/Equations/"+chName+"\n");
+								    		System.out.println("(PV)This chapter has \"Equations\" and equations are not present in "+pathString+"/Equations/"+chName+"\n");
+								    		eqnFolderStatus = false;
+								    		
+								    	}
+								    }
+								    else if(eqnStatus.equals("false"))
+								    {
+								    	consoleLog.log("(PV)This chapter does not have \"Equations\"\n");
+							    		System.out.println("(PV)This chapter does not have \"Equations\"\n");
+							    		eqnFolderStatus = true;
+								    }
+								    
+								    
 								    //System.out.println("preEditStatus : "+preEditStatus);
 								    //System.out.println("(Thread 2)inDStyleMap : "+inDStyleMap+"\n");
 								    //consoleLog.log("(Thread 2) : "+inDStyleMap+"\n");
-								    if((exportMap != null) && (!exportMap.isEmpty()) && (inDStyleMap != null) && (!inDStyleMap.isEmpty()))
+								    if((exportMap != null) && (!exportMap.isEmpty()) && (inDStyleMap != null) && (!inDStyleMap.isEmpty())
+								    	&& (preeditStatus != null) && (!preeditStatus.isEmpty()) && eqnFolderStatus && (true))
 							        {
 								    	if(exportMap.equals("true"))
 								    	{
@@ -107,9 +153,12 @@ public class postValidation implements Runnable
 										    if(new File(jobFolder+"/"+chName+".docx").exists() && new File(jobFolder+"/"+chName+".xlsx").exists())
 										    {
 										    	//just now export map passed
-										    	utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+										    	utilities.fileMove(pathString+"/"+chName+".docx",jobFolder+"/"+chName+".docx");
 												if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-													utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
+													utilities.fileMove(pathString+"/"+chName+".xlsx",jobFolder+"/"+chName+".xlsx");
+//										    	utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+//												if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
+//													utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
 										    }
 										    else
 										    {
@@ -117,9 +166,12 @@ public class postValidation implements Runnable
 										    	if(inDStyleMap.equals("true") && new File(pathString+"/"+chName+".docx").exists() && new File(pathString+"/"+chName+".xlsx").exists())
 										        {
 										    		//just now indesign import map passed after post validation
-										    		utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+//										    		utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+//													if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
+//														utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
+										    		utilities.fileMove(pathString+"/"+chName+".docx",jobFolder+"/"+chName+".docx");
 													if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-														utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
+														utilities.fileMove(pathString+"/"+chName+".xlsx",jobFolder+"/"+chName+".xlsx");
 										        }
 //										    	else if((inDStyleMap.equals("false") && new File(pathString+"/"+chName+".docx").exists() && new File(pathString+"/"+chName+".xlsx").exists()))
 //										    	{
@@ -184,5 +236,19 @@ public class postValidation implements Runnable
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static String json_pretty_print(String json)
+	{
+		if(!json.isEmpty())
+		{
+			json = json.replace("{","{\n    ");
+			json = json.replace(",",",\n    ");
+			json = json.replace("}","\n}");
+			//System.out.println("JSON:"+json);
+			return json;
+		}
+		else
+			return "";
 	}
 }

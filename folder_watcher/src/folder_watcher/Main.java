@@ -288,18 +288,18 @@ public class Main
 										Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
 										watchThread1.start();
 										
-										if(!new File(pathFolder+"/ERROR/").exists())
-										{
-											File theDir = new File(pathFolder+"/ERROR/");
-								        	if (!theDir.exists()) 
-											{
-								        		theDir.mkdir();
-											}
-										}
+//										if(!new File(pathFolder+"/ERROR/").exists())
+//										{
+//											File theDir = new File(pathFolder+"/ERROR/");
+//								        	if (!theDir.exists()) 
+//											{
+//								        		theDir.mkdir();
+//											}
+//										}
 										
-										watchObj = new watchDir(pathFolder+"/ERROR/", noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
-										Thread watchThread2 = new Thread(watchObj, "Watch Thread for ERROR folder in parent directory" + Integer.toString(i));
-										watchThread2.start();
+//										watchObj = new watchDir(pathFolder+"/ERROR/", noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
+//										Thread watchThread2 = new Thread(watchObj, "Watch Thread for ERROR folder in parent directory" + Integer.toString(i));
+//										watchThread2.start();
 										
 										listPath.add(Paths.get(path.get(i)));
 									}
