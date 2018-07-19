@@ -315,6 +315,28 @@ public class mail implements Runnable
 			 				"\nThanks & Regards,\n" +
 			 				"Maestro Queuing System";
 	        		}
+	        		else if(status.equals("ERROR"))
+	        		{
+	        			if(!attachment.isEmpty())
+	        			{
+			        		mailMessage = "Dear All,\n\n"+
+										subject+"\n" +
+									"--------------------------------------------\n\n" +
+					 				"Please find the attached error log and clear the listed errors within the InDD Template and Import Map respectively.\n\n" +
+					 				"After clearing the error[s], the above error log need to be uploaded into Maestro Queuing System through \"cM_Tools->Comp->T&F->MaestroQS->InDT/IIMap Certification\".\n\n" +
+					 				"\nThanks & Regards,\n" +
+					 				"Maestro Queuing System";
+	        			}
+	        			else
+	        			{
+	        				mailMessage = "Dear All,\n\n"+
+									subject+"\n" +
+								"--------------------------------------------\n\n" +
+				 				"The Used stylesheet file for this manuscript is Invalid.\n\n" +
+				 				"\nThanks & Regards,\n" +
+				 				"Maestro Queuing System";
+	        			}
+	        		}
 	        		break;
 	        		
 	        	case "CRC Team":

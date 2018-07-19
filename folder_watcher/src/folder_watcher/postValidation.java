@@ -23,7 +23,7 @@ public class postValidation implements Runnable
 	
 	void postValidationProcess() throws IOException, ParseException
 	{
-		try 
+		try
 		{
 			String jobFolder = pathString.substring(0, pathString.lastIndexOf("ERROR"));
 	        //String[] strList = folder.list();
@@ -35,6 +35,8 @@ public class postValidation implements Runnable
 			job j1 = new job();
 			System.out.println("Job status(PV):"+j1.job_status(jobId));
 			System.out.println("pathString:"+pathString);
+			
+
 			
          	//boolean jobError =false;
 			//job_restart:
@@ -51,6 +53,7 @@ public class postValidation implements Runnable
 		        	folderError = false;
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
+						//TimeUnit.SECONDS.sleep(2);
 						//System.out.println("Files List:"+listOfFiles[i].getName());
 						if (listOfFiles[i].isFile()) 
 						{
@@ -76,110 +79,121 @@ public class postValidation implements Runnable
 								//http://172.16.1.25:8080/maestro/getValStageDetails?jobId=9781482298697_Yu&clientId=TF_HSS&chapter=9781138598928_Willard+Bohn_BM01
 						    	String preEditResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getValStageDetails?"+urlParams,"GET","");        		
 						        
-						    	//consoleLog.log("URL:\"http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams + "\", type:\"GET\"\n");
-					    		//System.out.println("URL:\"http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams + "\", type:\"GET\"\n");
+//						    	consoleLog.log("URL:\"http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams + "\", type:\"GET\"\n");
+//					    		System.out.println("URL:\"http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams + "\", type:\"GET\"\n");
 					    		
-					        	String eqnResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams,"GET","");        		
-					            
-					        	System.out.println("eqnResponse(PV):"+json_pretty_print(eqnResponse)+"\n");
-					        	consoleLog.log("eqnResponse(PV):"+json_pretty_print(eqnResponse)+"\n");
+					        	//url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams,"GET","");        		
+					        	//String eqnResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams,"GET","");
+					        	//System.out.println("eqnResponse(PV):"+json_pretty_print(eqnResponse)+"\n");
+					        	//consoleLog.log("eqnResponse(PV):"+json_pretty_print(eqnResponse)+"\n");
 						        
-					        	consoleLog.log("preEditResponse(PV):"+json_pretty_print(preEditResponse)+"\n");
-						        System.out.println("preEditResponse(PV):"+json_pretty_print(preEditResponse)+"\n");
+//					        	consoleLog.log("preEditResponse(PV):"+json_pretty_print(preEditResponse)+"\n");
+//						        System.out.println("preEditResponse(PV):"+json_pretty_print(preEditResponse)+"\n");
 					        	
 						        if((preEditResponse != null) && (!preEditResponse.isEmpty()) && (!preEditResponse.equals("")))
 								{
-						        	String styleSheetfileStatus,inDStyleMap,exportMap,eqnStatus,preeditStatus;
-						        	Boolean eqnFolderStatus =  false;
+						        	String inddImportMap;//,exportMap,eqnStatus,preeditStatus,styleSheetfileStatus;
+						        	//Boolean eqnFolderStatus =  false;
 						        	JSONParser parser = new JSONParser();
 									Object preEditObj = parser.parse(preEditResponse);
 							        JSONObject jo = (JSONObject) preEditObj;
-								    inDStyleMap = (String) jo.get("inDStyleMap");
-								    exportMap = (String) jo.get("wdExportMap");
-								    preeditStatus = (String) jo.get("status");
+								    inddImportMap = (String) jo.get("inDStyleMap");
+								    
+								    if((inddImportMap != null) && (!inddImportMap.isEmpty()) && inddImportMap.equals("true"))
+								    {
+								    	utilities.fileMove(pathString+chName+".docx",jobFolder+chName+".docx");
+										if(utilities.fileCheck(pathString +chName+".xlsx"))
+											utilities.fileMove(pathString +chName+".xlsx",jobFolder+chName+".xlsx");
+								    }
+								    
+								    
+//								    exportMap = (String) jo.get("wdExportMap");
+//								    preeditStatus = (String) jo.get("status");
 								    
 								    //Equation validation
-								    JSONParser parser1 = new JSONParser();
-									Object eqnObj = parser1.parse(eqnResponse);
-							        JSONObject jo1 = (JSONObject) eqnObj;
-								    eqnStatus = (String) jo1.get("isEquationExists");
+//								    JSONParser parser1 = new JSONParser();
+//									Object eqnObj = parser1.parse(eqnResponse);
+//							        JSONObject jo1 = (JSONObject) eqnObj;
+//								    eqnStatus = (String) jo1.get("isEquationExists");
+//								    
+//								    System.out.println("eqnStatus:"+eqnStatus);
 								    
-								    System.out.println("eqnStatus:"+eqnStatus);
-								    
-								    if(eqnStatus.equals("true"))
-								    {
-								    	if(new File(pathString+"/Equations/"+chName).isDirectory())
-								    	{
-								    		consoleLog.log("(PV)This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
-								    		System.out.println("(PV)This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
-								    		eqnFolderStatus = true;
-								    	}
-								    	else
-								    	{
-								    		consoleLog.log("(PV)This chapter has \"Equations\" but equations are not present in "+pathString+"/Equations/"+chName+"\n");
-								    		System.out.println("(PV)This chapter has \"Equations\" and equations are not present in "+pathString+"/Equations/"+chName+"\n");
-								    		eqnFolderStatus = false;
-								    		
-								    	}
-								    }
-								    else if(eqnStatus.equals("false"))
-								    {
-								    	consoleLog.log("(PV)This chapter does not have \"Equations\"\n");
-							    		System.out.println("(PV)This chapter does not have \"Equations\"\n");
-							    		eqnFolderStatus = true;
-								    }
+//								    if(eqnStatus.equals("true"))
+//								    {
+//								    	if(new File(pathString+"/Equations/"+chName).isDirectory())
+//								    	{
+//								    		consoleLog.log("(PV)This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
+//								    		System.out.println("(PV)This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
+//								    		eqnFolderStatus = true;
+//								    	}
+//								    	else
+//								    	{
+//								    		consoleLog.log("(PV)This chapter has \"Equations\" but equations are not present in "+pathString+"/Equations/"+chName+"\n");
+//								    		System.out.println("(PV)This chapter has \"Equations\" and equations are not present in "+pathString+"/Equations/"+chName+"\n");
+//								    		eqnFolderStatus = false;
+//								    		
+//								    	}
+//								    }
+//								    else if(eqnStatus.equals("false"))
+//								    {
+//								    	consoleLog.log("(PV)This chapter does not have \"Equations\"\n");
+//							    		System.out.println("(PV)This chapter does not have \"Equations\"\n");
+//							    		eqnFolderStatus = true;
+//								    }
 								    
 								    
 								    //System.out.println("preEditStatus : "+preEditStatus);
 								    //System.out.println("(Thread 2)inDStyleMap : "+inDStyleMap+"\n");
 								    //consoleLog.log("(Thread 2) : "+inDStyleMap+"\n");
-								    if((exportMap != null) && (!exportMap.isEmpty()) && (inDStyleMap != null) && (!inDStyleMap.isEmpty())
-								    	&& (preeditStatus != null) && (!preeditStatus.isEmpty()) && eqnFolderStatus && (true))
-							        {
-								    	if(exportMap.equals("true"))
-								    	{
-									    	System.out.println("(Thread 2)Docx File : " +chName);
-											consoleLog.log("(Thread 2)Docx File : " +chName);
-											System.out.println("(Thread 2)inDStyleMap : "+inDStyleMap+"\n");
-										    consoleLog.log("(Thread 2) : "+inDStyleMap+"\n");
-											//all parameters of content modelling stage true
-											//Move manuscripts to error folder
-								        	//File theDir = new File(pathString);
-	//							        	if (!theDir.exists()) 
-	//										{
-	//							        		theDir.mkdir();
-	//										}
-										    
-										    if(new File(jobFolder+"/"+chName+".docx").exists() && new File(jobFolder+"/"+chName+".xlsx").exists())
-										    {
-										    	//just now export map passed
-										    	utilities.fileMove(pathString+"/"+chName+".docx",jobFolder+"/"+chName+".docx");
-												if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-													utilities.fileMove(pathString+"/"+chName+".xlsx",jobFolder+"/"+chName+".xlsx");
-//										    	utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+//								    if((exportMap != null) && (!exportMap.isEmpty()) && (inDStyleMap != null) && (!inDStyleMap.isEmpty())
+//								    	&& (preeditStatus != null) && (!preeditStatus.isEmpty()) && eqnFolderStatus && (true))
+//							        {
+//								    	if(exportMap.equals("true"))
+//								    	{
+//									    	System.out.println("(Thread 2)Docx File : " +chName);
+//											consoleLog.log("(Thread 2)Docx File : " +chName);
+//											System.out.println("(Thread 2)inDStyleMap : "+inDStyleMap+"\n");
+//										    consoleLog.log("(Thread 2) : "+inDStyleMap+"\n");
+//											//all parameters of content modelling stage true
+//											//Move manuscripts to error folder
+//								        	//File theDir = new File(pathString);
+//	//							        	if (!theDir.exists()) 
+//	//										{
+//	//							        		theDir.mkdir();
+//	//										}
+//										    
+//										    //char arr["hello"];
+//										    
+//										    if(new File(jobFolder+"/"+chName+".docx").exists() && new File(jobFolder+"/"+chName+".xlsx").exists())
+//										    {
+//										    	//just now export map passed
+//										    	utilities.fileMove(pathString+"/"+chName+".docx",jobFolder+"/"+chName+".docx");
 //												if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-//													utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
-										    }
-										    else
-										    {
-										    	//export map passed already
-										    	if(inDStyleMap.equals("true") && new File(pathString+"/"+chName+".docx").exists() && new File(pathString+"/"+chName+".xlsx").exists())
-										        {
-										    		//just now indesign import map passed after post validation
-//										    		utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+//													utilities.fileMove(pathString+"/"+chName+".xlsx",jobFolder+"/"+chName+".xlsx");
+////										    	utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+////												if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
+////													utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
+//										    }
+//										    else
+//										    {
+//										    	//export map passed already
+//										    	if(inDStyleMap.equals("true") && new File(pathString+"/"+chName+".docx").exists() && new File(pathString+"/"+chName+".xlsx").exists())
+//										        {
+//										    		//just now indesign import map passed after post validation
+////										    		utilities.fileMove(pathString+"/"+chName+".docx",new File(pathString).getParent()+"/"+chName+".docx");
+////													if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
+////														utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
+//										    		utilities.fileMove(pathString+"/"+chName+".docx",jobFolder+"/"+chName+".docx");
 //													if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-//														utilities.fileMove(pathString+"/"+chName+".xlsx",new File(pathString).getParent()+"/"+chName+".xlsx");
-										    		utilities.fileMove(pathString+"/"+chName+".docx",jobFolder+"/"+chName+".docx");
-													if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-														utilities.fileMove(pathString+"/"+chName+".xlsx",jobFolder+"/"+chName+".xlsx");
-										        }
-//										    	else if((inDStyleMap.equals("false") && new File(pathString+"/"+chName+".docx").exists() && new File(pathString+"/"+chName+".xlsx").exists()))
-//										    	{
-//										    		
-//										    	}
-										    }
-										}
-							        }
+//														utilities.fileMove(pathString+"/"+chName+".xlsx",jobFolder+"/"+chName+".xlsx");
+//										        }
+////										    	else if((inDStyleMap.equals("false") && new File(pathString+"/"+chName+".docx").exists() && new File(pathString+"/"+chName+".xlsx").exists()))
+////										    	{
+////										    		
+////										    	}
+//										    }
+//										}
+//							        }
 								}
 											    				
 //			    				if(jobFailErrorFun())
@@ -203,7 +217,9 @@ public class postValidation implements Runnable
 //						
 //    				}
 				}
-				TimeUnit.MILLISECONDS.sleep(300);
+		        //System.out.println("loop finished.");
+				//TimeUnit.MILLISECONDS.sleep(1000);
+		        TimeUnit.SECONDS.sleep(1);
 			}
 			System.out.println("Post Validation finished for job :"+jobId+"\n");
 			consoleLog.log("Post Validation finished for job :"+jobId+"\n");
@@ -238,17 +254,17 @@ public class postValidation implements Runnable
 		}
 	}
 	
-	private static String json_pretty_print(String json)
-	{
-		if(!json.isEmpty())
-		{
-			json = json.replace("{","{\n    ");
-			json = json.replace(",",",\n    ");
-			json = json.replace("}","\n}");
-			//System.out.println("JSON:"+json);
-			return json;
-		}
-		else
-			return "";
-	}
+//	private static String json_pretty_print(String json)
+//	{
+//		if(!json.isEmpty())
+//		{
+//			json = json.replace("{","{\n    ");
+//			json = json.replace(",",",\n    ");
+//			json = json.replace("}","\n}");
+//			//System.out.println("JSON:"+json);
+//			return json;
+//		}
+//		else
+//			return "";
+//	}
 }

@@ -1089,12 +1089,21 @@ public class watchDir implements Runnable
 			        		
 			        		//check for attachment
 			        		if(utilities.fileCheck(System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls"))
+			        		{	
 			        			attachment = System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls";
+			        			mailObj = new mail("Template","ERROR",chName,attachment, "");
+				    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
+				    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
+				            	mailThread10.start();
+			        		}
+			        		else
+			        		{
+			        			mailObj = new mail("Pre-editing","ERROR",chName,attachment, "");
+				    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
+				    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
+				            	mailThread10.start();
+			        		}
 			        		
-			            	mailObj = new mail("Template","ERROR",chName,attachment, "");
-			    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
-			    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
-			            	mailThread10.start();
 			    			//processError = true;
 			            	
 			            	System.out.println("InDesign process finished with Error.\n");
