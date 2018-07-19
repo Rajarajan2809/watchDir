@@ -50,8 +50,7 @@ public class watcher
 	
 	static boolean mountError = false;
 	
-	//@SuppressWarnings({ "rawtypes", "unchecked" })
-	@SuppressWarnings({ "unlikely-arg-type", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) throws IOException, InterruptedException, ParseException,StringIndexOutOfBoundsException 
 	{
 		DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
@@ -227,9 +226,9 @@ public class watcher
 							if(((exec_type.get(i).equals("File") && utilities.fileCheck(pathFolder))) || ((exec_type.get(i).equals("Folder") && utilities.folderCheck(pathFolder))))
 								fileFolderStatus = true;
 							
-							System.out.println("fileFolderStatus:"+fileFolderStatus);
-							System.out.println("exec_type.equals(\"Folder\"):"+exec_type.equals("Folder"));
-							System.out.println("utilities.folderCheck(pathFolder):"+utilities.folderCheck(pathFolder));
+//							System.out.println("fileFolderStatus:"+fileFolderStatus);
+//							System.out.println("exec_type.equals(\"Folder\"):"+exec_type.equals("Folder"));
+//							System.out.println("utilities.folderCheck(pathFolder):"+utilities.folderCheck(pathFolder));
 							
 							
 							if(mountStatus.equals("Disk Found") && fileFolderStatus)
@@ -286,7 +285,7 @@ public class watcher
 				{
 					System.out.println("Directory does not exists");
 					consoleLog.log("Directory does not exists");
-					if (utilities.serverMount().equals("Disk Found")) 
+					if (utilities.mountDisk("172.16.1.2", "OEO", "rajarajan", "test@123").equals("Disk Found")) 
 					{
 						// Directory not exists
 						System.out.println(e.toString().substring(e.toString().lastIndexOf(":")+1));
@@ -305,22 +304,14 @@ public class watcher
 						System.out.println("SMB Share Mount error");
 						consoleLog.log("SMB Share Mount error");
 						// sample : sendMail("Net-ops", "", "MOUNT", "", "");
-						mail mailObj = new mail("rajarajan@codemantra.in", "ERROR", "MOUNT", "", "");
+						mail mailObj = new mail("rajarajan@codemantra.in", "NETWORK - ERROR", "MOUNT", "", "");
 						Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
 						mailThread.start();
 					}
 				}
 				break;
 
-				case "java.net.SocketException": 
-				{
-					System.out.println("socket connection refuse error");
-					consoleLog.log("socket connection refuse error");
-					// sample : sendMail("Net-ops", "", "DB", "", "");
-					mail mailObj = new mail("rajarajan@codemantra.in", "ERROR", "DB", "", "");  //netops@codemantra.in
-					Thread mailThread = new Thread(mailObj, "Mail Thread for Socket");
-					mailThread.start();
-				}
+				
 			// break;
 
 				

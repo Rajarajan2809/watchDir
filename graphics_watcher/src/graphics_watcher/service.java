@@ -36,9 +36,9 @@ import static java.nio.file.StandardWatchEventKinds.*;
 //import static java.nio.file.LinkOption.*;
 //import java.nio.file.attribute.*;
 //import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+//import java.text.SimpleDateFormat;
 import java.io.*;
-import java.net.URLEncoder;
+//import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 //import java.util.regex.Matcher;
@@ -76,7 +76,7 @@ public class service implements Runnable
     private final Map<WatchKey,Path> keys;
     private boolean trace = false;
     private final AtomicInteger counter;
-    private String pathString, jobId, jsxFile;
+    private String pathString, jobId, jsxFile, localFolder;
     mail mailObj;
     job j1;
     //private boolean processError = false;
@@ -154,6 +154,8 @@ public class service implements Runnable
         this.counter = counter;
         //this.jobFailError = false;
         Path listPath;
+        
+        this.localFolder = System.getProperty ("user.home")+"/Desktop/Graphics_QS/IN";
         
         //this.recursive = false;//to avoid checking sub directories ERROR folder
         //ArrayList<Path> listPath = new ArrayList<Path>();
@@ -270,13 +272,7 @@ public class service implements Runnable
 					//Move manuscripts to error folder
 					if(!listOfFiles[i].getName().equals("ERROR"))
 		        	{
-						File theDir = new File(pathString+"/ERROR/");
-		        	
-			        	if (!theDir.exists()) 
-						{
-			        		theDir.mkdir();
-						}
-			        	utilities.recurMove(new File(pathString+"/"+listOfFiles[i].getName()), new File (pathString+"/ERROR/"+listOfFiles[i].getName()));
+						utilities.recurMove(new File(pathString+"/"+listOfFiles[i].getName()), new File (pathString+"/ERROR/"+listOfFiles[i].getName()));
 						
 //			        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
 //						Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
@@ -554,6 +550,47 @@ public class service implements Runnable
 		//boolean procStatus = false;
     	try 
     	{
+    		//local job folder
+    		if(!new File(localFolder).exists())
+			{
+				File theDir = new File(localFolder);
+	        	if (!theDir.exists()) 
+				{
+	        		theDir.mkdir();
+				}
+			}
+    		
+    		//local JOB IN Folder
+    		if(!new File(localFolder+"/IN").exists())
+			{
+				File theDir = new File(localFolder+"/IN");
+	        	if (!theDir.exists()) 
+				{
+	        		theDir.mkdir();
+				}
+			}
+    		
+    		//local JOB OUT Folder
+    		if(!new File(localFolder+"/OUT").exists())
+			{
+				File theDir = new File(localFolder+"/OUT");
+	        	if (!theDir.exists()) 
+				{
+	        		theDir.mkdir();
+				}
+			}
+
+    		//local JOB OUT Folder
+    		if(!new File(pathString+"/OUT").exists())
+			{
+				File theDir = new File(pathString+"/OUT");
+	        	if (!theDir.exists()) 
+				{
+	        		theDir.mkdir();
+				}
+			}
+
+    		
     		int processStatus;
 			//watch thread job
     	    //this.jobId = jobId;
@@ -653,6 +690,8 @@ public class service implements Runnable
 		String chName = file;
 		chName = chName.substring(0,chName.indexOf(".docx"));
 		
+		utilities.fileMove("pathString"+file, localFolder+file);
+		
 		//stylesheet for manuscript checking
 		
 		//stylesheet file found and contentModelling stage passed
@@ -677,11 +716,7 @@ public class service implements Runnable
 		{
     		theDir.mkdir();
 		}
-    	utilities.fileMove(pathString+"/"+chName+".docx",pathString+"/ERROR/"+chName+".docx");
-		if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-			utilities.fileMove(pathString+"/"+chName+".xlsx",pathString+"/ERROR/"+chName+".xlsx");
-			//processedFiles--;
-		
+    	utilities.fileMove(pathString+"/"+file,pathString+"/ERROR/"+file);
 		return (jsxProcessStatus);
 	}
 	 
@@ -761,13 +796,6 @@ public class service implements Runnable
 			        		//"chapterDate":"28-06-2018 20:01:03",
 			        		//"styleSheetModifiedDate": "26-06-2018 23:01:00"
 			        		
-			        		System.out.println("Before Format : " + new File(pathString + "/" + chName + ".docx").lastModified());
-			            	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-			            	System.out.println("After Format : " + sdf.format(new File(pathString + "/" + chName + ".docx").lastModified()));
-			        		
-			        		obj1.put("chapterDate",sdf.format(new File(pathString + "/" + chName + ".docx").lastModified()));
-			        		obj1.put("styleSheetModifiedDate",sdf.format(new File(pathString + "/" + chName + ".xlsx").lastModified()));
-			        		
 			        		consoleLog.log(JSONValue.toJSONString(obj1));
 			        		System.out.println(JSONValue.toJSONString(obj1));
 			        		
@@ -775,35 +803,17 @@ public class service implements Runnable
 			        		
 			        		//sample : sendMail("CRC Team", "SUCCESS", "9781138556850_Ilyas_CH01", "", "");
 			        		//sending mail to CRC Team
-			        		mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"),"SUCCESS",chName,"", "");
+			        		mailObj = new mail("rajarajan@codemantra.in","SUCCESS",chName,"", "");
 			    			//mailObj.mailProcess(URLEncoder.encode("CRC Team", "UTF-8"),"SUCCESS",chName.substring(0,chName.indexOf(".docx")),"", "");
 			    			Thread mailThread7 = new Thread(mailObj, "Mail Thread for CRC Team");
 			            	mailThread7.start();
-			            	
-			            	//sample : sendMail("Template", "SUCCESS", "9781138556850_Ilyas_CH01", "", "");
-			            	//sending mail to Template Team
-			            	mailObj = new mail("Template","SUCCESS",chName,"", "");
-			    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
-			    			Thread mailThread8 = new Thread(mailObj, "Mail Thread for Template Team");
-			            	mailThread8.start();
 			            	
 			            	System.out.println("InDesign process finished Successfully.\n");
 			            	consoleLog.log("InDesign process finished Successfully.\n");
 			        	}
 			        	else if(response.equals("404"))
 			        	{
-			        		String templateStatus = (String) jo.get("status");
-			        		System.out.println("templateStatus:"+templateStatus);
-			        		consoleLog.log("templateStatus:"+templateStatus);
-			        		
-			        		//sample : sendMail("CRC Team", "ERROR", "9781138556850_Ilyas_CH01", "", "");
-			            	//sending mail to Template Team
-//			        		mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"),"ERROR",chName,System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls", "");
-//			    			//mailObj.mailProcess(URLEncoder.encode("CRC Team", "UTF-8"),"SUCCESS",chName.substring(0,chName.indexOf(".docx")),"", "");
-//			    			Thread mailThread9 = new Thread(mailObj, "Mail Thread for CRC Team");
-//			            	mailThread9.start();
-			        		
-			            	mailObj = new mail("Template","ERROR",chName,System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls", "");
+			        		mailObj = new mail("rajarajan@codemantra.in","ERROR",chName,"", "");
 			    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
 			    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
 			            	mailThread10.start();
@@ -819,11 +829,11 @@ public class service implements Runnable
 			{
 				System.out.println("InDesign could not access the \"Generic/standard style sheet\".");
         		consoleLog.log("InDesign could not access the \"Generic/standard style sheet\".");
-				
-				mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"),"ERROR",chName,"", "");
-    			//mailObj.mailProcess(URLEncoder.encode("CRC Team", "UTF-8"),"SUCCESS",chName.substring(0,chName.indexOf(".docx")),"", "");
-    			Thread mailThread9 = new Thread(mailObj, "Mail Thread for CRC Team");
-            	mailThread9.start();
+        		
+        		mailObj = new mail("rajarajan@codemantra.in","ERROR",chName,"", "");
+    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
+    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
+            	mailThread10.start();
 			}
 			//reader.close();
 		 } 
