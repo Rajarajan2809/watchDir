@@ -84,8 +84,10 @@ public class mail implements Runnable
 //			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajkannan@codemantra.com"));
 //			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("thiyagarajan@codemantra.com"));
 			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajarajan@codemantra.in"));
-			if(subject.equals("DB") || subject.equals("MOUNT"))
+			if( subject.equals("MOUNT"))
+			{
 				message.setSubject("NETWORK - ERROR");
+			}
 			else
 			{
 				if(status.equals("JOB_SUCCESS"))

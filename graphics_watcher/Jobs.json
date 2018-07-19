@@ -1,0 +1,15 @@
+[{
+		"name": "crc",
+		"exec_type": "Folder",
+		"path": "//172.16.1.2/OEO/Support/Thiyagu/ToGraphicsTeam_WatchStruc/Zinio_InDD_Img-Extraction_WS/",
+		"jsxFile": "Macintosh HD:Application:Adobe:Adobe InDesign CC 2018:Scripts:Scripts Panel:zinio:zinio.jsx"
+
+	},
+	{
+		"name": "zinio",
+		"exec_type": "folder",
+		"extn": ".zip",
+		"path": "Macintosh HD:Users:comp:zinio:IN",
+		"jsxFile": "Macintosh HD:Application:Adobe:Adobe InDesign CC 2018:Scripts:Scripts Panel:zinio:zinio.jsx"
+	}
+]

@@ -7,22 +7,22 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URLEncoder;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import graphics_watcher.watcher;
+//import java.net.URLEncoder;
+//
+//import org.json.simple.JSONObject;
+//import org.json.simple.parser.JSONParser;
+//import org.json.simple.parser.ParseException;
+//
+//import graphics_watcher.watcher;
 
 public class job 
 {
-	private static String json_pretty_print(String json)
+	public static String json_pretty_print(String json)
 	{
 		if(!json.isEmpty())
 		{
 			json = json.replace("{","{\n    ");
-			json = json.replace(",",",\n    ");
+			json = json.replace("\",",",\n    ");
 			json = json.replace("}","\n}\n");
 			//System.out.println("JSON:"+json);
 			return json;
