@@ -78,7 +78,7 @@ public class service implements Runnable
     private final AtomicInteger counter;
     private String pathString, jobId, jsxFile, localFolder;
     mail mailObj;
-    job j1;
+    //job j1;
     //private boolean processError = false;
     //private utilities U = new utilities();
     //private final boolean recursive = false;
@@ -648,8 +648,8 @@ public class service implements Runnable
          	//jobStatus update
          	
     		
-         	job j1 = new job();
-         	j1.job_update(jobId);
+//         	job j1 = new job();
+//         	j1.job_update(jobId);
 			
     	}
     	catch (IOException e) 
