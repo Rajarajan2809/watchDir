@@ -217,7 +217,8 @@ public class utilities
 		 }
 		 catch(Exception e)
 		 {
-			 consoleLog.log(e.toString().substring(0,e.toString().indexOf(":")) + " during file moving "+fromPath+" to "+toPath);
+			 e.printStackTrace();
+			 //consoleLog.log(e.toString().substring(0,e.toString().indexOf(":")) + " during file moving "+fromPath+" to "+toPath);
 		 }
 		 return;
 	}
@@ -281,11 +282,11 @@ public class utilities
 	            
 	            if(temp != null)
 	            {
-	                System.out.println("File renamed and moved successfully");
+	                //System.out.println("File renamed and moved successfully");
 	            }
 	            else
 	            {
-	                System.out.println("Failed to move the file");
+	                //System.out.println("Failed to move the file");
 	            }
 	            return true;
 	        } 
