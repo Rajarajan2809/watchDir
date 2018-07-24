@@ -9,6 +9,9 @@ import java.util.*;
 
 import org.apache.commons.io.FilenameUtils;
 
+import watchDirRec.consoleLog;
+
+
 public class watchDirRec
 {
 	//class variables
@@ -16,7 +19,9 @@ public class watchDirRec
     private final Map<WatchKey,Path> keys;
     private final boolean recursive;
     private boolean trace = false;
-
+    
+    private Path dir;
+    
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) 
     {
@@ -68,14 +73,19 @@ public class watchDirRec
 
     /**
      * Creates a WatchService and registers the given directory
+     * @throws InterruptedException 
      */
-    watchDirRec(Path dir) throws IOException 
+    watchDirRec(Path dir1) throws IOException, InterruptedException 
     {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<WatchKey,Path>();
         //default recursive
         this.recursive = true;
-
+        
+        this.dir = dir1;
+        
+        initProcessing(this.dir.toString());
+        
         if (recursive) 
         {
             System.out.format("Scanning %s ...\n", dir);
@@ -99,10 +109,9 @@ public class watchDirRec
     {
 	     try
 	     {
-    		for (;;) 
+	    	for (;;) 
 	        {
-	
-	            // wait for key to be signalled
+    		    // wait for key to be signalled
 	            WatchKey key;
 	            try 
 	            {
@@ -191,8 +200,6 @@ public class watchDirRec
     	 
     	 try 
     	 {
-    		Runtime.getRuntime().exec("attrib -r "+path);
-
     		Path outputPathRtf = Paths.get(path.replace("Process", "Output"));
     		
     		String inputPathXml = path;
@@ -261,13 +268,61 @@ public class watchDirRec
         
     }
 
+    private void initProcessing(String pathString) throws FileNotFoundException, IOException, InterruptedException
+    {
+    	try
+    	{
+	    	File folder = new File(pathString);
+	        File[] listOfFiles = folder.listFiles();
+	        //String[] strList = folder.list();
+	        //listOfFiles.length
+	        
+	        System.out.println("Processing already present files in Job folder...\n");
+			consoleLog.log("Processing already present files in Job folder...\n");
+			if(folder.exists())
+			{
+				for (int i = 0; i < listOfFiles.length; i++) 
+				{
+					System.out.println("File:"+listOfFiles[i].getParent().indexOf("Process"));
+					if (listOfFiles[i].isFile() && (listOfFiles[i].getParent().indexOf("Process") != -1)) 
+					{
+						System.out.println("Extension:"+FilenameUtils.getExtension(listOfFiles[i].toString()));
+						System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
+						
+						if(FilenameUtils.isExtension(listOfFiles[i].getName(),"rtf") || FilenameUtils.isExtension(listOfFiles[i].getName(),"doc") || FilenameUtils.isExtension(listOfFiles[i].getName(),"docx"))
+						{
+							vbScriptCall(listOfFiles[i].toString());
+						}
+					}
+					else if (listOfFiles[i].isDirectory()) 
+					{
+						//Move manuscripts to error folder
+						System.out.println("Found:"+listOfFiles[i].getName());
+						initProcessing(listOfFiles[i].toString());
+//						if(listOfFiles[i].getName().equals("Process"))
+//			        	{
+//							System.out.println("Found:"+listOfFiles[i].getName());
+//							initProcessing(listOfFiles[i].toString());
+//			        	}
+						//xlsx and docx files does not match regex
+					}
+				}
+			}
+    	}
+    	catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    }
+    
 	public static void main(String[] args) throws IOException 
 	{
         // parse arguments
         // register directory and process its events
 		try
 		{
-			System.out.println(System.getProperty ("user.home")+"/Desktop/PDF2XML/");
+			//System.out.println(System.getProperty ("user.home")+"/Desktop/PDF2XML/");
+			
 			if(new File(System.getProperty ("user.home")+"/Desktop/PDF2XML/").exists())
 			{
 				Path dir = Paths.get(System.getProperty ("user.home")+"/Desktop/PDF2XML/");
