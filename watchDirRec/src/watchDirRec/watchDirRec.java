@@ -6,10 +6,11 @@ import static java.nio.file.LinkOption.*;
 import java.nio.file.attribute.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
 
-import watchDirRec.consoleLog;
+//import watchDirRec.consoleLog;
 
 
 public class watchDirRec
@@ -214,61 +215,68 @@ public class watchDirRec
     		Path errPath = Paths.get(path.replace("Process", "Error"));
 			
     		System.out.println("input rtf Path:"+path);
-    		System.out.println("output rtf Path:"+outputPathRtf+"\n");
+    		System.out.println("output rtf Path:"+outputPathRtf);
     		
-    		System.out.println("Error Path:"+errPath+"\n");
+    		System.out.println("Error Path:"+errPath);
     		
     		System.out.println("input xml path:"+inputPathXml);
     		System.out.println("output xml path:"+outputPathXml);
     		
-    		File file = new File("macro_call.vbs"); 
+    		File file = new File(System.getProperty ("user.home")+"/macro_call.vbs"); 
     		//file = File.createNewFile();
-			file.deleteOnExit();
+			//file.deleteOnExit();
 			FileWriter fw = new java.io.FileWriter(file);
 			
-			String vbs = "Dim Word \n"
-			+ "Dim WordDoc \n"
-			+ "Set Word = CreateObject(\"Word.Application\") \n"
-			+ "' Make Word visible \n"
-			+ "'Open the Document \n"
-			+ "Set WordDoc = Word.Documents.open(\"" + path + "\") \n"
-			+ "'Run the macro called foo \n"
-			+ "Word.Run \"preprocess_cleanup\" \n"
-			+ "' Close Word \n"
-			+ "Word.Quit \n"
-			+ "'Release the object variables \n"
-			+ "Set WordDoc = Nothing \n"
-			+ "Set Word = Nothing \n";
+			String vbs = "Dim Word "
+			+ System.getProperty("line.separator") +  "Dim WordDoc "
+			+ System.getProperty("line.separator") + "Set Word = CreateObject(\"Word.Application\") "
+			+ System.getProperty("line.separator") + "' Make Word visible "
+			+ System.getProperty("line.separator") + "Word.Visible = True "
+			+ System.getProperty("line.separator") + "'Open the Document "
+			+ System.getProperty("line.separator") + "Set WordDoc = Word.Documents.open(\"" + path + "\") "
+			+ System.getProperty("line.separator") + "'Run the macro called foo "
+			+ System.getProperty("line.separator") + "Word.Run \"preprocess_cleanup\" "
+			+ System.getProperty("line.separator") + "' Close Word "
+			+ System.getProperty("line.separator") + "Word.Quit "
+			+ System.getProperty("line.separator") + "'Release the object variables "
+			+ System.getProperty("line.separator") + "Set WordDoc = Nothing "
+			+ System.getProperty("line.separator") + "Set Word = Nothing "+ System.getProperty("line.separator") ;
 			
 			fw.write(vbs);
 			fw.close();
 			
+			TimeUnit.SECONDS.sleep(1);
+
+			Runtime.getRuntime().exec("attrib +H macro_call.vbs");
+			
 			//System.out.println("Macro path:"+file);
+			//System.out.println("vbs content:"+vbs);
 			
 			Process p = Runtime.getRuntime().exec("wscript " + file.getPath());
 			p.waitFor();
 			//System.out.println("p.exitValue():"+p.exitValue());
-			if(p.exitValue() == 0)
+			if(p.exitValue() == -1)
+			{
+				System.out.println("Macro Failure\n\n");
+				Files.move(Paths.get(path),errPath,StandardCopyOption.REPLACE_EXISTING);
+				file.delete();
+				return (false);
+			}
+			else
 			{
 				System.out.println("Macro Success\n\n");
 				Files.move(Paths.get(path),outputPathRtf,StandardCopyOption.REPLACE_EXISTING);
 				Files.move(Paths.get(inputPathXml),outputPathXml,StandardCopyOption.REPLACE_EXISTING);
+				file.delete();
 				return (true);
 			}
-			else //if(p.exitValue() == -1)
-			{
-				System.out.println("Macro Failure");
-				Files.move(Paths.get(path),errPath,StandardCopyOption.REPLACE_EXISTING);
-				return (false);
-			}
-    	 }
+		 }
     	 catch (Exception e) 
     	 {
  			// TODO Auto-generated catch block
  			e.printStackTrace();
     	 }
     	 return false;
-        
     }
 
     private void initProcessing(String pathString) throws FileNotFoundException, IOException, InterruptedException
