@@ -200,6 +200,9 @@ public class watchDirRec
     	 
     	 try 
     	 {
+    		Runtime.getRuntime().exec("taskkill /F /IM WINWORD.EXE");
+    		Runtime.getRuntime().exec("taskkill /F /IM wscript.exe");
+    		 
     		Path outputPathRtf = Paths.get(path.replace("Process", "Output"));
     		
     		String inputPathXml = path;
@@ -277,17 +280,17 @@ public class watchDirRec
 	        //String[] strList = folder.list();
 	        //listOfFiles.length
 	        
-	        System.out.println("Processing already present files in Job folder...\n");
-			consoleLog.log("Processing already present files in Job folder...\n");
+//	        System.out.println("Processing already present files in Job folder...\n");
+//			consoleLog.log("Processing already present files in Job folder...\n");
 			if(folder.exists())
 			{
 				for (int i = 0; i < listOfFiles.length; i++) 
 				{
-					System.out.println("File:"+listOfFiles[i].getParent().indexOf("Process"));
+					//System.out.println("File:"+listOfFiles[i].getParent().indexOf("Process"));
 					if (listOfFiles[i].isFile() && (listOfFiles[i].getParent().indexOf("Process") != -1)) 
 					{
-						System.out.println("Extension:"+FilenameUtils.getExtension(listOfFiles[i].toString()));
-						System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
+						//System.out.println("Extension:"+FilenameUtils.getExtension(listOfFiles[i].toString()));
+						//System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
 						
 						if(FilenameUtils.isExtension(listOfFiles[i].getName(),"rtf") || FilenameUtils.isExtension(listOfFiles[i].getName(),"doc") || FilenameUtils.isExtension(listOfFiles[i].getName(),"docx"))
 						{
@@ -297,7 +300,7 @@ public class watchDirRec
 					else if (listOfFiles[i].isDirectory()) 
 					{
 						//Move manuscripts to error folder
-						System.out.println("Found:"+listOfFiles[i].getName());
+						//System.out.println("Found:"+listOfFiles[i].getName());
 						initProcessing(listOfFiles[i].toString());
 //						if(listOfFiles[i].getName().equals("Process"))
 //			        	{
