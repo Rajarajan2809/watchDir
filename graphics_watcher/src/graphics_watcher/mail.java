@@ -50,8 +50,8 @@ public class mail implements Runnable
 			System.out.println("(Thread Process) chName:"+subject);
 			System.out.println("(Thread Process) status:"+status);
 			
-			final String username = "maestroqs@codemantra.in";
-			final String password = "Mast$123";
+			final String username = "graphicsqs@codemantra.co.in";
+			final String password = "5UNnCEE9";
 	
 			Properties props = new Properties();
 			props.put("mail.smtp.auth", "true");
