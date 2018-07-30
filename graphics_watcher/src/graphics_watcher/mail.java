@@ -69,11 +69,11 @@ public class mail implements Runnable
 			});
 	
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("maestroqs@codemantra.in"));
+			message.setFrom(new InternetAddress("graphicsqs@codemantra.in"));
 			//message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(mail_id));
 			
-			consoleLog.log("JSON Parse failed for JSON on maestroqs_support.json\n\n");
-			System.out.println("JSON Parse failed for JSON on maestroqs_support.json");
+			//consoleLog.log("JSON Parse failed for JSON on maestroqs_support.json\n\n");
+			//System.out.println("JSON Parse failed for JSON on maestroqs_support.json");
 			
 			String mailIds = "rajarajan@codemantra.in";
 			InternetAddress[] parse = InternetAddress.parse(mailIds , true);
@@ -103,24 +103,23 @@ public class mail implements Runnable
 	        String mailMessage = "";
 	        switch(status)
 	        {
-		        case "404":
+		        case "ERROR":
 	        		{
 		        		mailMessage = "Dear All,\n\n"+
 									subject+"\n" +
 								"--------------------------------------------\n\n" +
-				 				"Please find the attached error log and clear the listed errors within the InDD Template and Import Map respectively.\n\n" +
-				 				"After clearing the error[s], the above error log need to be uploaded into Maestro Queuing System through \"cM_Tools->Comp->T&F->MaestroQS->InDT/IIMap Certification\".\n\n" +
+				 				"Image(s) could not be extracted from the IDML File.\n\n" +
 				 				"\nThanks & Regards,\n" +
 				 				"Maestro Queuing System";
 	        		}
 	        		break;
 	        		
-		        case "200":	
+		        case "SUCCESS":	
 	        		{
 	        			mailMessage = "Dear All,\n\n"+
 								subject+"\n" +
 							"--------------------------------------------\n\n" +
-			 				"The file is ready for Maestro IDML process.\n\n" +
+			 				"Image(s) extracted from the IDML file successfully.\n\n" +
 			 				"\nThanks & Regards,\n" +
 			 				"Maestro Queuing System";
 	        		}

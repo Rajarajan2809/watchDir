@@ -24,6 +24,9 @@ import graphics_watcher.mail;
 import graphics_watcher.utilities;
 import graphics_watcher.service;
 
+//https://docs.oracle.com/javase/tutorial/essential/io/examples/WatchDir.java
+//https://docs.oracle.com/javase/tutorial/essential/io/notification.html
+
 //https://www.geeksforgeeks.org/parse-json-java/
 //simple json jar download :http://www.java2s.com/Code/Jar/j/Downloadjsonsimple11jar.htm
 //https://www.javatpoint.com/collections-in-java
@@ -141,7 +144,7 @@ public class watcher
 					consoleLog.log("jsxFile :" + jsxFile.get(i)+ "\n");
 					System.out.println("jsxFile :" + jsxFile.get(i)+ "\n");
 							
-					String mountStatus = utilities.mountDisk("172.16.1.2", "OEO", "rajarajan", "test@123");
+					String mountStatus = utilities.mountDisk("172.16.1.21", "COMP", "graphicsqs", "@Op=0eja");
 					boolean fileFolderStatus =false;
 							
 					if(((exec_type.get(i).equals("File") && utilities.fileCheck(pathFolder))) 
