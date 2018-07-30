@@ -1,0 +1,68 @@
+25-Jul-18 14:59:00 --------------------------------------------------------
+25-Jul-18 14:59:00 Watch Service started at 25-Jul-18 02:59:00 PM...
+
+25-Jul-18 14:59:00 Processing file: /Users/comp/Desktop/PDF2XML/001_ENG/Process/.DS_Store
+
+25-Jul-18 14:59:00 input rtf Path:/Users/comp/Desktop/PDF2XML/001_ENG/Process/.DS_Store
+25-Jul-18 14:59:00 output rtf Path:/Users/comp/Desktop/PDF2XML/001_ENG/Output/.DS_Store
+25-Jul-18 14:59:00 Error Path:/Users/comp/Desktop/PDF2XML/001_ENG/Error/.DS_Store
+25-Jul-18 14:59:00 input xml path:/Users/comp/Desktop/PDF2XML/001_ENG/Process/.DS_Store
+25-Jul-18 14:59:00 output xml path:/Users/comp/Desktop/PDF2XML/001_ENG/Output/.DS_Store
+25-Jul-18 14:59:00 Macro processing finished with Error
+
+
+25-Jul-18 14:59:00 Processing file: /Users/comp/Desktop/PDF2XML/001_ENG/Process/P-S-9781498789851-part.rtf
+
+25-Jul-18 14:59:00 input rtf Path:/Users/comp/Desktop/PDF2XML/001_ENG/Process/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 output rtf Path:/Users/comp/Desktop/PDF2XML/001_ENG/Output/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 Error Path:/Users/comp/Desktop/PDF2XML/001_ENG/Error/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 input xml path:/Users/comp/Desktop/PDF2XML/001_ENG/Process/P-S-9781498789851-part.xml
+25-Jul-18 14:59:00 output xml path:/Users/comp/Desktop/PDF2XML/001_ENG/Output/P-S-9781498789851-part.xml
+25-Jul-18 14:59:00 Processing file: /Users/comp/Desktop/PDF2XML/002_SPN/Process/P-S-9781498789851-part.rtf
+
+25-Jul-18 14:59:00 input rtf Path:/Users/comp/Desktop/PDF2XML/002_SPN/Process/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 output rtf Path:/Users/comp/Desktop/PDF2XML/002_SPN/Output/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 Error Path:/Users/comp/Desktop/PDF2XML/002_SPN/Error/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 input xml path:/Users/comp/Desktop/PDF2XML/002_SPN/Process/P-S-9781498789851-part.xml
+25-Jul-18 14:59:00 output xml path:/Users/comp/Desktop/PDF2XML/002_SPN/Output/P-S-9781498789851-part.xml
+25-Jul-18 14:59:00 --------------------------------------------------------
+25-Jul-18 14:59:00 Watch Service started at 25-Jul-18 02:59:00 PM...
+
+25-Jul-18 14:59:00 Processing file: /Users/comp/Desktop/PDF2XML/003_FRN/Process/P-S-9781498789851-part.rtf
+
+25-Jul-18 14:59:00 input rtf Path:/Users/comp/Desktop/PDF2XML/003_FRN/Process/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 output rtf Path:/Users/comp/Desktop/PDF2XML/003_FRN/Output/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 Error Path:/Users/comp/Desktop/PDF2XML/003_FRN/Error/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:00 input xml path:/Users/comp/Desktop/PDF2XML/003_FRN/Process/P-S-9781498789851-part.xml
+25-Jul-18 14:59:00 output xml path:/Users/comp/Desktop/PDF2XML/003_FRN/Output/P-S-9781498789851-part.xml
+25-Jul-18 14:59:00 Scanning /Users/comp/Desktop/PDF2XML ...
+
+25-Jul-18 14:59:01 Processing file: /Users/comp/Desktop/PDF2XML/001_ENG/Process/P-S-9781498789851-part.rtf
+
+25-Jul-18 14:59:01 input rtf Path:/Users/comp/Desktop/PDF2XML/001_ENG/Process/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 Done.
+
+
+25-Jul-18 14:59:01 output rtf Path:/Users/comp/Desktop/PDF2XML/001_ENG/Output/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 Error Path:/Users/comp/Desktop/PDF2XML/001_ENG/Error/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 input xml path:/Users/comp/Desktop/PDF2XML/001_ENG/Process/P-S-9781498789851-part.xml
+25-Jul-18 14:59:01 output xml path:/Users/comp/Desktop/PDF2XML/001_ENG/Output/P-S-9781498789851-part.xml
+25-Jul-18 14:59:01 Processing file: /Users/comp/Desktop/PDF2XML/002_SPN/Process/P-S-9781498789851-part.rtf
+
+25-Jul-18 14:59:01 input rtf Path:/Users/comp/Desktop/PDF2XML/002_SPN/Process/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 output rtf Path:/Users/comp/Desktop/PDF2XML/002_SPN/Output/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 Error Path:/Users/comp/Desktop/PDF2XML/002_SPN/Error/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 input xml path:/Users/comp/Desktop/PDF2XML/002_SPN/Process/P-S-9781498789851-part.xml
+25-Jul-18 14:59:01 output xml path:/Users/comp/Desktop/PDF2XML/002_SPN/Output/P-S-9781498789851-part.xml
+25-Jul-18 14:59:01 Processing file: /Users/comp/Desktop/PDF2XML/003_FRN/Process/P-S-9781498789851-part.rtf
+
+25-Jul-18 14:59:01 input rtf Path:/Users/comp/Desktop/PDF2XML/003_FRN/Process/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 output rtf Path:/Users/comp/Desktop/PDF2XML/003_FRN/Output/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 Error Path:/Users/comp/Desktop/PDF2XML/003_FRN/Error/P-S-9781498789851-part.rtf
+25-Jul-18 14:59:01 input xml path:/Users/comp/Desktop/PDF2XML/003_FRN/Process/P-S-9781498789851-part.xml
+25-Jul-18 14:59:01 output xml path:/Users/comp/Desktop/PDF2XML/003_FRN/Output/P-S-9781498789851-part.xml
+25-Jul-18 14:59:01 Scanning /Users/comp/Desktop/PDF2XML ...
+
+25-Jul-18 14:59:01 Done.
+
+

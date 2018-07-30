@@ -4,12 +4,17 @@ import java.nio.file.*;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.LinkOption.*;
 import java.nio.file.attribute.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+//apache include
 import org.apache.commons.io.FilenameUtils;
 
+//https://docs.oracle.com/javase/tutorial/essential/io/examples/WatchDir.java
+//https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 //import watchDirRec.consoleLog;
 
 
@@ -41,12 +46,14 @@ public class watchDirRec
             if (prev == null) 
             {
                 System.out.format("register: %s\n", dir);
+                consoleLog.log("register: "+dir+"\n");
             } 
             else 
             {
                 if (!dir.equals(prev)) 
                 {
                     System.out.format("update: %s -> %s\n", prev, dir);
+                    consoleLog.log("update: "+prev+" -> "+dir+"\n");
                 }
             }
         }
@@ -90,8 +97,10 @@ public class watchDirRec
         if (recursive) 
         {
             System.out.format("Scanning %s ...\n", dir);
+            consoleLog.log("Scanning "+dir+" ...\n");
             registerAll(dir);
-            System.out.println("Done.");
+            System.out.println("Done.\n\n");
+            consoleLog.log("Done.\n\n");
         } 
         else 
         {
@@ -127,6 +136,7 @@ public class watchDirRec
 	            if (dir == null) 
 	            {
 	                System.err.println("WatchKey not recognized!!");
+	                consoleLog.log("WatchKey not recognized!!");
 	                continue;
 	            }
 	
@@ -146,17 +156,13 @@ public class watchDirRec
 	                Path child = dir.resolve(name);
 	
 	                File createdFile = child.toFile();
-	                String ext1 = FilenameUtils.getExtension(child.toString());
 	                //System.out.println("extension:"+ext1);
 	                
 	                // print out event
-	                if(kind.equals(ENTRY_CREATE) && ext1.equals("rtf") && createdFile.isFile() && (createdFile.getParentFile().getName().equals("Process")))
+	                if(kind.equals(ENTRY_CREATE) && (createdFile.getParentFile().getName().equals("_process")))
 	                {
-	                	//System.out.format("%s: %s\n", event.kind().name(), child);
-	                	//File createdFile = child.toFile();
-	                	System.out.println("extension:"+ext1);
-	                	vbScriptCall(child.toString());
-	                }
+	                	docProcessing(child.toString());
+		            }
 	                // if directory is created, and watching recursively, then
 	                // register it and its sub-directories
 	                if (recursive && (kind == ENTRY_CREATE)) 
@@ -196,87 +202,129 @@ public class watchDirRec
 		}
     }
     
-    private boolean vbScriptCall(String path) throws IOException, InterruptedException
+    private void docProcessing(String path) throws IOException, InterruptedException
     {
     	 
     	 try 
     	 {
-    		Runtime.getRuntime().exec("taskkill /F /IM WINWORD.EXE");
-    		Runtime.getRuntime().exec("taskkill /F /IM wscript.exe");
-    		 
-    		Path outputPathRtf = Paths.get(path.replace("Process", "Output"));
-    		
-    		String inputPathXml = path;
-    		//inputPathXml = path.replace("Process", "Output");
-    		inputPathXml = path.replace("rtf", "xml");
-    		//pathXml = pathXml.replace("rtf", "xml");
-    		
-    		Path outputPathXml = Paths.get(inputPathXml.replace("Process", "Output"));
-    		Path errPath = Paths.get(path.replace("Process", "Error"));
-			
-    		System.out.println("input rtf Path:"+path);
-    		System.out.println("output rtf Path:"+outputPathRtf);
-    		
-    		System.out.println("Error Path:"+errPath);
-    		
-    		System.out.println("input xml path:"+inputPathXml);
-    		System.out.println("output xml path:"+outputPathXml);
-    		
-    		File file = new File(System.getProperty ("user.home")+"/macro_call.vbs"); 
-    		//file = File.createNewFile();
-			//file.deleteOnExit();
-			FileWriter fw = new java.io.FileWriter(file);
-			
-			String vbs = "Dim Word "
-			+ System.getProperty("line.separator") +  "Dim WordDoc "
-			+ System.getProperty("line.separator") + "Set Word = CreateObject(\"Word.Application\") "
-			+ System.getProperty("line.separator") + "' Make Word visible "
-			+ System.getProperty("line.separator") + "Word.Visible = True "
-			+ System.getProperty("line.separator") + "'Open the Document "
-			+ System.getProperty("line.separator") + "Set WordDoc = Word.Documents.open(\"" + path + "\") "
-			+ System.getProperty("line.separator") + "'Run the macro called foo "
-			+ System.getProperty("line.separator") + "Word.Run \"preprocess_cleanup\" "
-			+ System.getProperty("line.separator") + "' Close Word "
-			+ System.getProperty("line.separator") + "Word.Quit "
-			+ System.getProperty("line.separator") + "'Release the object variables "
-			+ System.getProperty("line.separator") + "Set WordDoc = Nothing "
-			+ System.getProperty("line.separator") + "Set Word = Nothing "+ System.getProperty("line.separator") ;
-			
-			fw.write(vbs);
-			fw.close();
-			
-			TimeUnit.SECONDS.sleep(1);
-
-			Runtime.getRuntime().exec("attrib +H macro_call.vbs");
-			
-			//System.out.println("Macro path:"+file);
-			//System.out.println("vbs content:"+vbs);
-			
-			Process p = Runtime.getRuntime().exec("wscript " + file.getPath());
-			p.waitFor();
-			//System.out.println("p.exitValue():"+p.exitValue());
-			if(p.exitValue() == -1)
-			{
-				System.out.println("Macro Failure\n\n");
-				Files.move(Paths.get(path),errPath,StandardCopyOption.REPLACE_EXISTING);
-				file.delete();
-				return (false);
-			}
-			else
-			{
-				System.out.println("Macro Success\n\n");
-				Files.move(Paths.get(path),outputPathRtf,StandardCopyOption.REPLACE_EXISTING);
-				Files.move(Paths.get(inputPathXml),outputPathXml,StandardCopyOption.REPLACE_EXISTING);
-				file.delete();
-				return (true);
-			}
+    		if((path.indexOf("~") == -1) && (new File(path).exists()))
+    		{
+    			String outputPathRtf,inputPathXml,outputPathXml,errPath;
+    			outputPathRtf = path.replace("PDF2XML_Process", "PDF2XML");
+    			outputPathRtf = outputPathRtf.replace("_process", "OUT");
+					
+				//inputPathXml = path;
+				//inputPathXml = path.replace("Process", "Output");
+				inputPathXml = path.replace("rtf", "xml");
+				//pathXml = pathXml.replace("rtf", "xml");
+				
+				outputPathXml = outputPathRtf.replace("rtf", "xml");
+				
+				//Path outputPathXml = Paths.get();
+				errPath = path.replace("_process", "_log");
+				
+				System.out.format("Processing file: "+path+"\n");
+	        	//consoleLog.log("Processing file: "+path+"\n");
+				//System.out.println("input rtf Path:"+path);
+	//			System.out.println("output rtf Path:"+outputPathRtf);
+	//			System.out.println("Error Path:"+errPath);
+	//			System.out.println("input xml path:"+inputPathXml);
+	//			System.out.println("output xml path:"+outputPathXml);
+				
+				consoleLog.log("input rtf Path:"+path);
+				consoleLog.log("output rtf Path:"+outputPathRtf);
+				consoleLog.log("Error Path:"+errPath);
+				consoleLog.log("input xml path:"+inputPathXml);
+				consoleLog.log("output xml path:"+outputPathXml);
+	    		
+				if(new File(path).isFile())
+	    		{
+	    			String ext1 = FilenameUtils.getExtension(path);
+	    			if(ext1.equals("rtf") || ext1.equals("doc") || ext1.equals("docx"))
+	                {
+						Runtime.getRuntime().exec("taskkill /F /IM WINWORD.EXE");
+						Runtime.getRuntime().exec("taskkill /F /IM wscript.exe");
+						
+						File file = new File(System.getProperty ("user.home")+"/macro_call.vbs"); 
+						//file = File.createNewFile();
+						//file.deleteOnExit();
+						FileWriter fw = new java.io.FileWriter(file);
+						
+						String vbs = "Dim Word "
+						+ System.getProperty("line.separator") +  "Dim WordDoc "
+						+ System.getProperty("line.separator") + "Set Word = CreateObject(\"Word.Application\") "
+						+ System.getProperty("line.separator") + "' Make Word visible "
+						+ System.getProperty("line.separator") + "Word.Visible = True "
+						+ System.getProperty("line.separator") + "'Open the Document "
+						+ System.getProperty("line.separator") + "Set WordDoc = Word.Documents.open(\"" + path + "\") "
+						+ System.getProperty("line.separator") + "'Run the macro called foo "
+						+ System.getProperty("line.separator") + "Word.Run \"preprocess_cleanup\" "
+						+ System.getProperty("line.separator") + "' Close Word "
+						+ System.getProperty("line.separator") + "Word.Quit "
+						+ System.getProperty("line.separator") + "'Release the object variables "
+						+ System.getProperty("line.separator") + "Set WordDoc = Nothing "
+						+ System.getProperty("line.separator") + "Set Word = Nothing "+ System.getProperty("line.separator") ;
+						
+						fw.write(vbs);
+						fw.close();
+						
+						TimeUnit.SECONDS.sleep(1);
+						
+						//Runtime.getRuntime().exec("attrib +H macro_call.vbs");
+						
+						//System.out.println("Macro path:"+file);
+						//System.out.println("vbs content:"+vbs);
+						
+						TimeUnit.SECONDS.sleep(1);
+						
+						Process p = Runtime.getRuntime().exec("wscript " + file.getPath());
+						p.waitFor();
+						
+						DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
+    	    			String dateString2 = dateFormat2.format(new Date()).toString();
+						
+						//System.out.println("p.exitValue():"+p.exitValue());
+						if((p.exitValue() == -1) || !(new File(inputPathXml).exists()))
+						{
+							System.out.println("File : "+FilenameUtils.getName(path)+",\nMacro Status : FAIL,\n"+"time : "+dateString2+"\n\n");
+							consoleLog.log("Macro processing finished with Error\n\n");
+							Files.move(Paths.get(path),Paths.get(errPath),StandardCopyOption.REPLACE_EXISTING);
+							//file.delete();
+							//return (false);
+						}
+						else
+						{
+							System.out.println("Macro processing finished successfully\n\n");
+							consoleLog.log("Macro processing successfully\n\n");
+							Files.move(Paths.get(path),Paths.get(outputPathRtf),StandardCopyOption.REPLACE_EXISTING);
+							Files.move(Paths.get(inputPathXml),Paths.get(outputPathXml),StandardCopyOption.REPLACE_EXISTING);
+							//file.delete();
+							//return (true);
+						}
+						file.delete();
+	                }
+	    			else
+	    			{
+	    				System.out.println("File is invalid, moved to \""+errPath+"\n\n");
+						consoleLog.log("Macro processing finished with Error\n\n");
+	    				Files.move(Paths.get(path),Paths.get(errPath),StandardCopyOption.REPLACE_EXISTING);
+	    			}
+	    		}
+	    		else
+	    		{
+	    			System.out.println("Folder is invalid, moved to \""+errPath+"\n\n");
+	    			consoleLog.log("Invalid folder \""+path+"\" moved to \""+errPath+"\n\n");
+	    			recurMove(new File(path),new File(errPath));
+	    		}
+    		}
+    		//return;
 		 }
     	 catch (Exception e) 
     	 {
  			// TODO Auto-generated catch block
  			e.printStackTrace();
     	 }
-    	 return false;
+    	 return;
     }
 
     private void initProcessing(String pathString) throws FileNotFoundException, IOException, InterruptedException
@@ -285,37 +333,17 @@ public class watchDirRec
     	{
 	    	File folder = new File(pathString);
 	        File[] listOfFiles = folder.listFiles();
-	        //String[] strList = folder.list();
-	        //listOfFiles.length
-	        
-//	        System.out.println("Processing already present files in Job folder...\n");
-//			consoleLog.log("Processing already present files in Job folder...\n");
 			if(folder.exists())
 			{
 				for (int i = 0; i < listOfFiles.length; i++) 
 				{
-					//System.out.println("File:"+listOfFiles[i].getParent().indexOf("Process"));
-					if (listOfFiles[i].isFile() && (listOfFiles[i].getParent().indexOf("Process") != -1)) 
+					if (listOfFiles[i].isFile() && (listOfFiles[i].getParent().indexOf("_process") != -1)) 
 					{
-						//System.out.println("Extension:"+FilenameUtils.getExtension(listOfFiles[i].toString()));
-						//System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
-						
-						if(FilenameUtils.isExtension(listOfFiles[i].getName(),"rtf") || FilenameUtils.isExtension(listOfFiles[i].getName(),"doc") || FilenameUtils.isExtension(listOfFiles[i].getName(),"docx"))
-						{
-							vbScriptCall(listOfFiles[i].toString());
-						}
+						docProcessing(listOfFiles[i].toString());
 					}
 					else if (listOfFiles[i].isDirectory()) 
 					{
-						//Move manuscripts to error folder
-						//System.out.println("Found:"+listOfFiles[i].getName());
 						initProcessing(listOfFiles[i].toString());
-//						if(listOfFiles[i].getName().equals("Process"))
-//			        	{
-//							System.out.println("Found:"+listOfFiles[i].getName());
-//							initProcessing(listOfFiles[i].toString());
-//			        	}
-						//xlsx and docx files does not match regex
 					}
 				}
 			}
@@ -326,6 +354,52 @@ public class watchDirRec
     	}
     }
     
+    public static boolean recurMove(File sourceFile, File destFile)
+	{
+	    if (sourceFile.isDirectory())
+	    {
+	    	//File theDir = new File(pathString+"/INVALID_FILES/");
+        	
+        	if (!destFile.exists()) 
+			{
+        		destFile.mkdir();
+			}
+	        for (File file : sourceFile.listFiles())
+	        {
+	        	//System.out.println("dest1:"+destFile.getPath() + "/" + file.getName()+"\n");
+	        	//System.out.println("dest2:"+file.getPath() );
+	        	//file.
+	        	recurMove(file, new File(destFile.getPath() + "/" + file.getName()));
+	        }
+	        sourceFile.delete();
+	    }
+	    else
+	    {
+	        try 
+	        {
+	        	//SourceFile.getPath0)
+	        	//System.out.println("sourceFile.toString():"+sourceFile.toString()+"\n");
+	        	//System.out.println("destFile.toString():"+destFile.toString()+"\n");
+	            Path temp = Files.move(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	            
+	            if(temp != null)
+	            {
+	                System.out.println("File renamed and moved successfully");
+	            }
+	            else
+	            {
+	                System.out.println("Failed to move the file");
+	            }
+	            return true;
+	        } 
+	        catch (IOException e) 
+	        {
+	            return false;
+	        }
+	    }
+	    return false;
+	}
+    
 	public static void main(String[] args) throws IOException 
 	{
         // parse arguments
@@ -333,14 +407,22 @@ public class watchDirRec
 		try
 		{
 			//System.out.println(System.getProperty ("user.home")+"/Desktop/PDF2XML/");
+			DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
+			String dateString2 = dateFormat2.format(new Date()).toString();
+			consoleLog.log("--------------------------------------------------------");
+			System.out.println("Watch Service started at " + dateString2 + "...\n");
+			consoleLog.log("Watch Service started at " + dateString2 + "...\n");
 			
-			if(new File(System.getProperty ("user.home")+"/Desktop/PDF2XML/").exists())
+			if(new File(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/").exists())
 			{
-				Path dir = Paths.get(System.getProperty ("user.home")+"/Desktop/PDF2XML/");
+				Path dir = Paths.get(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/");
 				new watchDirRec(dir).processEvents();
 			}
 			else
-				System.out.println("Folder does not exists");
+			{
+				System.out.println(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/ does not exists");
+				consoleLog.log(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/ does not exists");
+			}
 		}
 		catch(Exception e)
 		{

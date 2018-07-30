@@ -21,13 +21,13 @@ public class consoleLog
 			String dateString2 = dateFormat2.format(new Date()).toString();
 			//System.out.println("Job started at : "+dateString2);
 			
-			File theDir = new File(System.getProperty ("user.home")+"/Desktop/PDF2XML/");//Users/comp/Library/Logs
+			File theDir = new File("Log");//Users/comp/Library/Logs
 	    	if (!theDir.exists()) 
 			{
 	    		theDir.mkdir();
 			}
 			Calendar cal = Calendar.getInstance();
-	    	String fileName = theDir.getAbsolutePath()+"/FW_"+new SimpleDateFormat("MMM").format(cal.getTime()) + new SimpleDateFormat("YY").format(cal.getTime())+".log";
+	    	String fileName = theDir.getAbsolutePath()+"/FW_ABBY_"+new SimpleDateFormat("MMM").format(cal.getTime()) + new SimpleDateFormat("YY").format(cal.getTime())+".log";
 			//System.out.println("fileName:"+fileName);
 	    	Writer output2 = new BufferedWriter(new FileWriter(fileName, true));  //clears file every time
 			output2.append(dateString2 + " " + object + System.getProperty("line.separator"));
