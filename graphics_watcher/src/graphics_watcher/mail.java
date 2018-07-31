@@ -75,8 +75,8 @@ public class mail implements Runnable
 			//consoleLog.log("JSON Parse failed for JSON on maestroqs_support.json\n\n");
 			//System.out.println("JSON Parse failed for JSON on maestroqs_support.json");
 			
-			String mailIds = "rajarajan@codemantra.in";
-			InternetAddress[] parse = InternetAddress.parse(mailIds , true);
+			//String mailIds = "rajarajan@codemantra.in";
+			InternetAddress[] parse = InternetAddress.parse(mailId , true);
 			message.setRecipients(javax.mail.Message.RecipientType.TO,  parse);
 					
 					//return;

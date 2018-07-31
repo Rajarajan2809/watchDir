@@ -1,5 +1,8 @@
 package folder_watcher;
 
+//https://docs.oracle.com/javase/tutorial/essential/io/examples/WatchDir.java
+//https://docs.oracle.com/javase/tutorial/essential/io/notification.html
+
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -40,6 +43,7 @@ import folder_watcher.mail;
 import folder_watcher.url_request;
 import folder_watcher.utilities;
 import folder_watcher.watchDir;
+import folder_watcher.webServer;
 
 //https://www.geeksforgeeks.org/parse-json-java/
 //simple json jar download :http://www.java2s.com/Code/Jar/j/Downloadjsonsimple11jar.htm
@@ -73,7 +77,12 @@ public class Main
 			// do something
 			file.delete();
 		}
-
+		
+		//web server to find server status
+		webServer server = new webServer();
+		Thread webServerThread = new Thread(server, "Thread to initiate the web server.");
+		webServerThread.start();
+		
 		consoleLog.log("Polling process started.");
 
 		for (;;) 

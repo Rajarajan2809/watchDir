@@ -386,7 +386,7 @@ public class utilities
 				 "\tend try\n" + 
 				 "else if (mountedDiskName is in diskNames) and not (mountedDiskName1 is in diskNames) then\n" + 
 				 "\ttry\n" + 
-				 "\t\tmount volume \"smb://172.16.1.4/comp_template\" as user name \"maestroqs@cmpl.in\" with password \"M@est0123\"\n" +
+				 "\t\tmount volume \"smb://172.16.1.21/comp_template\" as user name \"maestroqs@cmpl.in\" with password \"M@est0123\"\n" +
 				 "\t\treturn \"Disk Found\"\n" +
 				 "\ton error\n" +
 				 "\t\treturn \"Disk not Found, contact administrator\"\n" +
@@ -401,7 +401,7 @@ public class utilities
 				 "else\n" +
 				 "\ttry\n" +
 				 "\t\tmount volume \"smb://172.16.1.2/Copyediting\" as user name \"maestroqs@cmpl.in\" with password \"M@est0123\"\n" +
-				 "\t\tmount volume \"smb://172.16.1.4/comp_template\" as user name \"maestroqs@cmpl.in\" with password \"M@est0123\"\n" +
+				 "\t\tmount volume \"smb://172.16.1.21/comp_template\" as user name \"maestroqs@cmpl.in\" with password \"M@est0123\"\n" +
 				 "\t\tlog \"Disk Found -->\" & mountedDiskName & mountedDiskName1\n" +
 				 "\t\treturn \"Disk Found\"\n" +
 				 "\ton error\n" +	

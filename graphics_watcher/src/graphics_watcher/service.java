@@ -1,6 +1,9 @@
 package graphics_watcher;
 
 import java.nio.file.*;
+import java.time.Duration;
+import java.time.Instant;
+
 import static java.nio.file.StandardWatchEventKinds.*;
 import java.io.*;
 
@@ -9,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
@@ -84,8 +88,8 @@ public class service implements Runnable
         
         //user exists or not
         File theDir = new File(System.getProperty ("user.home"));
-		//System.out.println("theDir:"+theDir.exists());
-    	if (!theDir.exists()) 
+		System.out.println("theDir1:"+theDir.exists());
+    	while (!theDir.exists()) 
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -93,8 +97,8 @@ public class service implements Runnable
     	
     	//Desktop exists or not
     	theDir = new File(System.getProperty ("user.home")+"/");
-		//System.out.println("theDir:"+theDir.exists());
-    	if (!theDir.exists()) 
+		System.out.println("theDir2:"+theDir.exists());
+    	while (!theDir.exists()) 
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -102,8 +106,8 @@ public class service implements Runnable
     	
     	//Graphics_QS exists or not
     	theDir = new File(System.getProperty ("user.home")+"/Graphics_QS/");
-		//System.out.println("theDir:"+theDir.exists());
-    	if (!theDir.exists()) 
+		System.out.println("theDir3:"+theDir.exists());
+    	while (!theDir.exists()) 
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -111,8 +115,8 @@ public class service implements Runnable
 
     	//
     	theDir = new File(this.localFolder);
-		//System.out.println("theDir:"+theDir.exists());
-    	if (!theDir.exists()) 
+		System.out.println("theDir4:"+theDir.exists());
+    	while (!theDir.exists()) 
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -125,8 +129,8 @@ public class service implements Runnable
 		//local JOB IN Folder
 		this.localInFolder = localFolder+"/IN";
 		theDir = new File(localFolder+"/IN");
-		//System.out.println("theDir:"+theDir.exists());
-    	if (!theDir.exists()) 
+		System.out.println("theDir5:"+theDir.exists());
+    	while (!theDir.exists()) 
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -136,8 +140,8 @@ public class service implements Runnable
 		this.localOutFolder = localFolder+"/OUT";
 		//System.out.println("localOutFolder:"+this.localOutFolder);
 		File theDir1 = new File(localFolder+"/OUT");
-		//System.out.println("theDirOut:"+theDir1.exists());
-    	if (!theDir1.mkdir()) 
+		System.out.println("theDirOut:"+theDir1.exists());
+    	while (!theDir1.exists()) 
 		{
     		theDir1.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -147,8 +151,8 @@ public class service implements Runnable
 		//local JOB OUT Folder
 		this.jobOutFolder = jobFolder+"/OUT";
 		theDir = new File(jobFolder+"/OUT");
-		//System.out.println("theDir:"+theDir.exists());
-    	if (!theDir.exists()) 
+		System.out.println("theDir:"+theDir.exists());
+    	while (!theDir.exists()) 
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -182,11 +186,16 @@ public class service implements Runnable
 			{			
 				if (listOfFiles[i].isFile()) 
 				{
+					Collection<String> extn = new ArrayList<String>();
+    				extn.add("indd");
+    				extn.add("idml");
 					//System.out.println("File/Folder Status:"+listOfFiles[i].getName()+"("+listOfFiles[i].isFile()+")");
-					if(!listOfFiles[i].getName().equals(".DS_Store"))
+					if(!listOfFiles[i].getName().equals(".DS_Store") && FilenameUtils.isExtension(listOfFiles[i].getName(),extn))
 					{
 						functionalityCheck(listOfFiles[i].getName());
 					}
+					else
+						utilities.delete(listOfFiles[i]);
 				}
 				else if (listOfFiles[i].isDirectory()) 
 				{
@@ -275,17 +284,34 @@ public class service implements Runnable
             			
             			if(createdFile.isFile())
             			{
-            				if(!createdFile.getName().equals(".DS_Store"))
-            				{
+            				
+            				Collection<String> extn = new ArrayList<String>();
+            				extn.add("indd");
+            				extn.add("idml");
+            				
+            				//System.out.println("file extn status:"+FilenameUtils.isExtension(createdFile.getName(),extn));
+            				
+            				if(!createdFile.getName().equals(".DS_Store") && FilenameUtils.isExtension(createdFile.getName(),extn))
+            				{ 		
+            					Instant start = Instant.now();
             					while(!isCompletelyWritten(child.toFile()))
         						{}
+            					Instant end = Instant.now();
+            					Duration timeElapsed = Duration.between(start, end);
+            					System.out.println("Time taken to copy: "+ timeElapsed.getSeconds() +" seconds");
 	            				functionalityCheck(child.getFileName().toString());
             				}
+            				else
+            					utilities.delete(createdFile);
             			}
             			else if(createdFile.isDirectory())
             			{
-            				while(!isCompletelyWritten(child.toFile()))
+            				Instant start = Instant.now();
+        					while(!isCompletelyWritten(child.toFile()))
     						{}
+        					Instant end = Instant.now();
+        					Duration timeElapsed = Duration.between(start, end);
+        					System.out.println("Time taken to copy: "+ timeElapsed.getSeconds() +" seconds");
             				functionalityCheck(child.getFileName().toString());
             			}
             		}
@@ -413,12 +439,20 @@ public class service implements Runnable
 	{
 		boolean jsxProcessStatus = false;// 0 > failed,0 = success
 		
-		System.out.println("File:"+file+"\n");
+		//System.out.println("File:"+file+"\n");
+		
+		Instant start = Instant.now();
 		
 		if(new File(jobInFolder+"/"+file).isFile())
 			System.out.println(Files.move(Paths.get(jobInFolder+"/"+file), Paths.get(localInFolder+"/"+file), StandardCopyOption.REPLACE_EXISTING));
 		else if(new File(jobInFolder+"/"+file).isDirectory())
 			utilities.recurMove(new File(jobInFolder+"/"+file), new File(localInFolder+"/"+file));
+		
+		Instant end = Instant.now();
+		Duration timeElapsed = Duration.between(start, end);
+		System.out.println("Time taken to copy: "+ timeElapsed.getSeconds() +" seconds");
+		
+		System.out.println("dir status:"+new File(jobInFolder+"/"+file).isDirectory());
 		
 		//if(new File(jobInFolder+"/"+file).isDirectory())
 		//{
@@ -427,9 +461,9 @@ public class service implements Runnable
 			
 			System.out.println("out folder:"+localOutFolder+"/"+file);
 			File theDir1 = new File(localOutFolder+"/"+file);
-			if (!theDir1.exists()) 
+			while (!theDir1.exists()) 
 			{
-	    		theDir1.mkdir();
+	    		//theDir1.mkdir();
 	    		System.out.println("status1:"+theDir1.mkdir());
 			}
 			
@@ -451,7 +485,8 @@ public class service implements Runnable
 	    	counter.decrementAndGet();
 			System.out.println("localOutFolderFile:"+localOutFolder+"/"+file);
 	    	System.out.println("jobOutFolder:"+jobOutFolder+"/"+file);
-	    	utilities.recurMove(new File(localOutFolder+"/"+file),new File(jobOutFolder+"/"+file));
+	    	utilities.delete(new File(localInFolder+"/"+file));
+	    	//utilities.recurMove(new File(localOutFolder+"/"+file),new File(jobOutFolder+"/"+file));
 		//}
 		return (jsxProcessStatus);
 	}
@@ -480,7 +515,7 @@ public class service implements Runnable
 			"return myScriptArgumentA \n" +
 			"end tell\n";
 			
-			System.out.println("command:"+command+"\n\n");
+			//System.out.println("command:"+command+"\n\n");
 			System.out.println("InDesign Processing.....");
 			consoleLog.log("InDesign Processing.....");
 			result = utilities.osascript_call(command);
@@ -498,8 +533,10 @@ public class service implements Runnable
 			        {
 			        	if(response.equals("200"))
 			        	{
+			        		utilities.recurMove(new File(localOutFolder+"/"+outFolder.substring(outFolder.lastIndexOf("/")+1)),new File(jobOutFolder+"/"+outFolder.substring(outFolder.lastIndexOf("/")+1)));
+			        		
 			        		appleScriptStatus = true;
-			        		mailObj = new mail("rajarajan@codemantra.in","SUCCESS",outFolder.substring(outFolder.lastIndexOf("/")+1),"", "");
+			        		mailObj = new mail("artwork@codemantra.co.in","SUCCESS",outFolder.substring(outFolder.lastIndexOf("/")+1),"", "");
 			    			Thread mailThread7 = new Thread(mailObj, "Mail Thread for SUCCESS");
 			            	mailThread7.start();
 			            	
@@ -508,7 +545,7 @@ public class service implements Runnable
 			        	}
 			        	else if(response.equals("404"))
 			        	{
-			        		mailObj = new mail("rajarajan@codemantra.in","ERROR",outFolder.substring(outFolder.lastIndexOf("/")+1),"", "");
+			        		mailObj = new mail("artwork@codemantra.co.in","ERROR",outFolder.substring(outFolder.lastIndexOf("/")+1),"", "");
 			    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for FAILURE");
 			            	mailThread10.start();
 			    			//processError = true;
@@ -521,10 +558,10 @@ public class service implements Runnable
 	        }
 			else
 			{
-				System.out.println("InDesign could not access the \"Generic/standard style sheet\".");
-        		consoleLog.log("InDesign could not access the \"Generic/standard style sheet\".");
+				System.out.println("No response from InDesign.");
+				consoleLog.log("No response from InDesign.");
         		
-        		mailObj = new mail("rajarajan@codemantra.in","ERROR",outFolder.substring(outFolder.lastIndexOf("/")+1),"", "");
+        		mailObj = new mail("artwork@codemantra.co.in","ERROR",outFolder.substring(outFolder.lastIndexOf("/")+1),"", "");
     			Thread mailThread10 = new Thread(mailObj, "Mail Thread for FAILURE");
             	mailThread10.start();
 			}

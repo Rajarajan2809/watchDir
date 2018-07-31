@@ -176,9 +176,9 @@ public class job
 //		    		System.out.println("maestroMappingPath : "+jobParams[2]);
 //		    		System.out.println("styleSheetPath : "+jobParams[3]+"\n");
 //		    		
-//		    		consoleLog.log("templatePath : "+jobParams[1]);
-//		    		consoleLog.log("maestroMappingPath : "+jobParams[2]);
-//		    		consoleLog.log("styleSheetPath : "+jobParams[3]+"\n");
+		    		consoleLog.log("templatePath : "+jobParams[1]);
+		    		consoleLog.log("maestroMappingPath : "+jobParams[2]);
+		    		consoleLog.log("styleSheetPath : "+jobParams[3]+"\n");
 		        	
 		    		boolean templatePath = utilities.folderCheck(jobParams[1]);
 		    		boolean maestroMappingPath = utilities.folderCheck(jobParams[2]);

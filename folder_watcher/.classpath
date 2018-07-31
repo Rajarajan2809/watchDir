@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/javamail-1.4.7/mail.jar"/>
 	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/http-20070405.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

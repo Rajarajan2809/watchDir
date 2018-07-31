@@ -268,7 +268,7 @@ public class watchDir implements Runnable
 				else if (listOfFiles[i].isDirectory()) 
 				{
 					//Move manuscripts to error folder
-					if(!listOfFiles[i].getName().equals("ERROR") && !listOfFiles[i].getName().equals("INVALID_FILES") && !listOfFiles[i].getName().equals("Equations"))
+					if(!(listOfFiles[i].getName().compareToIgnoreCase("ERROR") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("INVALID_FILES") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("Equations") == 0))
 		        	{
 						File theDir = new File(pathString+"/INVALID_FILES/");
 		        	
@@ -515,7 +515,7 @@ public class watchDir implements Runnable
             			}
             			else if(new File(pathString + "/" + child.getFileName().toString()).isDirectory())
             			{
-            				if(!child.getFileName().toString().equals("ERROR") && !child.getFileName().toString().equals("INVALID_FILES") && !child.getFileName().toString().equals("Equations"))
+            				if(!(child.getFileName().toString().compareToIgnoreCase("ERROR") == 0 )  && !(child.getFileName().toString().compareToIgnoreCase("INVALID_FILES") == 0) && !(child.getFileName().toString().compareToIgnoreCase("Equations") == 0))
             	        	{
 	            				//Move manuscripts to error folder
 	        		        	File theDir = new File(pathString+"/INVALID_FILES/");
