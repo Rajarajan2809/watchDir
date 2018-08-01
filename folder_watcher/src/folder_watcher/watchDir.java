@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+
 //import javax.script.ScriptEngine;
 //import javax.script.ScriptEngineManager;
 
@@ -1250,6 +1252,21 @@ public class watchDir implements Runnable
 		 }
 		 return;
 	 }
+	 
+	private boolean isCompletelyWritten(File file) throws InterruptedException
+    {
+        Long fileSizeBefore = FileUtils.sizeOf(file);//size(file.toPath());
+        Thread.sleep(3000);
+        Long fileSizeAfter = FileUtils.sizeOf(file);//size(file.toPath());
+
+        //System.out.println("comparing file size " + fileSizeBefore + " with " + fileSizeAfter);
+        if (fileSizeBefore.equals(fileSizeAfter)) 
+        {
+            return true;
+        }
+        System.out.println("Copying.........");
+        return false;
+    }
 	 
 	 boolean jobFailErrorFun() throws IOException
 	 {
