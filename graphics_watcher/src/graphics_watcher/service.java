@@ -192,6 +192,8 @@ public class service implements Runnable
 					//System.out.println("File/Folder Status:"+listOfFiles[i].getName()+"("+listOfFiles[i].isFile()+")");
 					if(!listOfFiles[i].getName().equals(".DS_Store") && FilenameUtils.isExtension(listOfFiles[i].getName(),extn))
 					{
+						while(!isCompletelyWritten(listOfFiles[i]))
+						{}
 						functionalityCheck(listOfFiles[i].getName());
 					}
 					else
@@ -199,6 +201,8 @@ public class service implements Runnable
 				}
 				else if (listOfFiles[i].isDirectory()) 
 				{
+					while(!isCompletelyWritten(listOfFiles[i]))
+					{}
 					functionalityCheck(listOfFiles[i].getName());
 				}
 			}
