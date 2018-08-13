@@ -51,6 +51,11 @@ public class job
 			File inputFile = new File("jobs.txt");
 			File tempFile = new File("jobs_temp.txt");
 		
+			if(!inputFile.exists())
+			{
+				job_insert("");
+			}
+			
 			BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 

@@ -459,8 +459,16 @@ public class mail implements Runnable
 		catch (MessagingException e)
 		{
 			//throw new RuntimeException(e);
-			System.out.println("(Thread Process) Error in mailing parameters for javax api"+"\n");
-			consoleLog.log("(Thread Process) Error in mailing parameters for javax api"+"\n");
+			System.out.println("(Thread Process) group:"+group);
+			System.out.println("(Thread Process) chName:"+subject);
+			System.out.println("(Thread Process) status:"+status);
+			
+			consoleLog.log("(Thread Process) group:"+group);
+			consoleLog.log("(Thread Process) chName:"+subject);
+			consoleLog.log("(Thread Process) status:"+status);
+			
+			System.out.println("(Thread Process) Error in mailing parameters for javax api"+"\n"+e.toString());
+			consoleLog.log("(Thread Process) Error in mailing parameters for javax api"+"\n"+e.toString());
 		}
 		catch (Exception e) 
 		{

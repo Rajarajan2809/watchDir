@@ -12,8 +12,8 @@ public class url_request
 {
 	//private String urlQuery,type,content;
 
-	static String serverIp = "172.16.4.112:8088";//testing server
-	//static String serverIp = "172.16.1.25:8080";//production server
+	//static String serverIp = "172.16.4.112:8088";//testing server
+	static String serverIp = "172.16.1.25:8080";//production server
 	
 	url_request()
     {

@@ -198,10 +198,20 @@ public class Main
 							// System.out.println("Job status:"+!j1.job_status(jobId.get(i)));
 							if (!j1.job_status(jobId.get(i)))// if(!listPath.contains(Paths.get(path.get(i))))
 							{
-								String osResp = utilities.serverMount();
-								System.out.println("osResp:" + osResp);
-								consoleLog.log("Mount response:" + osResp);
-								if (osResp.equals("Disk Found")) 
+								String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+								String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+								String osResp3 = utilities.mountDisk("172.16.1.2", "COMP", "maestroqs@cmpl.in", "M@est0123");
+								//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+								//String osResp = utilities.serverMount();
+								System.out.println("osResp1:" + osResp1);
+								consoleLog.log("Mount response1:" + osResp1);
+								
+								System.out.println("osResp2:" + osResp2);
+								consoleLog.log("Mount response2:" + osResp2);
+								
+								System.out.println("osResp3:" + osResp3);
+								consoleLog.log("Mount response3:" + osResp3);
+								if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
 								{
 									if(!mailTriggNet)
 									{
@@ -209,8 +219,7 @@ public class Main
 										consoleLog.log("API Server (172.16.1.25:8080) is online.");
 										System.out.println("API Server (172.16.1.25:8080) is online.");
 									}
-									j1.job_insert(jobId.get(i));
-
+									
 									//consoleLog.log("Poll response : " + response + "\n");
 									//System.out.println("Poll response : " + response + "\n");
 
@@ -262,8 +271,8 @@ public class Main
 									
 									System.out.println("eqnPathError:"+eqnPathError);
 									System.out.println("graphPathError:"+graphPathError);
-									if(eqnPathError)
-										break;
+									//if(eqnPathError)
+										//break;
 									
 									//System.out.println("Path : " + pathFolder);
 									// watchDir.getDocParam(jobId.get(i),
@@ -271,145 +280,144 @@ public class Main
 									// path is not present in watch dir list
 									// try
 									// check job folder exists and jobId and job folder names are same
-									String jobParams[] = job.getDocParam(jobId.get(i), clientId.get(i));
-									if (utilities.folderCheck(pathFolder) 
-											&& (pathFolder.indexOf(jobId.get(i)) != -1)
-											&& !jobParams[1].equals("") 
-											&& !jobParams[2].equals("")
-											&& !jobParams[3].equals("") 
-											&& utilities.folderCheck(jobParams[1])
-											&& utilities.folderCheck(jobParams[2]) 
-											&& utilities.fileCheck(jobParams[3])
-											&& !graphPathError
-											&& !eqnPathError) 
-									{
-										System.out.println("newJob:" + newJob.get(i));
-										// pathFolder = System.getProperty ("user.home")+"/Desktop/MaestroReady";
-										// new job or already failed job
-										if (!newJob.get(i)) 
+										String jobParams[] = job.getDocParam(jobId.get(i), clientId.get(i));
+										if (utilities.folderCheck(pathFolder) 
+												&& (pathFolder.indexOf(jobId.get(i)) != -1)
+												&& !jobParams[1].equals("") 
+												&& !jobParams[2].equals("")
+												&& !jobParams[3].equals("") 
+												&& utilities.folderCheck(jobParams[1])
+												&& utilities.folderCheck(jobParams[2]) 
+												&& utilities.fileCheck(jobParams[3])
+												//&& !graphPathError
+												&& !eqnPathError) 
 										{
-											//utilities.folderMove(pathFolder + "/ERROR", pathFolder);
-											//utilities.delete(new File(pathFolder + "/ERROR"));
+											j1.job_insert(jobId.get(i));
+											System.out.println("newJob:" + newJob.get(i));
+											// pathFolder = System.getProperty ("user.home")+"/Desktop/MaestroReady";
+											// new job or already failed job
+											if (!newJob.get(i)) 
+											{
+												//utilities.folderMove(pathFolder + "/ERROR", pathFolder);
+												//utilities.delete(new File(pathFolder + "/ERROR"));
+											}
+											// consoleLog.log("Watch thread created.");
+											consoleLog.log("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\npath : \"" + pathFolder + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
+											watchDir watchObj = new watchDir(pathFolder, noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
+											Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
+											watchThread1.start();
+											
+	//										if(!new File(pathFolder+"/ERROR/").exists())
+	//										{
+	//											File theDir = new File(pathFolder+"/ERROR/");
+	//								        	if (!theDir.exists()) 
+	//											{
+	//								        		theDir.mkdir();
+	//											}
+	//										}
+											
+	//										watchObj = new watchDir(pathFolder+"/ERROR/", noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
+	//										Thread watchThread2 = new Thread(watchObj, "Watch Thread for ERROR folder in parent directory" + Integer.toString(i));
+	//										watchThread2.start();
+											
+											listPath.add(Paths.get(path.get(i)));
 										}
-										// consoleLog.log("Watch thread created.");
-										consoleLog.log("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\npath : \"" + pathFolder + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
-										watchDir watchObj = new watchDir(pathFolder, noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
-										Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
-										watchThread1.start();
-										
-//										if(!new File(pathFolder+"/ERROR/").exists())
-//										{
-//											File theDir = new File(pathFolder+"/ERROR/");
-//								        	if (!theDir.exists()) 
-//											{
-//								        		theDir.mkdir();
-//											}
-//										}
-										
-//										watchObj = new watchDir(pathFolder+"/ERROR/", noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
-//										Thread watchThread2 = new Thread(watchObj, "Watch Thread for ERROR folder in parent directory" + Integer.toString(i));
-//										watchThread2.start();
-										
-										listPath.add(Paths.get(path.get(i)));
-									}
-									else 
-									{
-										//j1 = new job();
-							         	j1.job_update(jobId.get(i));
-							         	
-										String errParam = "";
-										System.out.println("utilities.folderCheck(pathFolder):" + utilities.folderCheck(pathFolder));
-
-										// copy edit path validation
-										if (!utilities.folderCheck(pathFolder) || (pathFolder.indexOf(jobId.get(i)) == -1)) 
+										else 
 										{
-											// System.out.println("1");
-											errParam = "\n* Copyedit Path is invalid";
+											//j1 = new job();
+								         	j1.job_update(jobId.get(i));
+								         	
+											String errParam = "";
+											System.out.println("utilities.folderCheck(pathFolder):" + utilities.folderCheck(pathFolder));
+	
+											// copy edit path validation
+											if (!utilities.folderCheck(pathFolder) || (pathFolder.indexOf(jobId.get(i)) == -1)) 
+											{
+												// System.out.println("1");
+												errParam = "\n* Copyedit Path is invalid";
+											}
+	
+											// graphics path validation
+											if (graphPathError) 
+											{
+												// System.out.println("2");
+												errParam = (errParam.isEmpty() ? "" : errParam + ",\n") + "* Graphics Path is invalid";
+												//graphicsErrFlag = true;
+											}
+	
+											// equations path validation
+											if (eqnPathError) 
+											{
+												// System.out.println("2");
+												errParam = (errParam.isEmpty() ? "" : errParam + ",\n") + "* Equations Path is invalid";
+												//equationErrFlag = true;
+											}
+	
+											// template path validation
+											if (jobParams[1].equals("") || !utilities.folderCheck(jobParams[1])) 
+											{
+												// System.out.println("2");
+												errParam = (errParam.isEmpty() ? "" : errParam + ",\n")	+ "* Template Path is invalid";
+												//equationErrFlag = true;
+											}
+	
+											// Maestro map path validation
+											if (jobParams[2].equals("") || !utilities.folderCheck(jobParams[2])) 
+											{
+												// System.out.println("3");
+												errParam = (errParam.isEmpty() ? "" : errParam + ",\n")	+ "* Maestro Map Path is invalid";
+											}
+	
+											// Standard style sheet path validation
+											if (jobParams[3].equals("") || !utilities.fileCheck(jobParams[3])) 
+											{
+												// System.out.println("4");
+												errParam = (errParam.isEmpty() ? "" : errParam + ",\n") + "* Standard StyleSheet Path is invalid";
+											}
+	
+											errParam = errParam + ".\n\n";
+											JSONObject obj = new JSONObject();
+											obj.put("jobId", jobId.get(i));
+											obj.put("clientId", clientId.get(i));
+											obj.put("status", "FAILED");
+	
+											// sample : sendMail("CRC Team", "JOB_FAIL", "9781138556850_Ilyas_CH01", "",
+											// errParam);
+											// changed from "CRC Team" to "Pre-editing" - rajkannan
+											mail mailObj = new mail(URLEncoder.encode("Pre-editing", "UTF-8"), "JOB_FAIL",jobId.get(i), "", errParam);
+											Thread mailThread1 = new Thread(mailObj, "Mail Thread for file/directory");
+											mailThread1.start();
+	
+											if (graphPathError) 
+											{
+												mailObj = new mail(URLEncoder.encode("Graphics", "UTF-8"), "JOB_FAIL", jobId.get(i), "", errParam);
+												Thread mailThread2 = new Thread(mailObj, "Mail Thread for file/directory");
+												mailThread2.start();
+											}
+	
+											if (eqnPathError) 
+											{
+												mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "JOB_FAIL", jobId.get(i), "", errParam);
+												Thread mailThread3 = new Thread(mailObj, "Mail Thread for file/directory");
+												mailThread3.start();
+											}
+	
+											// mailObj.mailProcess(URLEncoder.encode("CRC Team",
+											// "UTF-8"),"DIRECTORY_NOT_EXISTS","DIRECTORY","", errParam);
+											// mailObj.mailProcess("Template","JOB_FAIL",jobId.get(i),"",errParam);
+	
+											System.out.println("Job finished WITH ERROR at " + dateString2 + " for jobId:" + jobId.get(i) + ", clientId:" + clientId.get(i) + " and folder location:" + pathFolder);
+											consoleLog.log("Job finished WITH ERROR at \"" + dateString2 + "\" for jobId:\"" + jobId.get(i) + "\", clientId:\"" + clientId.get(i) + "\" and folder location:\""  + pathFolder + "\"");
+	
+											String jsonText = JSONValue.toJSONString(obj);
+											// System.out.println(jsonText);
+											// jobStatus update
+											consoleLog.log("URL : \"http://" + url_request.serverIp + "/maestro/updateJobStatus\", type : \"PUT\" and content : \"" + jsonText + "\"");
+											String webResponse = url_request.urlRequestProcess("http://" + url_request.serverIp + "/maestro/updateJobStatus", "PUT", jsonText);
+											System.out.println("URL response : " + webResponse);
+											consoleLog.log("URL response : " + webResponse);
 										}
-
-										// graphics path validation
-										if (graphPathError) 
-										{
-											// System.out.println("2");
-											errParam = (errParam.isEmpty() ? "" : errParam + ",\n") + "* Graphics Path is invalid";
-											//graphicsErrFlag = true;
-										}
-
-										// equations path validation
-										if (eqnPathError) 
-										{
-											// System.out.println("2");
-											errParam = (errParam.isEmpty() ? "" : errParam + ",\n") + "* Equations Path is invalid";
-											//equationErrFlag = true;
-										}
-
-										// template path validation
-										if (jobParams[1].equals("") || !utilities.folderCheck(jobParams[1])) 
-										{
-											// System.out.println("2");
-											errParam = (errParam.isEmpty() ? "" : errParam + ",\n")	+ "* Template Path is invalid";
-											//equationErrFlag = true;
-										}
-
-										// Maestro map path validation
-										if (jobParams[2].equals("") || !utilities.folderCheck(jobParams[2])) 
-										{
-											// System.out.println("3");
-											errParam = (errParam.isEmpty() ? "" : errParam + ",\n")	+ "* Maestro Map Path is invalid";
-										}
-
-										// Standard style sheet path validation
-										if (jobParams[3].equals("") || !utilities.fileCheck(jobParams[3])) 
-										{
-											// System.out.println("4");
-											errParam = (errParam.isEmpty() ? "" : errParam + ",\n") + "* Standard StyleSheet Path is invalid";
-										}
-
-										errParam = errParam + ".\n\n";
-										JSONObject obj = new JSONObject();
-										obj.put("jobId", jobId.get(i));
-										obj.put("clientId", clientId.get(i));
-										obj.put("status", "FAILED");
-
-										// sample : sendMail("CRC Team", "JOB_FAIL", "9781138556850_Ilyas_CH01", "",
-										// errParam);
-										// changed from "CRC Team" to "Pre-editing" - rajkannan
-										mail mailObj = new mail(URLEncoder.encode("Pre-editing", "UTF-8"), "JOB_FAIL",jobId.get(i), "", errParam);
-										Thread mailThread1 = new Thread(mailObj, "Mail Thread for file/directory");
-										mailThread1.start();
-
-										if (graphPathError) 
-										{
-											mailObj = new mail(URLEncoder.encode("Graphics", "UTF-8"), "JOB_FAIL", jobId.get(i), "", errParam);
-											Thread mailThread2 = new Thread(mailObj, "Mail Thread for file/directory");
-											mailThread2.start();
-										}
-
-										if (eqnPathError) 
-										{
-											mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "JOB_FAIL", jobId.get(i), "", errParam);
-											Thread mailThread3 = new Thread(mailObj, "Mail Thread for file/directory");
-											mailThread3.start();
-										}
-
-										// mailObj.mailProcess(URLEncoder.encode("CRC Team",
-										// "UTF-8"),"DIRECTORY_NOT_EXISTS","DIRECTORY","", errParam);
-										// mailObj.mailProcess("Template","JOB_FAIL",jobId.get(i),"",errParam);
-
-										System.out.println("Job finished WITH ERROR at " + dateString2 + " for jobId:" + jobId + ", clientId:" + clientId + " and folder location:" + pathFolder);
-										consoleLog.log("Job finished WITH ERROR at \"" + dateString2 + "\" for jobId:\"" + jobId + "\", clientId:\"" + clientId + "\" and folder location:\""  + pathFolder + "\"");
-
-										String jsonText = JSONValue.toJSONString(obj);
-										// System.out.println(jsonText);
-										// jobStatus update
-										consoleLog.log("URL : \"http://" + url_request.serverIp + "/maestro/updateJobStatus\", type : \"PUT\" and content : \"" + jsonText + "\"");
-										String webResponse = url_request.urlRequestProcess("http://" + url_request.serverIp + "/maestro/updateJobStatus", "PUT", jsonText);
-										System.out.println("URL response : " + webResponse);
-										consoleLog.log("URL response : " + webResponse);
-									}
 								}
-
-								
 								else 
 								{
 									if (mailTriggNet2) // mail trigger once
@@ -470,7 +478,23 @@ public class Main
 					{
 						System.out.println("Directory does not exists");
 						consoleLog.log("Directory does not exists");
-						if (utilities.serverMount().equals("Disk Found")) 
+						
+						String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+						String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+						String osResp3 = utilities.mountDisk("172.16.1.2", "COMP", "maestroqs@cmpl.in", "M@est0123");
+						
+						//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+						//String osResp = utilities.serverMount();
+						System.out.println("osResp1:" + osResp1);
+						consoleLog.log("Mount response1:" + osResp1);
+						
+						System.out.println("osResp2:" + osResp2);
+						consoleLog.log("Mount response2:" + osResp2);
+						
+						System.out.println("osResp3:" + osResp3);
+						consoleLog.log("Mount response3:" + osResp3);
+						
+						if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
 						{
 							// Directory not exists
 							System.out.println(e.toString().substring(e.toString().lastIndexOf(":")+1));

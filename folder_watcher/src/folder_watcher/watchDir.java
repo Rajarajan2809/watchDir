@@ -195,7 +195,7 @@ public class watchDir implements Runnable
         this.trace = true;
     }
 
-    private void initProcessing() throws FileNotFoundException, IOException, ParseException
+    private void initProcessing() throws FileNotFoundException, IOException, ParseException, InterruptedException
     {
     	File folder = new File(pathString);
         File[] listOfFiles = folder.listFiles();
@@ -225,6 +225,17 @@ public class watchDir implements Runnable
 						
 						if(!manuScripts.contains(listOfFiles[i].getName()))
 						{
+							try 
+			        		{
+								while(!isCompletelyWritten(listOfFiles[i]))
+								{}
+							}
+			        		catch (InterruptedException e) 
+			        		{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
 							functionalityCheck(listOfFiles[i].getName());
 						}
 						//System.out.println("jobFailError : "+jobFailError);
@@ -298,7 +309,7 @@ public class watchDir implements Runnable
      * @throws IOException 
      * @throws ParseException 
      */
-    int processEvents() throws IOException, ParseException 
+    int processEvents() throws IOException, ParseException, InterruptedException
     {
     	boolean initFlag = false;
     	
@@ -306,7 +317,15 @@ public class watchDir implements Runnable
         {
         	if(initFlag == false)
         	{
-        		initProcessing();
+        		try 
+        		{
+					initProcessing();
+				}
+        		catch (InterruptedException e) 
+        		{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
         		initFlag = true;
         		
         		if(!new File(pathString+"/ERROR/").exists())
@@ -439,6 +458,17 @@ public class watchDir implements Runnable
             				
             				consoleLog.log("chap_name:"+fileNameWoExtn);
             				consoleLog.log("Manuscript name match:"+m.matches()+"\n");
+            				
+            				try 
+			        		{
+								while(!isCompletelyWritten(createdFile))
+								{}
+							}
+			        		catch (InterruptedException e) 
+			        		{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
             				
 	            			if(m.matches() && (utilities.getFileExtension(createdFile).equals("docx") || utilities.getFileExtension(createdFile).equals("xlsx")))
 	                    	{
@@ -624,36 +654,44 @@ public class watchDir implements Runnable
     				//infinite loop to connect to disk
     			while(true)
     			{
-    				processStatus = processEvents();
-    				
-    				System.out.println("processStatus:" + processStatus);
-					consoleLog.log("processStatus:" + processStatus);
-    				
-					//mount error
-    				if(processStatus == 7)
+    				try 
     				{
-		    			System.out.println("Process status:"+processStatus);
-		    			consoleLog.log("Process status:"+processStatus);
-				    	String osResp = utilities.serverMount();
-						System.out.println("Mount response:" + osResp+"\n");
-						consoleLog.log("Mount response:" + osResp+"\n");
-						
-						if(osResp.equals("Disk Found"))
-							continue job_continue;
-						else
-						{
-							// mail to netops
-							consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
-							// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
-							mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
-							// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
-							Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
-							mailThread.start();
-						}
+						processStatus = processEvents();
+	    				System.out.println("processStatus:" + processStatus);
+						consoleLog.log("processStatus:" + processStatus);
+						//mount error
+	    				if(processStatus == 7)
+	    				{
+			    			System.out.println("Process status:"+processStatus);
+			    			consoleLog.log("Process status:"+processStatus);
+					    	String osResp = utilities.serverMount();
+							System.out.println("Mount response:" + osResp+"\n");
+							consoleLog.log("Mount response:" + osResp+"\n");
+							if(osResp.equals("Disk Found"))
+							{
+								register(Paths.get(pathString));
+								continue job_continue;
+							}
+							else
+							{
+								// mail to netops
+								consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
+								// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
+								mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+								// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
+								Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
+								mailThread.start();
+							}
+	    				}
+	    				//successful job finish
+	    				else
+	    					break;
     				}
-    				//successful job finish
-    				else
-    					break;
+    				catch (InterruptedException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
     			}
         		
     			JSONObject obj=new JSONObject();

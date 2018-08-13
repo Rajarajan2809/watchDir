@@ -413,6 +413,31 @@ public class utilities
 		return (osascript_call(command));
 	}
 	
+	public static String mountDisk(String ip, String shareName, String user, String password)
+	{
+		String command = "set mountedDiskName to \""+shareName+"\"\n" +
+				 "tell application \"System Events\" to set diskNames to name of every disk\n" +
+				 "if (mountedDiskName is in diskNames) then\n" +	
+				 "\ttry\n" +
+				 "\t\tlog \"Disk Found -->\" & mountedDiskName\n" +
+				 "\t\treturn \"Disk Found\"\n" +
+				 "\ton error\n" +
+				 "\t\treturn \"Disk not Found, contact administrator\"\n" +
+				 "\tend try\n" + 
+				 "else\n" +
+				 "\ttry\n" +
+				 "\t\tmount volume \"smb://"+ip+"/"+shareName+"\" as user name \""+user+"\" with password \""+password+"\"\n" +
+				 "\t\tlog \"Disk Found -->\" & mountedDiskName \n" +
+				 "\t\treturn \"Disk Found\"\n" +
+				 "\ton error\n" +	
+				"\t\treturn \"Disk not Found, contact administrator\"\n" +
+				"\tend try\n" +
+				"end if";
+		//System.out.println(command);
+		//test = new test4();
+		return (osascript_call(command));
+	}
+	
 	static String getFileNameWithoutExtension(File file) 
 	{
 	    String fileName = "";
