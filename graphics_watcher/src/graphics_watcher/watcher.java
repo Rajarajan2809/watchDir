@@ -73,7 +73,7 @@ public class watcher
 				]
 			}
 			*/
-			FileReader reader = new FileReader("jobs.json");
+			FileReader reader = new FileReader(System.getProperty ("user.home")+"/graphicsqs/jobs.json");
 			JSONParser jsonParser = new JSONParser();
 			Object obj = jsonParser.parse(reader);
 			 

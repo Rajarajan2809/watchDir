@@ -152,7 +152,7 @@ public class service implements Runnable
 		this.jobOutFolder = jobFolder+"/OUT";
 		theDir = new File(jobFolder+"/OUT");
 		System.out.println("theDir:"+theDir.exists());
-    	while (!theDir.exists()) 
+    	while (!theDir.exists())
 		{
     		theDir.mkdir();
     		TimeUnit.SECONDS.sleep(1);
@@ -354,11 +354,11 @@ public class service implements Runnable
         Long fileSizeAfter = FileUtils.sizeOf(file);//size(file.toPath());
 
         //System.out.println("comparing file size " + fileSizeBefore + " with " + fileSizeAfter);
-        System.out.println("Copying.........");
         if (fileSizeBefore.equals(fileSizeAfter)) 
         {
             return true;
         }
+        System.out.println("Copying.........");
         return false;
     }
     
@@ -383,12 +383,21 @@ public class service implements Runnable
 				{
 	    			System.out.println("Process status:"+processStatus);
 	    			consoleLog.log("Process status:"+processStatus);
-			    	String osResp = utilities.mountDisk("172.16.1.2", "OEO", "rajarajan", "test@123");
+			    	String osResp = utilities.mountDisk("172.16.1.21", "COMP", "graphicsqs", "@Op=0eja");
 					System.out.println("Mount response:" + osResp+"\n");
 					consoleLog.log("Mount response:" + osResp+"\n");
 					
 					if(osResp.equals("Disk Found"))
+					{
+//						this.jobFolder = jobFolder;
+//				        this.jsxFile = jsxFile;
+//				        this.jobId = jobId;
+//				        this.counter = counter;
+						//new service(jobFolder,jsxFile,"Folder",jobId,counter);
+						//;
+					    register(Paths.get(this.jobInFolder));
 						continue job_continue;
+					}
 					else
 					{
 						// mail to netops
