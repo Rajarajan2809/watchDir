@@ -606,15 +606,15 @@ public class watchDirRec
 			System.out.println("Watch Service started at " + dateString2 + "...\n");
 			consoleLog.log("Watch Service started at " + dateString2 + "...\n");
 			
-			if(new File(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/").exists())
+			if(new File("D:/PDF2XML_Process/").exists())//System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/").exists())
 			{
-				Path dir = Paths.get(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/");
+				Path dir = Paths.get("D:/PDF2XML_Process/");
 				new watchDirRec(dir).processEvents();
 			}
 			else
 			{
-				System.out.println(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/ does not exists");
-				consoleLog.log(System.getProperty ("user.home")+"/Desktop/PDF2XML_Process/ does not exists");
+				System.out.println("D:/PDF2XML_Process/ does not exists");
+				consoleLog.log("D:/PDF2XML_Process/ does not exists");
 			}
 		}
 		catch(Exception e)
