@@ -247,14 +247,14 @@ public class job
 					errParam = errParam  + ".\n\n";
 					
 					//sample : sendMail("CRC Team", "JOB_FAIL", "9781138556850_Ilyas", "", errParam);
-					mail mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "JOB_FAIL", jobId, "", errParam);
+					//mail mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "JOB_FAIL", jobId, "", errParam);
 					//mailObj.mailProcess();
-					Thread mailThread4 = new Thread(mailObj, "Mail Thread for CRC Team");
-					mailThread4.start();
+					//Thread mailThread4 = new Thread(mailObj, "Mail Thread for CRC Team");
+					//mailThread4.start();
 					
-					mailObj = new mail(URLEncoder.encode("Pre-editing", "UTF-8"), "JOB_FAIL", jobId, "", errParam);
-					Thread mailThread5 = new Thread(mailObj, "Mail Thread for CRC Team");
-					mailThread5.start();
+					//mailObj = new mail(URLEncoder.encode("Pre-editing", "UTF-8"), "JOB_FAIL", jobId, "", errParam);
+					//Thread mailThread5 = new Thread(mailObj, "Mail Thread for CRC Team");
+					//mailThread5.start();
 				}
 			}
 			else
@@ -264,10 +264,10 @@ public class job
 					// mail to netops
 					consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
 					// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
-					mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+					//mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
 					// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
-					Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
-					mailThread.start();
+					//Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
+					//mailThread.start();
 					Main.mountError = true;
 				}
 			}
@@ -298,25 +298,6 @@ public class job
 		}
 		
 		return jobFailError;
-	 }
-//	public static void main(String[] args) throws IOException 
-//	{
-//		// TODO Auto-generated method stub
-//		
-//		try
-//		{
-////			output2 = new BufferedWriter(new FileWriter("tasks1.txt", true));  //clears file every time
-////			output2.append("hello1"+ System.getProperty("line.separator"));
-////			output2.close();
-//			job_insert("9781482298697_Yu");
-//			job_update("9781482298697_Yu");
-//			System.out.println(job_status("9781482298697_Yu"));
-//		}
-//		catch(Exception e)
-//		{
-//			e.printStackTrace();
-//		}
-//	}
-	
+	 }	
 }
 

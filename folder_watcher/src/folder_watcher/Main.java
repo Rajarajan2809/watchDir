@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -115,6 +117,12 @@ public class Main
 						mailTriggNet = true;
 						consoleLog.log("API Server (172.16.1.25:8080) is online.");
 						System.out.println("API Server (172.16.1.25:8080) is online.");
+						
+						mail m = new mail("Net-ops", "SUCCESS", "DB", "", "");
+						// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
+						Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
+						mailThread.start();
+						
 					}
 					if (response.charAt(1) != '{') 
 					{
@@ -179,18 +187,24 @@ public class Main
 							pathFolder = "/Volumes/" + pathFolder;
 
 							//String graphicsPathFolder = graphicsPath.get(i);
-							graphicsPath.set(i, graphicsPath.get(i).replace("\r\n", ""));
-							graphicsPath.set(i, graphicsPath.get(i).replace('\\', '/'));
-							graphicsPath.set(i, graphicsPath.get(i).substring(graphicsPath.get(i).indexOf("//") + 2, graphicsPath.get(i).length()));
-							graphicsPath.set(i, graphicsPath.get(i).substring(graphicsPath.get(i).indexOf('/') + 1, graphicsPath.get(i).length()));
-							graphicsPath.set(i, "/Volumes/" + graphicsPath.get(i));
+							if(!graphicsPath.get(i).equals("") && !graphicsPath.get(i).equals("-"))
+							{
+								graphicsPath.set(i, graphicsPath.get(i).replace("\r\n", ""));
+								graphicsPath.set(i, graphicsPath.get(i).replace('\\', '/'));
+								graphicsPath.set(i, graphicsPath.get(i).substring(graphicsPath.get(i).indexOf("//") + 2, graphicsPath.get(i).length()));
+								graphicsPath.set(i, graphicsPath.get(i).substring(graphicsPath.get(i).indexOf('/') + 1, graphicsPath.get(i).length()));
+								graphicsPath.set(i, "/Volumes/" + graphicsPath.get(i));
+							}
 							
-							//equations path
-							equationsPath.set(i, equationsPath.get(i).replace("\r\n", ""));
-							equationsPath.set(i, equationsPath.get(i).replace('\\', '/'));
-							equationsPath.set(i, equationsPath.get(i).substring(equationsPath.get(i).indexOf("//") + 2, equationsPath.get(i).length()));
-							equationsPath.set(i, equationsPath.get(i).substring(equationsPath.get(i).indexOf('/') + 1, equationsPath.get(i).length()));
-							equationsPath.set(i, "/Volumes/" + equationsPath.get(i));
+							if(!equationsPath.get(i).equals("") && !equationsPath.get(i).equals("-"))
+							{
+								//equations path
+								equationsPath.set(i, equationsPath.get(i).replace("\r\n", ""));
+								equationsPath.set(i, equationsPath.get(i).replace('\\', '/'));
+								equationsPath.set(i, equationsPath.get(i).substring(equationsPath.get(i).indexOf("//") + 2, equationsPath.get(i).length()));
+								equationsPath.set(i, equationsPath.get(i).substring(equationsPath.get(i).indexOf('/') + 1, equationsPath.get(i).length()));
+								equationsPath.set(i, "/Volumes/" + equationsPath.get(i));
+							}
 
 							// System.out.println("Path : "+pathFolder);
 							job j1 = new job();
@@ -200,7 +214,7 @@ public class Main
 							{
 								String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
 								String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-								String osResp3 = utilities.mountDisk("172.16.1.2", "COMP", "maestroqs@cmpl.in", "M@est0123");
+								String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 								//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 								//String osResp = utilities.serverMount();
 								System.out.println("osResp1:" + osResp1);
@@ -249,13 +263,13 @@ public class Main
 									
 									boolean graphPathError = false, eqnPathError= false;
 									
-									if(graphicsPath.get(i).equals("") || graphicsPath.get(i).equals("-") || (!utilities.folderCheck(graphicsPath.get(i))
+									if((!graphicsPath.get(i).equals("") && !graphicsPath.get(i).equals("-")) && (!utilities.folderCheck(graphicsPath.get(i))
 											&& !(graphicsPath.get(i).indexOf(jobId.get(i)) != -1)))
 									{
 										graphPathError = true;
 									}
 									
-									if(graphicsPath.get(i).equals("") || equationsPath.get(i).equals("-") || (!utilities.folderCheck(equationsPath.get(i))
+									if((!equationsPath.get(i).equals("") && !equationsPath.get(i).equals("-")) && (!utilities.folderCheck(equationsPath.get(i))
 											&& !(equationsPath.get(i).indexOf(jobId.get(i)) != -1)))
 									{
 										eqnPathError = true;
@@ -271,6 +285,10 @@ public class Main
 									
 									System.out.println("eqnPathError:"+eqnPathError);
 									System.out.println("graphPathError:"+graphPathError);
+									
+									consoleLog.log("eqnPathError:"+eqnPathError);
+									consoleLog.log("graphPathError:"+graphPathError);
+									
 									//if(eqnPathError)
 										//break;
 									
@@ -292,35 +310,51 @@ public class Main
 												//&& !graphPathError
 												&& !eqnPathError) 
 										{
-											j1.job_insert(jobId.get(i));
-											System.out.println("newJob:" + newJob.get(i));
-											// pathFolder = System.getProperty ("user.home")+"/Desktop/MaestroReady";
-											// new job or already failed job
-											if (!newJob.get(i)) 
+											String REGEX = "[\\s\\S]+[\\/\\\\]+[\\d]{9}_[\\w\\s\\S]+[\\/\\\\]+MaestroReady+[\\/\\\\]{0,1}{1}$|[\\s\\S]+[\\/\\\\]+[\\d]{13}_[\\w\\s\\S]+[\\/\\\\]+MaestroReady+[\\/\\\\]{0,1}{1}$";
+											
+											//regex matching
+											Pattern p = Pattern.compile(REGEX);
+											Matcher m = p.matcher(pathFolder);   // get a matcher object
+							    			
+											if(m.matches())
 											{
-												//utilities.folderMove(pathFolder + "/ERROR", pathFolder);
-												//utilities.delete(new File(pathFolder + "/ERROR"));
+												j1.job_insert(jobId.get(i));
+												System.out.println("newJob:" + newJob.get(i));
+												// pathFolder = System.getProperty ("user.home")+"/Desktop/MaestroReady";
+												// new job or already failed job
+												if (!newJob.get(i)) 
+												{
+													//utilities.folderMove(pathFolder + "/ERROR", pathFolder);
+													//utilities.delete(new File(pathFolder + "/ERROR"));
+												}
+												// consoleLog.log("Watch thread created.");
+												consoleLog.log("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\npath : \"" + pathFolder + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
+												System.out.println("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\npath : \"" + pathFolder + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
+												
+												watchDir watchObj = new watchDir(pathFolder, noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
+												Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
+												watchThread1.start();
+												
+		//										if(!new File(pathFolder+"/ERROR/").exists())
+		//										{
+		//											File theDir = new File(pathFolder+"/ERROR/");
+		//								        	if (!theDir.exists()) 
+		//											{
+		//								        		theDir.mkdir();
+		//											}
+		//										}
+												
+		//										watchObj = new watchDir(pathFolder+"/ERROR/", noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
+		//										Thread watchThread2 = new Thread(watchObj, "Watch Thread for ERROR folder in parent directory" + Integer.toString(i));
+		//										watchThread2.start();
+												
+												listPath.add(Paths.get(path.get(i)));
 											}
-											// consoleLog.log("Watch thread created.");
-											consoleLog.log("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\npath : \"" + pathFolder + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
-											watchDir watchObj = new watchDir(pathFolder, noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
-											Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
-											watchThread1.start();
-											
-	//										if(!new File(pathFolder+"/ERROR/").exists())
-	//										{
-	//											File theDir = new File(pathFolder+"/ERROR/");
-	//								        	if (!theDir.exists()) 
-	//											{
-	//								        		theDir.mkdir();
-	//											}
-	//										}
-											
-	//										watchObj = new watchDir(pathFolder+"/ERROR/", noOfManuScripts.get(i), jobId.get(i), clientId.get(i), shared);
-	//										Thread watchThread2 = new Thread(watchObj, "Watch Thread for ERROR folder in parent directory" + Integer.toString(i));
-	//										watchThread2.start();
-											
-											listPath.add(Paths.get(path.get(i)));
+											else
+											{
+												consoleLog.log("Job folder format didn't pass REGEX\n");
+												System.out.println("Job folder format didn't pass REGEX\n");
+											}
 										}
 										else 
 										{
@@ -331,12 +365,17 @@ public class Main
 											System.out.println("utilities.folderCheck(pathFolder):" + utilities.folderCheck(pathFolder));
 	
 											// copy edit path validation
-											if (!utilities.folderCheck(pathFolder) || (pathFolder.indexOf(jobId.get(i)) == -1)) 
+											if (!utilities.folderCheck(pathFolder))  
 											{
 												// System.out.println("1");
-												errParam = "\n* Copyedit Path is invalid";
+												errParam = "\n* Copyedit Path is invalid ";
 											}
 	
+											if((pathFolder.indexOf(jobId.get(i)) == -1))
+											{
+												// System.out.println("1");
+												errParam = "\n* Difference in Copyedit Path and JobId";
+											}
 											// graphics path validation
 											if (graphPathError) 
 											{
@@ -481,7 +520,7 @@ public class Main
 						
 						String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
 						String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-						String osResp3 = utilities.mountDisk("172.16.1.2", "COMP", "maestroqs@cmpl.in", "M@est0123");
+						String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 						
 						//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 						//String osResp = utilities.serverMount();
@@ -513,9 +552,9 @@ public class Main
 							System.out.println("SMB Share Mount error");
 							consoleLog.log("SMB Share Mount error");
 							// sample : sendMail("Net-ops", "", "MOUNT", "", "");
-							mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", "");
-							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
-							mailThread.start();
+							//mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+							//Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
+							//mailThread.start();
 						}
 					}
 					break;

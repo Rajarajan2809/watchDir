@@ -415,24 +415,36 @@ public class utilities
 	
 	public static String mountDisk(String ip, String shareName, String user, String password)
 	{
-		String command = "set mountedDiskName to \""+shareName+"\"\n" +
-				 "tell application \"System Events\" to set diskNames to name of every disk\n" +
-				 "if (mountedDiskName is in diskNames) then\n" +	
-				 "\ttry\n" +
-				 "\t\tlog \"Disk Found -->\" & mountedDiskName\n" +
-				 "\t\treturn \"Disk Found\"\n" +
-				 "\ton error\n" +
-				 "\t\treturn \"Disk not Found, contact administrator\"\n" +
-				 "\tend try\n" + 
-				 "else\n" +
-				 "\ttry\n" +
-				 "\t\tmount volume \"smb://"+ip+"/"+shareName+"\" as user name \""+user+"\" with password \""+password+"\"\n" +
-				 "\t\tlog \"Disk Found -->\" & mountedDiskName \n" +
-				 "\t\treturn \"Disk Found\"\n" +
-				 "\ton error\n" +	
-				"\t\treturn \"Disk not Found, contact administrator\"\n" +
-				"\tend try\n" +
-				"end if";
+		String command = "set mountedDiskName to \""+shareName+"\"\n"
+					+	 "set sharedIp to \""+ip+"\"\n"
+					+	 "set userName to \""+user+"\"\n"
+					+	 "set passwd to \""+password+"\"\n"
+					+	 "tell application \"System Events\" to set diskNames to name of every disk\n"
+					+	 "if (mountedDiskName is in diskNames) then\n"
+					+	 "\ttry\n"
+					+	 "\t\tif (do shell script \"ping -c 1 -t 1 \" & sharedIp) contains \"1 packets received\" then\n"
+					+	 "\t\t\treturn \"Disk Found\"\n"
+					+	 "\t\tend if\n"
+					+	 "\ton error\n"
+					+	 "\t\t\ttell application \"Finder\"\n"
+					+	 "\t\t\t\teject alias mountedDiskName\n"
+					+	 "\t\t\tend tell\n"
+					+	 "\t\t\treturn \"Disk not Found2 -->\" & mountedDiskName\n"
+					+	 "\tend try\n"
+					+	 "else\n"
+					+	 "\ttry\n"
+					+	 "\t\tif (do shell script \"ping -c 1 -t 1 \" & sharedIp) contains \"1 packets received\" then\n"
+					+	 "\t\t\tmount volume \"smb://\" & sharedIp & \"/\" & mountedDiskName as user name userName with password passwd\n"
+					+	 "\t\t\ttell application \"System Events\" to set diskNames to name of every disk\n"
+					+	 "\t\t\tif (mountedDiskName is in diskNames) then\n"
+					+	 "\t\t\t\treturn \"Disk Found\"\n"
+					+	 "\t\t\tend if\n"
+					+	 "\t\tend if\n"
+					+	 "\ton error\n"
+					+	 "\t\treturn \"Disk not Found -->\" & mountedDiskName\n"
+					+	 "\tend try\n"
+					+	 "end if"; 
+		
 		//System.out.println(command);
 		//test = new test4();
 		return (osascript_call(command));

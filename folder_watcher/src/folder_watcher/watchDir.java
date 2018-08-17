@@ -328,19 +328,6 @@ public class watchDir implements Runnable
 				}
         		initFlag = true;
         		
-        		if(!new File(pathString+"/ERROR/").exists())
-				{
-					File theDir = new File(pathString+"/ERROR/");
-		        	if (!theDir.exists()) 
-					{
-		        		theDir.mkdir();
-					}
-				}
-        		
-        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId);
-				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
-				postValThread.start();
-        		
         		//template path or stylesheet path or map path is missing
         		System.out.println("jobId:"+jobId);
         		System.out.println("clientId:"+clientId);
@@ -363,8 +350,8 @@ public class watchDir implements Runnable
 	            }
         		
         		//this prints when job started watching folder
-        		System.out.println("Watch Folder initiated......\n");
-				consoleLog.log("Watch Folder initiated......\n");
+        		//System.out.println("Watch Folder initiated......\n");
+				//consoleLog.log("Watch Folder initiated......\n");
         	}
         	//pre change check
         	if(processedFiles == Integer.parseInt(noOfManuScripts))
@@ -650,6 +637,20 @@ public class watchDir implements Runnable
 	            //this.counter = counter;
 	           // Path listPath;
     			//int processStatus;
+    			
+    			if(!new File(pathString+"/ERROR/").exists())
+				{
+					File theDir = new File(pathString+"/ERROR/");
+		        	if (!theDir.exists()) 
+					{
+		        		theDir.mkdir();
+					}
+				}
+        		
+        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId);
+				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
+				postValThread.start();
+    			
     			job_continue:
     				//infinite loop to connect to disk
     			while(true)
@@ -662,13 +663,25 @@ public class watchDir implements Runnable
 						//mount error
 	    				if(processStatus == 7)
 	    				{
-			    			System.out.println("Process status:"+processStatus);
-			    			consoleLog.log("Process status:"+processStatus);
-					    	String osResp = utilities.serverMount();
-							System.out.println("Mount response:" + osResp+"\n");
-							consoleLog.log("Mount response:" + osResp+"\n");
-							if(osResp.equals("Disk Found"))
-							{
+			    			//System.out.println("Process status:"+processStatus);
+			    			//consoleLog.log("Process status:"+processStatus);
+			    			String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+			    			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+			    			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+			    			
+			    			//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+			    			//String osResp = utilities.serverMount();
+			    			System.out.println("(job restart validation)osResp1:" + osResp1);
+			    			consoleLog.log("(job restart validation)Mount response1:" + osResp1);
+			    			
+			    			System.out.println("(job restart validation)osResp2:" + osResp2);
+			    			consoleLog.log("(job restart validation)Mount response2:" + osResp2);
+			    			
+			    			System.out.println("(job restart validation)osResp3:" + osResp3);
+			    			consoleLog.log("(job restart validation)Mount response3:" + osResp3);
+			    			
+			    			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
+			    			{
 								register(Paths.get(pathString));
 								continue job_continue;
 							}
@@ -677,10 +690,10 @@ public class watchDir implements Runnable
 								// mail to netops
 								consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
 								// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
-								mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+								//mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
 								// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
-								Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
-								mailThread.start();
+								//Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
+								//mailThread.start();
 							}
 	    				}
 	    				//successful job finish
@@ -716,9 +729,9 @@ public class watchDir implements Runnable
 	    			System.out.println("Job finished with SUCCESS at "+dateString2+" for jobId:"+jobId+", clientId:"+clientId+" and folder location:"+pathString);
 	             	consoleLog.log("Job finished with success at "+dateString2+" for jobId:\""+jobId+"\", clientId:\""+clientId+"\" and folder location:\""+pathString+"\"");
 	             	
-//	             	//deleting "ERROR" folder
+//	             	deleting "ERROR" & "INVALID" folder
 //	             	utilities.delete(new File(pathString+"/ERROR/"));
-//	             	utilities.delete(new File(pathString+"/ERROR/"));
+//	             	utilities.delete(new File(pathString+"/INVALID/"));
 	    		}
 	    		else
 	    		{
@@ -1311,10 +1324,22 @@ public class watchDir implements Runnable
 		boolean jobFailError = false; 
 		try
 		{
-			String osResp = utilities.serverMount();
-			System.out.println("osResp:" + osResp);
-			consoleLog.log("Mount response:" + osResp);
-			if (osResp.equals("Disk Found")) 
+			String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+			
+			//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+			//String osResp = utilities.serverMount();
+			System.out.println("(job fail validation)osResp1:" + osResp1);
+			consoleLog.log("(job fail validation)Mount response1:" + osResp1);
+			
+			System.out.println("(job fail validation)osResp2:" + osResp2);
+			consoleLog.log("(job fail validation)Mount response2:" + osResp2);
+			
+			System.out.println("(job fail validation)osResp3:" + osResp3);
+			consoleLog.log("(job fail validation)Mount response3:" + osResp3);
+			
+			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
 			{
 				Main.mountError = false;
 				String errParam = "";
@@ -1360,10 +1385,10 @@ public class watchDir implements Runnable
 					// mail to netops
 					consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
 					// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
-					mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+					//mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
 					// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
-					Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
-					mailThread.start();
+					//Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
+					//mailThread.start();
 					Main.mountError = true;
 				}
 			}

@@ -3,12 +3,15 @@ package folder_watcher;
 import java.io.File;
 //import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
 //import java.net.ConnectException;
 import java.net.URLDecoder;
+import java.net.UnknownHostException;
 //import java.net.URLEncoder;
 //import java.net.URLEncoder;
 //import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -42,6 +45,16 @@ public class mail implements Runnable
 		this.subject = subject;
 		this.attachment = attachment;
 		this.errParam = errParam;
+	}
+	
+	public static String sendPingRequest(String ipAddress) throws UnknownHostException, IOException
+	{
+		InetAddress geek = InetAddress.getByName(ipAddress);
+		//System.out.println("Sending Ping Request to " + ipAddress);
+		if (geek.isReachable(5000))
+			return "online";
+		else
+			return "offline";
 	}
 	
 	public void run()
@@ -79,6 +92,14 @@ public class mail implements Runnable
 			System.out.println("(Thread Process) chName:"+subject);
 			System.out.println("(Thread Process) status:"+status);
 			System.out.println("(Thread Process) attachment:"+attachment+"\n");
+			System.out.println("(Thread Process) errParam:"+errParam+"\n");
+			
+			consoleLog.log("(Thread Process) group:"+group);
+			//System.out.println("(Thread Process) mail_id:"+mail_id);
+			consoleLog.log("(Thread Process) chName:"+subject);
+			consoleLog.log("(Thread Process) status:"+status);
+			consoleLog.log("(Thread Process) attachment:"+attachment+"\n");
+			consoleLog.log("(Thread Process) errParam:"+errParam+"\n");
 			
 			final String username = "maestroqs@codemantra.in";
 			final String password = "Mast$123";
@@ -163,10 +184,10 @@ public class mail implements Runnable
 				}
 			}
 			
-//			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajkannan@codemantra.com"));
+			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajkannan@codemantra.com"));
 //			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("thiyagarajan@codemantra.com"));
 			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajarajan@codemantra.in"));
-			if(subject.equals("DB") || subject.equals("MOUNT"))
+			if((subject.equals("DB")&& status.equals("ERROR")) || (subject.equals("MOUNT") && status.equals("ERROR")))
 				message.setSubject("NETWORK - ERROR");
 			else
 			{
@@ -244,21 +265,44 @@ public class mail implements Runnable
 	        	case "Net-ops":
 	        		if(subject.equals("MOUNT"))
 	        		{
-	        			mailMessage = "Dear Team,\n\n" +
+	        			if(status.equals("ERROR"))
+	        			{
+		        			mailMessage = "Dear Team,\n\n" +
+		        						//"--------------------------------------------\n\n" +
+		        						"MaestroQS has failed to mount the following server share[s] "+errParam+" within the system.\n\n" +
+		        					   	"Please check and do the needful promptly.\n\n" +
+		        					   	"\nThanks & Regards,\n" +
+		        					   	"Maestro Queuing System";
+	        			}
+	        			else if(status.equals("SUCCESS"))
+	        			{
+	        				mailMessage = "Dear Team,\n\n" +
 	        						//"--------------------------------------------\n\n" +
-	        						"MaestroQS is failed to mount the following server share[s] within the system (IP:172.16.4.184).\n\n" +
+	        						"MaestroQS successfully mount the following server share[s] within the system.\n\n" +
 	        					   	"Please check and do the needful promptly.\n\n" +
 	        					   	"\nThanks & Regards,\n" +
 	        					   	"Maestro Queuing System";
+	        			}
 	        		}
 	        		else if(subject.equals("DB"))
 	        		{
-	        			mailMessage = "Dear Team,\n\n" +
+	        			if(status.equals("ERROR"))
+	        			{
+		        			mailMessage = "Dear Team,\n\n" +
+		        						//"--------------------------------------------\n\n" +
+		        						"MaestroQS is failed to connect with (IP: 172.16.1.25) server, it seems the server is \"Offline\".\n\n" +
+		        						"Please check and do the needful ASAP.\n\n" +
+		        						"\nThanks & Regards,\n" +
+		        					   	"Maestro Queuing System";
+	        			}
+	        			else if(status.equals("SUCCESS"))
+	        			{
+	        				mailMessage = "Dear Team,\n\n" +
 	        						//"--------------------------------------------\n\n" +
-	        						"MaestroQS is failed to connect with (IP: 172.16.1.25) server, it seems the server is down.\n\n" +
-	        						"Please check and do the needful ASAP.\n\n" +
+	        						"MaestroQS can able to connect with (IP: 172.16.1.25) server, it seems the server is back \"Online\".\n\n" +
 	        						"\nThanks & Regards,\n" +
 	        					   	"Maestro Queuing System";
+	        			}
 	        		}
 	        		break;
 	        		
@@ -452,20 +496,20 @@ public class mail implements Runnable
 				 message.setText(mailMessage);  
 			
 			//consoleLog.log("Mail content:"+mailMessage);
+			while(sendPingRequest("172.16.1.5").equals("offline"))
+			{
+				TimeUnit.SECONDS.sleep(1);
+				//mail ip is offline
+			}
 			Transport.send(message);
-			System.out.println("(Thread Process) mail sent.\n\n");
-			consoleLog.log("(Thread Process) mail sent.\n\n");
+			System.out.println("(Thread Process) mail sent to group="+group+" with subject="+subject+" and status="+status+".\n\n");
+			consoleLog.log("(Thread Process) mail sent to group="+group+" with subject="+subject+" and status="+status+".\n\n");
 		}
 		catch (MessagingException e)
 		{
 			//throw new RuntimeException(e);
-			System.out.println("(Thread Process) group:"+group);
-			System.out.println("(Thread Process) chName:"+subject);
-			System.out.println("(Thread Process) status:"+status);
-			
-			consoleLog.log("(Thread Process) group:"+group);
-			consoleLog.log("(Thread Process) chName:"+subject);
-			consoleLog.log("(Thread Process) status:"+status);
+			consoleLog.log("(Thread Process) mail failed to send to group="+group+" with subject="+subject+" and status="+status+".\n\n");
+			System.out.println("(Thread Process) mail failed to send to group="+group+" with subject="+subject+" and status="+status+".\n\n");
 			
 			System.out.println("(Thread Process) Error in mailing parameters for javax api"+"\n"+e.toString());
 			consoleLog.log("(Thread Process) Error in mailing parameters for javax api"+"\n"+e.toString());

@@ -12,8 +12,8 @@ public class url_request
 {
 	//private String urlQuery,type,content;
 
-	//static String serverIp = "172.16.4.112:8088";//testing server
-	static String serverIp = "172.16.1.25:8080";//production server
+	static String serverIp = "172.16.4.112:8088";//testing server
+	//static String serverIp = "172.16.1.25:8080";//production server
 	
 	url_request()
     {
@@ -133,22 +133,22 @@ public class url_request
 			{
 				case "java.nio.file.NoSuchFileException":
 				{
-					System.out.println("(Polling Process) Directory does not exists");
-					consoleLog.log("(Polling Process) Exception:Directory to scan does not exists in SMB Server.");
+					//System.out.println("(Polling Process) Directory does not exists");
+					//consoleLog.log("(Polling Process) Exception:Directory to scan does not exists in SMB Server.");
 				}
 				break;
 				
 				case "java.net.SocketException":
 				{
-					System.out.println("(Polling Process) connection refuse error");
-					consoleLog.log("(Polling Process) Exception:Could not able to connect to API Server.");
+					//System.out.println("(Polling Process) connection refuse error");
+					//consoleLog.log("(Polling Process) Exception:Could not able to connect to API Server.");
 				}
 				break;
 				
 				case "java.net.ConnectException":
 				{
-					//consoleLog.log("(Polling Process) connection refuse error");
-					//System.out.println("(Polling Process) Exception:Could not able to connect to API Server.");
+					//consoleLog.log("(Polling Process url) connection refuse error");
+					//System.out.println("(Polling Process url) Exception:Could not able to connect to API Server.");
 					
 					//if(mailTriggNet)
 					//{
@@ -173,22 +173,22 @@ public class url_request
 				
 				case "java.lang.IndexOutOfBoundsException":
 				{
-					System.out.println("(Polling Process) Error in sending mail.");
-					consoleLog.log("(Polling Process) Error in sending mail.");
+					//System.out.println("(Polling Process) Error in sending mail.");
+					//consoleLog.log("(Polling Process) Error in sending mail.");
 				}
 				break;
 				
 				case "java.lang.NullException":
 				{
-					System.out.println("(Polling Process) Exception: sending mail.");
-					consoleLog.log("(Polling Process) Exception: sending mail.");
+					//System.out.println("(Polling Process) Exception: sending mail.");
+					//consoleLog.log("(Polling Process) Exception: sending mail.");
 				}
 				break;
 				
 				case "org.json.simple.parser.ParseException":
 				{
-					System.out.println("(Polling Process) Exception: Invaid JSON in mail configuration.");
-					consoleLog.log("(Polling Process) Exception: Invaid JSON in mail configuration.");
+					//System.out.println("(Polling Process) Exception: Invaid JSON in mail configuration.");
+					//consoleLog.log("(Polling Process) Exception: Invaid JSON in mail configuration.");
 				}
 			}
 		}

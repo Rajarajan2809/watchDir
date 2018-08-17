@@ -1,5 +1,6 @@
 package folder_watcher;
 
+//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -7,6 +8,14 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class webServer implements Runnable, HttpHandler 
 {
@@ -46,12 +55,28 @@ public class webServer implements Runnable, HttpHandler
 
 class MyHandler implements HttpHandler 
 {
+	@SuppressWarnings("unchecked")
     public void handle(HttpExchange t) throws IOException 
     {
-      byte [] response = "{\"status\" : \"Server is online.\" }".getBytes();
-      t.sendResponseHeaders(200, response.length);
-      OutputStream os = t.getResponseBody();
-      os.write(response);
-      os.close();
+    	JSONObject obj = new JSONObject();
+		JSONArray jobs = new JSONArray();
+		obj.toJSONString();
+		List<String> lines = Files.readAllLines(Paths.get("jobs.txt"));
+		
+		Iterator<String> iterator = lines.iterator();
+		while (iterator.hasNext()) 
+		{
+			//System.out.println(iterator.next());
+			jobs.add(iterator.next());
+		}
+		obj.put("status", "Server is online");
+		obj.put("jobs", jobs);
+		
+		//System.out.print(obj.toJSONString());
+		byte [] response = obj.toJSONString().getBytes();
+		t.sendResponseHeaders(200, response.length);
+		OutputStream os = t.getResponseBody();
+		os.write(response);
+		os.close();
     }
   }
