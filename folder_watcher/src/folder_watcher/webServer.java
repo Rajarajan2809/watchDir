@@ -17,6 +17,8 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import folder_watcher.consoleLog;
+
 public class webServer implements Runnable, HttpHandler 
 {
 	@Override
@@ -29,12 +31,32 @@ public class webServer implements Runnable, HttpHandler
 		catch (IOException e) 
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Error:"+e.toString().substring(0, e.toString().indexOf(":")));
+			switch (e.toString().substring(0, e.toString().indexOf(":"))) 
+			{
+				case "java.net.BindException":
+				{
+					System.out.println("Another instance of \"MaestroQS\" is already running, Please close these instances, before starting this service.");
+					try 
+					{
+						consoleLog.log("Another instance of \"MaestroQS\" is already running, Please close these instances, before starting this service.");
+					} 
+					catch (IOException e1) 
+					{
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					System.exit(0);
+				}
+				break;
+			}
 		} 
 		catch (InterruptedException e) 
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			//System.exit(0);
 		}
 	}
 	

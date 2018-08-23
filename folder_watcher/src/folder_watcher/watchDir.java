@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,6 +85,7 @@ public class watchDir implements Runnable
     private ArrayList<String> manuScripts;
     mail mailObj;
     job j1;
+    boolean suspended = false;
     //private boolean processError = false;
     //private utilities U = new utilities();
     //private final boolean recursive = false;
@@ -233,7 +235,7 @@ public class watchDir implements Runnable
 			        		catch (InterruptedException e) 
 			        		{
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
 							}
 							
 							functionalityCheck(listOfFiles[i].getName());
@@ -324,17 +326,17 @@ public class watchDir implements Runnable
         		catch (InterruptedException e) 
         		{
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
         		initFlag = true;
         		
         		//template path or stylesheet path or map path is missing
         		System.out.println("jobId:"+jobId);
         		System.out.println("clientId:"+clientId);
-        		if(jobFailErrorFun())
+        		/*if(jobFailErrorFun())
 				{
 					return 1;
-				}
+				}*/
         		
         		if(processedFiles == Integer.parseInt(noOfManuScripts))
 	            {
@@ -454,7 +456,7 @@ public class watchDir implements Runnable
 			        		catch (InterruptedException e) 
 			        		{
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
 							}
             				
 	            			if(m.matches() && (utilities.getFileExtension(createdFile).equals("docx") || utilities.getFileExtension(createdFile).equals("xlsx")))
@@ -647,7 +649,7 @@ public class watchDir implements Runnable
 					}
 				}
         		
-        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId);
+        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId, counter);
 				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
 				postValThread.start();
     			
@@ -655,17 +657,40 @@ public class watchDir implements Runnable
     				//infinite loop to connect to disk
     			while(true)
     			{
-    				try 
-    				{
-						processStatus = processEvents();
+    					processStatus = processEvents();
 	    				System.out.println("processStatus:" + processStatus);
 						consoleLog.log("processStatus:" + processStatus);
 						//mount error
 	    				if(processStatus == 7)
 	    				{
+	    					suspend();
+	    					//TimeUnit.SECONDS.sleep(5);
+	    		            //synchronized(this) 
+	    		            //{
+	    					System.out.println("Waiting to connect.....\n");
+	    					consoleLog.log("Waiting to connect.....\n");
+							while(suspended) 
+							{
+								//wait();
+								if(!Main.mountError)
+								{
+									resume();
+								}
+								TimeUnit.SECONDS.sleep(1);
+							}
+							System.out.println("pathString status:"+!new File(pathString).exists());
+	    		               while(!new File(pathString).exists())
+	    		               {
+	    		            	   //System.out.println("Waiting to connect.....");
+	    		            	   TimeUnit.SECONDS.sleep(5);
+	    		               }
+	    		               register(Paths.get(pathString));
+							   System.out.println("Register:"+pathString);
+							   continue job_continue;
+	    		            //}
 			    			//System.out.println("Process status:"+processStatus);
 			    			//consoleLog.log("Process status:"+processStatus);
-			    			String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+			    			/*String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
 			    			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
 			    			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 			    			
@@ -681,10 +706,11 @@ public class watchDir implements Runnable
 			    			consoleLog.log("(job restart validation)Mount response3:" + osResp3);
 			    			
 			    			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
-			    			{
-								register(Paths.get(pathString));
-								continue job_continue;
-							}
+			    			{*/
+//								register(Paths.get(pathString));
+//								System.out.println("Register:"+pathString);
+//								continue job_continue;
+							/*}
 							else
 							{
 								// mail to netops
@@ -694,17 +720,14 @@ public class watchDir implements Runnable
 								// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
 								//Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
 								//mailThread.start();
-							}
+							}*/
 	    				}
 	    				//successful job finish
 	    				else
 	    					break;
-    				}
-    				catch (InterruptedException e) 
-    				{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+    				
+    				
+    				
     			}
         		
     			JSONObject obj=new JSONObject();
@@ -769,39 +792,22 @@ public class watchDir implements Runnable
 	    		}
 			//}
     	}
-    	catch (IOException e) 
+    	catch (Exception e) 
     	{
 			e.printStackTrace();
-			try 
-			{
-				consoleLog.log(e.toString());
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			}
+//			try 
+//			{
+//				//consoleLog.log(e.toString());
+//			} 
+//			catch (IOException e1) 
+//			{
+//				//e1.printStackTrace();
+//			}
 		}
-    	catch (ParseException e) 
-    	{
-			e.printStackTrace();
-			try 
-			{
-				consoleLog.log(e.toString());
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			}
-		}
-//    	catch (InterruptedException e) 
-//    	{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
     	return;
 	}
 	
-	private boolean functionalityCheck(String file) throws IOException,FileNotFoundException, ParseException
+	private boolean functionalityCheck(String file) throws IOException,FileNotFoundException, ParseException, InterruptedException
 	{
 		boolean styleSheetfileStatus = false, contentModellingStatus = false, jsxProcessStatus = false, eqnFolderStatus = false;// 0 > failed,0 = success
 		String chName = file,eqnStatus,preEditStatus,stageCleanUp,docVal,structuringVal,postVal,postConv,inDStyleMap = "",wdExportMap="";
@@ -961,7 +967,9 @@ public class watchDir implements Runnable
 				if(!jobFailErrorFun())
 	    		{
 			        while(counter.get() != 0)
-			        {}
+			        {
+			        	TimeUnit.SECONDS.sleep(1);
+			        }
 	
 			        counter.incrementAndGet();
 		        	utilities.delete(new File(System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls"));
@@ -1319,28 +1327,37 @@ public class watchDir implements Runnable
         return false;
     }
 	 
-	 boolean jobFailErrorFun() throws IOException
+	 boolean jobFailErrorFun() throws IOException, InterruptedException
 	 {
 		boolean jobFailError = false; 
 		try
 		{
-			String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+			while(counter.get() != 0)
+	        {
+	        	TimeUnit.SECONDS.sleep(1);
+	        }
+
+	        counter.incrementAndGet();
+			/*String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+			TimeUnit.SECONDS.sleep(1);
 			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+			TimeUnit.SECONDS.sleep(1);
 			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+			TimeUnit.SECONDS.sleep(1);
 			
 			//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 			//String osResp = utilities.serverMount();
-			System.out.println("(job fail validation)osResp1:" + osResp1);
-			consoleLog.log("(job fail validation)Mount response1:" + osResp1);
+			System.out.println("(job fail validation)osResp1:" + osResp1+", jobId:"+jobId);
+			consoleLog.log("(job fail validation)Mount response1:" + osResp1+", jobId:"+jobId);
 			
-			System.out.println("(job fail validation)osResp2:" + osResp2);
-			consoleLog.log("(job fail validation)Mount response2:" + osResp2);
+			System.out.println("(job fail validation)osResp2:" + osResp2+", jobId:"+jobId);
+			consoleLog.log("(job fail validation)Mount response2:" + osResp2+", jobId:"+jobId);
 			
-			System.out.println("(job fail validation)osResp3:" + osResp3);
-			consoleLog.log("(job fail validation)Mount response3:" + osResp3);
+			System.out.println("(job fail validation)osResp3:" + osResp3+", jobId:"+jobId);
+			consoleLog.log("(job fail validation)Mount response3:" + osResp3+", jobId:"+jobId);
 			
 			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
-			{
+			{*/
 				Main.mountError = false;
 				String errParam = "";
 				
@@ -1377,7 +1394,7 @@ public class watchDir implements Runnable
 					Thread mailThread5 = new Thread(mailObj, "Mail Thread for CRC Team");
 					mailThread5.start();
 				}
-			}
+			/*}
 			else
 			{
 				if(!Main.mountError)
@@ -1391,7 +1408,8 @@ public class watchDir implements Runnable
 					//mailThread.start();
 					Main.mountError = true;
 				}
-			}
+			}*/
+			counter.decrementAndGet();
 		}
 		catch (IOException e) 
     	{
@@ -1420,6 +1438,17 @@ public class watchDir implements Runnable
 		
 		return jobFailError;
 	 }
+	 
+	 void suspend() 
+	 {
+		 suspended = true;
+	 }
+	   
+	void resume() 
+	{
+		suspended = false;
+		//notify();
+	}
 }
 	
 //	 private boolean fileMove(String fromFolder,String toFolder)

@@ -9,17 +9,19 @@ import java.util.regex.Pattern;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class postValidation implements Runnable
 {
 	String pathString, jobId, clientId;
 	int errFlag;
-	
-	postValidation(String pathString, String jobId, String clientId)
+	private AtomicInteger postValCounter;
+	postValidation(String pathString, String jobId, String clientId, AtomicInteger postValCounter)
 	{
 		this.pathString = pathString;
 		this.jobId = jobId;
 		this.clientId = clientId;
+		this.postValCounter = postValCounter;
 		this.errFlag = 0;// 0 -> error, 1 -> no error, 2 already error
 	}
 	
@@ -45,29 +47,41 @@ public class postValidation implements Runnable
 			//job_restart:
 			while(j1.job_status(jobId))//while(j1.job_status(jobId))
 			{
+				while(postValCounter.get() != 0)
+		        {
+					TimeUnit.SECONDS.sleep(1);
+		        }
+
+				postValCounter.incrementAndGet();
 				File folder = new File(pathString);
 //		        System.out.println("Exists:"+folder.exists());
-//		        System.out.println("errFlag:"+errFlag);
+//		        System.out.println("errFlag(jobId:"+jobId+"):"+errFlag);
+//		        consoleLog.log("errFlag:"+errFlag);
 //		        System.out.println("folder:"+folder+"\n\n");
 		        //boolean folderError = false;
 		        
 		        //System.out.println("\"ERROR\" folder does not exist for job : "+jobId+".");
         		//consoleLog.log("\"ERROR\" folder does not exist for job : "+jobId+".");
-        		String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
-    			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-    			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+		        //TimeUnit.SECONDS.sleep(1);
+		        //String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+		        //TimeUnit.SECONDS.sleep(1);
+        		//String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+        		//TimeUnit.SECONDS.sleep(1);
+    			//String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+    			//TimeUnit.SECONDS.sleep(1);
     			
-//    			System.out.println("(post validation)osResp1:" + osResp1);
-//    			consoleLog.log("(post validation)Mount response1:" + osResp1);
+//    			System.out.println("(post validation)(jobId:"+jobId+")osResp1:" + osResp1);
+//    			consoleLog.log("(post validation)(jobId:"+jobId+")Mount response1:" + osResp1);
 //    			
-//    			System.out.println("(post validation)osResp2:" + osResp2);
+//    			System.out.println("(post validation)(jobId:"+jobId+")osResp2:" + osResp2);
 //    			consoleLog.log("(post validation)Mount response2:" + osResp2);
 //    			
-//    			System.out.println("(post validation)osResp3:" + osResp3);
+//    			System.out.println("(post validation)(jobId:"+jobId+")osResp3:" + osResp3);
 //    			consoleLog.log("(post validation)Mount response3:" + osResp3);
     			
-    			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
-    			{
+    			//if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
+    			//{
+    				//TimeUnit.SECONDS.sleep(6);
 //    				System.out.println("Disk mounted.");
 //	        		consoleLog.log("Disk mounted.");
 	        		if(!new File(pathString).exists())
@@ -79,14 +93,14 @@ public class postValidation implements Runnable
 						}
 					}
 		        
-			        if(folder.exists())
+			        if(folder.exists() && !Main.mountError)
 			        {
 			        	if(errFlag == 2)
 			        	{
-			        		System.out.println("Server mounted.....................");
-			        		mail mailObj = new mail("Net-ops", "SUCCESS", "MOUNT", "", "");
-							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
-							mailThread.start();
+//			        		System.out.println("Server mounted.....................");
+//			        		mail mailObj = new mail("Net-ops", "SUCCESS", "MOUNT", "", "");
+//							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
+//							mailThread.start();
 			        	}
 			        	errFlag = 1;
 			        	File[] listOfFiles = folder.listFiles();
@@ -133,7 +147,7 @@ public class postValidation implements Runnable
 							TimeUnit.SECONDS.sleep(2);
 						}
 			        }
-		        }
+		      /*  }
 		        else
 				{
 		        	if(errFlag == 1)
@@ -152,18 +166,19 @@ public class postValidation implements Runnable
 		    				System.out.println("SMB Share Mount error");
 							consoleLog.log("SMB Share Mount error");
 							// sample : sendMail("Net-ops", "", "MOUNT", "", "");
-							mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", errorShare);
-							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
-							mailThread.start();
+//							mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", errorShare);
+//							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
+//							mailThread.start();
 		        	}
 //		        	if(job.jobFailErrorFun(jobId,clientId))
 //					{
 //						
 //    				}
-				}
+				}*/
 		        //System.out.println("loop finished.");
 				//TimeUnit.MILLISECONDS.sleep(1000);
-		        TimeUnit.SECONDS.sleep(3);
+		        postValCounter.decrementAndGet();
+		        TimeUnit.SECONDS.sleep(5);
 			}
 			System.out.println("Post Validation finished for job :"+jobId+"\n");
 			consoleLog.log("Post Validation finished for job :"+jobId+"\n");
