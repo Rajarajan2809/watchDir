@@ -1,0 +1,300 @@
+{
+    "TF_HSS_Standard_Template": [
+        {
+            "S.No": "1",
+            "Standard Template Names": "StandardA(6x9)",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardA(6x9)/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Standard_A_Sabon"
+        },
+        {
+            "Standard Template Names": "StandardA(6x9)",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardA(6x9)/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Standard_A_Bembo"
+        },
+        {
+            "Standard Template Names": "StandardA(6x9)",
+            "Font": "Times New Roman (TNR)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardA(6x9)/TNR/03_IDML_Files",
+            "Template (IDML) Name": "Standard_A_TNR"
+        },
+        {
+            "S.No": "2",
+            "Standard Template Names": "StandardA(7x10)",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardA(7x10)/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "7x10_Standard_A_Sabon"
+        },
+        {
+            "S.No": "3",
+            "Standard Template Names": "StandardB(6x9)",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardB(6x9)/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Standard_B_Bembo"
+        },
+        {
+            "Standard Template Names": "StandardB(6x9)",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardB(6x9)/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Standard_B_Sabon"
+        },
+        {
+            "S.No": "4",
+            "Standard Template Names": "StandardB(229x152mm)",
+            "Font": "Times New Roman (TNR)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardB(229x152mm)/TNR/03_IDML_Files",
+            "Template (IDML) Name": "Standard_A_TNR"
+        },
+        {
+            "S.No": "5",
+            "Standard Template Names": "StandardSupp(6x9)",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/StandardSupp(6x9)/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Standard_Supp"
+        },
+        {
+            "S.No": "6",
+            "Standard Template Names": "DemyOctavo(138x216mm)-StandardA",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/DemyOctavo(138x216mm)-StandardA/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Demy_A_Bembo"
+        },
+        {
+            "Standard Template Names": "DemyOctavo(138x216mm)-StandardA",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/DemyOctavo(138x216mm)-StandardA/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Demy_A_Sabon"
+        },
+        {
+            "Standard Template Names": "DemyOctavo(138x216mm)-StandardA",
+            "Font": "Times New Roman (TNR)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/DemyOctavo(138x216mm)-StandardA/TNR/03_IDML_Files",
+            "Template (IDML) Name": "Demy_A_TNR"
+        },
+        {
+            "S.No": "7",
+            "Standard Template Names": "DemyOctavo(138x216mm)-StandardB",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/DemyOctavo(138x216mm)-StandardB/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Demy_B_Sabon"
+        },
+        {
+            "S.No": "8",
+            "Standard Template Names": "DemyOctavo(138x216mm)-StandardSupp",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/DemyOctavo(138x216mm)-StandardSupp/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Demy_Supp"
+        },
+        {
+            "S.No": "9",
+            "Standard Template Names": "PinchedCrown(246x174mm)-RoutledgeHandbookA",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-RoutledgeHandbookA/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_Handbook_A"
+        },
+        {
+            "S.No": "10",
+            "Standard Template Names": "PinchedCrown(246x174mm)-RoutledgeHandbookB",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-RoutledgeHandbookB/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_Handbook_B"
+        },
+        {
+            "S.No": "11",
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardA",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardA/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_A_Bembo"
+        },
+        {
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardA",
+            "Font": "Galliard",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardA/Galliard/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_A_Galliard"
+        },
+        {
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardA",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardA/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_A_Sabon"
+        },
+        {
+            "S.No": "12",
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardB",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardB/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_B_Bembo"
+        },
+        {
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardB",
+            "Font": "Goudy",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardB/Goudy/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_B_Goudy"
+        },
+        {
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardB",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardB/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_B_Sabon"
+        },
+        {
+            "S.No": "13",
+            "Standard Template Names": "PinchedCrown(246x174mm)-StandardC",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/PinchedCrown(246x174mm)-StandardC/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Pinched_Crown_C_Sabon"
+        },
+        {
+            "S.No": "14",
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Baskerville",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/Baskerville/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_Baskerville"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_Bembo"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Galliard",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/Galliard/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_Galliard"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Garamond3",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/Garamond3/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_Garamond3"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Goudy",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/Goudy/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_Goudy"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_Sabon"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardA",
+            "Font": "Times New Roman (TNR)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardA/TNR/03_IDML_Files",
+            "Template (IDML) Name": "Royal_A_TNR"
+        },
+        {
+            "S.No": "15",
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_Bembo"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Galliard",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/Galliard/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_Galliard"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Garamond3",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/Garamond3/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_Garamond3"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Goudy",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/Goudy/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_GoudyOldstyle"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_Sabon"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Times New Roman (TNR)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/TNR/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_TNR"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardB",
+            "Font": "Times New Roman (TNR_11pts)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardB/TNR_11pts/03_IDML_Files",
+            "Template (IDML) Name": "Royal_B_TNR11"
+        },
+        {
+            "S.No": "16",
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardC",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardC/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Royal_C_Bembo"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardC",
+            "Font": "Sabon",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardC/Sabon/03_IDML_Files",
+            "Template (IDML) Name": "Royal_C_Sabon"
+        },
+        {
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardC",
+            "Font": "Times New Roman (TNR)",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardC/TNR/03_IDML_Files",
+            "Template (IDML) Name": "Royal_C_TNR"
+        },
+        {
+            "S.No": "17",
+            "Standard Template Names": "RoyalOctavo(234x156mm)-StandardSupp",
+            "Font": "Bembo",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/00_SUPPORTIVE/TandF_HSS/03-Standard_Design/RoyalOctavo(234x156mm)-StandardSupp/Bembo/03_IDML_Files",
+            "Template (IDML) Name": "Royal_Supp"
+        }
+    ],
+    "ENCYCLOPEDIA Standard Template": [
+        {
+            "S.No": "1",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/TandF_ENCYCLOPEDIA/00_SUPPORTIVE/01_Standard_Design/03_Template",
+            "Template (IDML) Name": "Encyclopedia_CH"
+        },
+        {
+            "S.No": "2",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/TandF_ENCYCLOPEDIA/00_SUPPORTIVE/01_Standard_Design/03_Template",
+            "Template (IDML) Name": "Encyclopedia_FM"
+        },
+        {
+            "S.No": "3",
+            "Template Path": "//172.16.1.21/comp_template/01_Template/TandF/TandF_ENCYCLOPEDIA/00_SUPPORTIVE/01_Standard_Design/03_Template",
+            "Template (IDML) Name": "Encyclopedia_BM"
+        }
+    ],
+    "Stage6-Maestro_Mapping_Path": [
+        {
+            "TF_STEM": "//172.16.1.21/comp_template/03_Maestro Settings/TF_CRC/Automation Root/Settings/TFCRC"
+        },
+        {
+            "TF_HSS": "//172.16.1.21/comp_template/03_Maestro Settings/T&F/Automation Root/Settings/TF-GENERIC"
+        },
+        {
+            "TF_ENCYCLOPEDIA": "//172.16.1.21/comp_template/03_Maestro Settings/Encyclopedia/Automation Root/Settings/Encyclopedia"
+        }
+    ],
+    "Stage7-Standard_Generic_Style": [
+        {
+            "TF_STEM": "//172.16.1.21/comp_template/03_Maestro Settings/01_Mapping Styles/TF_STEM_StylesNames.xlsx"
+        },
+        {
+            "TF_HSS": "//172.16.1.21/comp_template/03_Maestro Settings/01_Mapping Styles/TF_HSS_StylesNames.xlsx"
+        },
+        {
+            "TF_ENCYCLOPEDIA": "//172.16.1.21/comp_template/03_Maestro Settings/01_Mapping Styles/TF_ENCYCLOPEDIA_StylesNames.xlsx"
+        }
+    ]
+}

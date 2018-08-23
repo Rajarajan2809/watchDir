@@ -1,0 +1,80 @@
+{
+    "Template": [
+        {
+            "GROUP_ID": "Template",
+            "JOB_ID": "TF_STEM",
+            "TEMPLATE_TYPE": "TandF_STEM",
+            "TEMPLATE_PATH": "//172.16.1.21/comp_template/01_Template/TandF/TandF_STEM/01_PROJECT/CatNo/ISBNNo_AuthorName/03_Template"
+        },
+        {
+            "GROUP_ID": "Template",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_TS",
+            "TEMPLATE_PATH": "//172.16.1.21/comp_template/01_Template/TandF/TandF_HSS/TandF_TS/01_PROJECT/SNO/ISBNNo_AuthorName/03_Template"
+        },
+        {
+            "GROUP_ID": "Template",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_PM",
+            "TEMPLATE_PATH": "//172.16.1.21/comp_template/01_Template/TandF/TandF_HSS/TandF_PM/01_PROJECT/SNO/ISBNNo_AuthorName/03_Template"
+        },
+        {
+            "GROUP_ID": "Template",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_Monograph",
+            "TEMPLATE_PATH": "//172.16.1.21/comp_template/01_Template/TandF/TandF_HSS/TandF_Monograph/01_PROJECT/SNO/ISBNNo_AuthorName/03_Template"
+        }
+    ],
+    "Production": [
+        {
+            "GROUP_ID": "Production",
+            "JOB_ID": "TF_STEM",
+            "TEMPLATE_TYPE": "TandF_STEM",
+            "TEMPLATE_PATH": "//172.16.1.2/CRC/CRC Press/CatNo/ISBNNo_AuthorName/03_Applications/02_IDML"
+        },
+        {
+            "GROUP_ID": "Production",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_TS",
+            "TEMPLATE_PATH": "//172.16.1.2/T&F/T&F/T&F HSS/T&F TS/SNO/ISBN_AuthorName/03_Applications/02_IDML"
+        },
+        {
+            "GROUP_ID": "Production",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_PM",
+            "TEMPLATE_PATH": "//172.16.1.2/T&F/T&F/T&F HSS/T&F PM/SNO/ISBN_AuthorName/03_Applications/02_IDML"
+        },
+        {
+            "GROUP_ID": "Production",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "T&F Monograph",
+            "TEMPLATE_PATH": "//172.16.1.2/T&F/T&F/T&F HSS/T&F Monograph/SNO/ISBN_AuthorName/03_Applications/02_IDML"
+        }
+    ],
+    "Graphics": [
+        {
+            "GROUP_ID": "Graphics",
+            "JOB_ID": "TF_STEM",
+            "TEMPLATE_TYPE": "TandF_STEM",
+            "TEMPLATE_PATH": "\\\\172.16.1.21\\comp\\GRAPHICS\\T&F\\T&F STEM\\CATNo\\ISBN_AuthorName\\FINAL\\"
+        },
+        {
+            "GROUP_ID": "Graphics",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_TS",
+            "TEMPLATE_PATH": "\\\\172.16.1.21\\comp\\GRAPHICS\\T&F\\T&F HSS\\T&F TS\\SNo\\ISBN_AuthorName\\FINAL\\"
+        },
+        {
+            "GROUP_ID": "Graphics",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "TandF_PM",
+            "TEMPLATE_PATH": "\\\\172.16.1.21\\comp\\GRAPHICS\\T&F\\T&F HSS\\T&F PM\\SNo\\ISBN_AuthorName\\FINAL\\"
+        },
+        {
+            "GROUP_ID": "Graphics",
+            "JOB_ID": "TF_HSS",
+            "TEMPLATE_TYPE": "T&F Monograph",
+            "TEMPLATE_PATH": "\\\\172.16.1.21\\comp\\GRAPHICS\\T&F\\T&F HSS\\T&F Monograph\\SNo\\ISBN_AuthorName\\FINAL\\"
+        }
+    ]
+}
