@@ -6,7 +6,5 @@
 	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/http-20070405.jar"/>
 	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/json-simple-1.1.jar"/>
 	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/commons-io-2.6/commons-io-2.6.jar"/>
-	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/commons-io-2.6/commons-io-2.6-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/comp/Desktop/workspace/reference/jar/commons-io-2.6/commons-io-2.6-javadoc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

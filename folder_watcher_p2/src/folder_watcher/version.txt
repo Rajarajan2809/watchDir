@@ -1,6 +1,10 @@
-//06-Jun-18
-1. "JOB FAILED" case changed,
-2. "JOB INPROGRESS" case finished only when all files are processed successfully, 
-3. if files are not processed the manuscripts are moved to "ERROR" folder and waits for files till successful file completeion,
+//30-Aug-18
+v2.0 released
 
-//03
+* folder creation
+
+//31-Aug-18
+v2.1 released
+
+* validation parametrs aded,
+* template file checking

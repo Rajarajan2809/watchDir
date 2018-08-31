@@ -278,8 +278,7 @@ public class mail implements Runnable
 	        			{
 	        				mailMessage = "Dear Team,\n\n" +
 	        						//"--------------------------------------------\n\n" +
-	        						"MaestroQS successfully mount the following server share[s] within the system.\n\n" +
-	        					   	"Please check and do the needful promptly.\n\n" +
+	        						"MaestroQS successfully mount the server share[s] within the system.\n\n" +
 	        					   	"\nThanks & Regards,\n" +
 	        					   	"Maestro Queuing System";
 	        			}
@@ -299,7 +298,7 @@ public class mail implements Runnable
 	        			{
 	        				mailMessage = "Dear Team,\n\n" +
 	        						//"--------------------------------------------\n\n" +
-	        						"MaestroQS can able to connect with (IP: 172.16.1.25) server, it seems the server is back \"Online\".\n\n" +
+	        						"MaestroQS can able to connect with (IP: 172.16.1.25) Server, it seems the Server is back \"Online\".\n\n" +
 	        						"\nThanks & Regards,\n" +
 	        					   	"Maestro Queuing System";
 	        			}

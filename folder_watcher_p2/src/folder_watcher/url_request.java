@@ -12,9 +12,9 @@ public class url_request
 {
 	//private String urlQuery,type,content;
 
-	//static String serverIp = "172.16.4.112:8088";//testing server
+	static String serverIp = "172.16.4.112:8088";//testing server
 	//static String serverIp = "172.16.1.25:8080";//production server
-	static String serverIp = "172.16.1.55";//testing server2
+	//static String serverIp = "172.16.1.55";//testing server2
 	
 	url_request()
     {
@@ -29,25 +29,25 @@ public class url_request
 //	{
 //		try
 //		{
-//	//		URL urlReq = new URL(urlQuery);
-//	//		System.out.println("URL:"+urlQuery);
-//	//        URLConnection connParam = null;
-//	//        connParam = urlReq.openConnection();
-//	//        //connParam.setRequestMethod(t);
-//	//        connParam.setDoOutput(true);
-//	//        
-//	//        BufferedReader in = new BufferedReader(new InputStreamReader(connParam.getInputStream()));
-//	//        
-//	//        String temp,webCurResp= "";
-//	//        
-//	//        while ((temp = in.readLine()) != null)
-//	//        {
-//	//        	webCurResp = webCurResp +"\n"+ temp;
-//	//        }
-//	//        
-//	//        //System.out.println(webCurResp);
-//	//    	in.close();
-//	//    	return webCurResp;
+//			URL urlReq = new URL(urlQuery);
+//			System.out.println("URL:"+urlQuery);
+//	        URLConnection connParam = null;
+//	        connParam = urlReq.openConnection();
+//	        //connParam.setRequestMethod(t);
+//	        connParam.setDoOutput(true);
+//	        
+//	        BufferedReader in = new BufferedReader(new InputStreamReader(connParam.getInputStream()));
+//	        
+//	        String temp,webCurResp= "";
+//	        
+//	        while ((temp = in.readLine()) != null)
+//	        {
+//	        	webCurResp = webCurResp +"\n"+ temp;
+//	        }
+//	        
+//	        //System.out.println(webCurResp);
+//	    	in.close();
+//	    	return webCurResp;
 //			
 //			//String url = "http://www.google.com/search?q=mkyong";
 //		
@@ -60,9 +60,9 @@ public class url_request
 //		//add request header
 //		con.setRequestProperty("User-Agent", "Mozilla/5.0");
 //
-//		//int responseCode = con.getResponseCode();
-//		//System.out.println("\nSending 'GET' request to URL : " + urlQuery);
-//		//System.out.println("Response Code : " + responseCode);
+//		int responseCode = con.getResponseCode();
+//		System.out.println("\nSending 'GET' request to URL : " + urlQuery);
+//		System.out.println("Response Code : " + responseCode);
 //
 //		BufferedReader in = new BufferedReader(
 //		        new InputStreamReader(con.getInputStream()));
@@ -94,6 +94,8 @@ public class url_request
 			URL url = new URL(urlQuery);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			
+			connection.setConnectTimeout(5000);
+			
 			if(!content.isEmpty() && type.equals("GET"))
 			{
 				// optional default is GET
@@ -114,7 +116,7 @@ public class url_request
 			//System.out.println("URL response code:"+connection.getResponseCode());
 			
 			 String temp,webCurResp= "";
-			if(connection.getResponseCode() == 200)
+			if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
 			{
 			    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			    while ((temp = in.readLine()) != null)

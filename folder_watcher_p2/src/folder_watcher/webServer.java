@@ -62,7 +62,7 @@ public class webServer implements Runnable, HttpHandler
 	
 	public static void server() throws IOException, InterruptedException
 	{
-		 HttpServer server = HttpServer.create(new InetSocketAddress(9000), 0);
+		 HttpServer server = HttpServer.create(new InetSocketAddress(9001), 0);
 		    server.createContext("/maestro", new MyHandler());
 		    server.setExecutor(null); // creates a default executor
 		    server.start();

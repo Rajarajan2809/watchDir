@@ -1,80 +1,188 @@
 {
-	"Template": {
-		"TF_STEM": {
-			"TandF_STEM": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp_template/01_Template/TandF/TandF_STEM/01_PROJECT",
-				"format": "/CatNo/ISBNNo_AuthorName/03_Template"
-			}
-		},
-		"TF_HSS": {
-			"TandF_TS": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_TS/01_PROJECT/",
-				"format": "SNO/ISBNNo_AuthorName/03_Template"
-			},
-			"TandF_PM": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_PM/01_PROJECT/",
-				"format": "SNO/ISBNNo_AuthorName/03_Template"
-			},
-			"TandF_Monograph": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_Monograph/01_PROJECT",
-				"format": "SNO/ISBNNo_AuthorName/03_Template"
-			}
-		}
-	},
-	"Production": {
-		"TF_STEM": {
-			"TandF_STEM": {
-				"ip": "172.16.1.2",
-				"path": "/Volumes/CRC/CRC Press/",
-				"format": "/CatNo/ISBNNo_AuthorName/03_Applications/02_IDML"
-			}
-		},
-		"TF_HSS": {
-			"TandF_TS": {
-				"ip": "172.16.1.2",
-				"path": "/Volumes/T&F/T&F/T&F HSS/T&F TS/",
-				"format": "SNO/ISBN_AuthorName/03_Applications/02_IDML"
-			},
-			"TandF_PM": {
-				"ip": "172.16.1.2",
-				"path": "/Volumes/T&F/T&F/T&F HSS/T&F PM/",
-				"format": "SNO/ISBNNo_AuthorName/03_Template"
-			},
-			"TandF_Monograph": {
-				"ip": "172.16.1.2",
-				"path": "/Volumes/T&F/T&F/T&F HSS/T&F Monograph/",
-				"format": "SNO/ISBNNo_AuthorName/03_Template"
-			}
-		}
-	},
-	"Graphics": {
-		"TF_STEM": {
-			"TandF_STEM": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp/GRAPHICS/T&F/T&F STEM/",
-				"format": "CATNo/ISBN_AuthorName/FINAL/"
-			}
-		},
-		"TF_HSS": {
-			"TandF_TS": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F TS/",
-				"format": "SNo/ISBN_AuthorName/FINAL/"
-			},
-			"TandF_PM": {
-				"ip": "172.16.1.21",
-				"path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F PM/",
-				"format": "SNo/ISBN_AuthorName/FINAL/"
-			},
-			"TandF_Monograph": {
-				"ip": "172.16.1.21",
-				"path": "/comp/GRAPHICS/T&F/T&F HSS/T&F Monograph/",
-				"format": "SNo/ISBN_AuthorName/FINAL/"
-			}
-		}
-	}
+    "Template": {
+        "TF_ENCYCLOPEDIA": {"TF_ENCYCLOPEDIA": {
+            "ip": "172.16.1.21",
+            "path": "/Volumes/comp_template/01_Template/TandF/TandF_ENCYCLOPEDIA/01_PROJECT/",
+            "format": "SNO/ISBN_AuthorName/03_Template/"
+        }},
+        "TF_STEM": {"TF_STEM": {
+            "ip": "172.16.1.21",
+            "path": "/Volumes/comp_template/01_Template/TandF/TandF_STEM/01_PROJECT/",
+            "format": "SNO/ISBN_AuthorName/03_Template/"
+        }},
+        "TF_HSS": {
+            "TF_TS": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_TS/01_PROJECT/",
+                "format": "SNO/ISBN_AuthorName/03_Template/"
+            },
+            "TF_PM": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_PM/01_PROJECT/",
+                "format": "SNO/ISBN_AuthorName/03_Template/"
+            },
+            "TF_Mono": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_Monograph/01_PROJECT/",
+                "format": "SNO/ISBN_AuthorName/03_Template/"
+            },
+            "TF_MW": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_MW/01_PROJECT/",
+                "format": "SNO/ISBN_AuthorName/03_Template/"
+            },
+            "TF_Law": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_Law/01_PROJECT/",
+                "format": "SNO/ISBN_AuthorName/03_Template/"
+            },
+            "TF_SPIB": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp_template/01_Template/TandF/TandF_HSS/TandF_SPIB/01_PROJECT/",
+                "format": "SNO/ISBN_AuthorName/03_Template/"
+            }
+        }
+    },
+    "Composition": {
+        "TF_ENCYCLOPEDIA": {"TF_ENCYCLOPEDIA": {
+            "ip": "172.16.1.2",
+            "path": "/Volumes/CRC/T&F ENCYCLOPEDIA/",
+            "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+        }},
+        "TF_STEM": {"TF_STEM": {
+            "ip": "172.16.1.2",
+            "path": "/Volumes/CRC/CRC Press/",
+            "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+        }},
+        "TF_HSS": {
+            "TF_TS": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/T&F/T&F/T&F HSS/T&F TS/",
+                "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+            },
+            "TF_PM": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/T&F/T&F/T&F HSS/T&F PM/",
+                "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+            },
+            "TF_Mono": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/T&F/T&F/T&F HSS/T&F Monograph/",
+                "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+            },
+            "TF_MW": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/T&F/T&F/T&F HSS/T&F MW/",
+                "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+            },
+            "TF_Law": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/T&F/T&F/T&F HSS/T&F Law/",
+                "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML"
+            },
+            "TF_SPIB": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/T&F/T&F/T&F HSS/T&F SPIB/",
+                "format": "SNO/ISBN_AuthorName/03_Applications/02_IDML/"
+            }
+        }
+    },
+    "Graphics": {
+        "TF_ENCYCLOPEDIA": {"TF_ENCYCLOPEDIA": {
+            "ip": "172.16.1.21",
+            "path": "/Volumes/comp/GRAPHICS/T&F/T&F ENCYCLOPEDIA/",
+            "format": "SNO/ISBN_AuthorName/FINAL/"
+        }},
+        "TF_STEM": {"TF_STEM": {
+            "ip": "172.16.1.21",
+            "path": "/Volumes/comp/GRAPHICS/T&F/T&F STEM/",
+            "format": "SNO/ISBN_AuthorName/FINAL/"
+        }},
+        "TF_HSS": {
+            "TF_TS": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F TS/",
+                "format": "SNO/ISBN_AuthorName/FINAL/"
+            },
+            "TF_PM": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F PM/",
+                "format": "SNO/ISBN_AuthorName/FINAL/"
+            },
+            "TF_Mono": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F Monograph/",
+                "format": "SNO/ISBN_AuthorName/FINAL/"
+            },
+            "TF_MW": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F MW/",
+                "format": "SNO/ISBN_AuthorName/FINAL/"
+            },
+            "TF_Law": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F Law/",
+                "format": "SNO/ISBN_AuthorName/FINAL/"
+            },
+            "TF_SPIB": {
+                "ip": "172.16.1.21",
+                "path": "/Volumes/comp/GRAPHICS/T&F/T&F HSS/T&F SPIB/",
+                "format": "SNO/ISBN_AuthorName/FINAL/"
+            }
+        }
+    },
+    "Copyediting": {
+        "TF_ENCYCLOPEDIA": {"TF_ENCYCLOPEDIA": {
+            "ip": "172.16.1.2",
+            "path": "/Volumes/Copyediting/05_Copyediting/5_T&F-ENCYCLOPEDIA/",
+            "format": "ISBN_AuthorName/06_MaestroReady/"
+        }},
+        "TF_STEM": {"TF_STEM": {
+            "ip": "172.16.1.2",
+            "path": "/Volumes/Copyediting/05_Copyediting/1_T&F CRC Press/",
+            "format": "ISBN_AuthorName/06_MaestroReady/"
+        }},
+        "TF_HSS": {
+            "TF_TS": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/Copyediting/05_Copyediting/2_T&F/T&F-TS/",
+                "format": "SNO/ISBN_AuthorName/06_MaestroReady/"
+            },
+            "TF_PM": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/Copyediting/05_Copyediting/2_T&F/T&F-PM/",
+                "format": "SNO/ISBN_AuthorName/06_MaestroReady/"
+            },
+            "TF_Mono": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/Copyediting/05_Copyediting/2_T&F/T&F-Mono/",
+                "format": "SNO/ISBN_AuthorName/06_MaestroReady/"
+            },
+            "TF_MW": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/Copyediting/05_Copyediting/2_T&F/T&F-MW/",
+                "format": "SNO/ISBN_AuthorName/06_MaestroReady/"
+            },
+            "TF_Law": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/Copyediting/05_Copyediting/2_T&F/T&F-Law/",
+                "format": "SNO/ISBN_AuthorName/06_MaestroReady/"
+            },
+            "TF_SPIB": {
+                "ip": "172.16.1.2",
+                "path": "/Volumes/Copyediting/05_Copyediting/2_T&F/T&F-SPIB/",
+                "format": "SNO/ISBN_AuthorName/06_MaestroReady/"
+            }
+        }
+    },
+    "Map_path": {
+        "TF_STEM": "/Volumes/comp_template/03_Maestro Settings/TF_CRC/Automation Root/Settings/TFCRC/",
+        "TF_HSS": "/Volumes/comp_template/03_Maestro Settings/T&F/Automation Root/Settings/TF-GENERIC/",
+        "TF_ENCYCLOPEDIA": "/Volumes/comp_template/03_Maestro Settings/Encyclopedia/Automation Root/Settings/Encyclopedia/"
+    },
+    "Standard_stylesheet": {
+        "TF_STEM": "/Volumes/comp_template/03_Maestro Settings/01_Mapping Styles/TF_STEM_StylesNames.xlsx",
+        "TF_HSS": "/Volumes/comp_template/03_Maestro Settings/01_Mapping Styles/TF_HSS_StylesNames.xlsx",
+        "TF_ENCYCLOPEDIA": "/Volumes/comp_template/03_Maestro Settings/01_Mapping Styles/TF_ENCYCLOPEDIA_StylesNames.xlsx"
+    }
 }

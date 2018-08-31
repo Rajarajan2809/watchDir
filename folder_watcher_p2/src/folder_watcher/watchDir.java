@@ -46,6 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 //import javax.script.ScriptEngine;
 //import javax.script.ScriptEngineManager;
@@ -78,6 +79,7 @@ public class watchDir implements Runnable
 {
     private final WatchService watcher;
     private final Map<WatchKey,Path> keys;
+    private final Map<String,String> jobParam;
     private boolean trace = false;
     private final AtomicInteger counter;
     private int processedFiles = 0;
@@ -86,16 +88,6 @@ public class watchDir implements Runnable
     mail mailObj;
     job j1;
     boolean suspended = false;
-    //private boolean processError = false;
-    //private utilities U = new utilities();
-    //private final boolean recursive = false;
-	//String templateName;
-	//String templatePath;
-	//String styleSheetPath;
-	//String maestroMappingPath;
-    //list of dirs as static
-   // private ArrayList<String> docxTitles = new ArrayList<String>();
-	//private ArrayList<String> xlsStyles = new ArrayList<String>();
     
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) 
@@ -103,9 +95,6 @@ public class watchDir implements Runnable
         return (WatchEvent<T>)event;
     }
 
-    /**
-     * Register the given directory with the WatchService
-     */
     private void register(Path dir) throws IOException 
     {
         WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
@@ -127,73 +116,23 @@ public class watchDir implements Runnable
         keys.put(key, dir);
     }
 
-    /**
-     * Register the given directory, and all its sub-directories, with the
-     * WatchService.
-     */
-//    private void registerAll(final Path start) throws IOException 
-//    {
-//        // register directory and sub-directories
-//        Files.walkFileTree(start, new SimpleFileVisitor<Path>() 
-//        {
-//            @Override
-//            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-//                throws IOException
-//            {
-//                register(dir);
-//                return FileVisitResult.CONTINUE;
-//            }
-//        });
-   // }
-
-    /**
-     * Creates a WatchService and registers the given directory
-     * @param noOfManuScripts 
-     * @throws ParseException 
-     */
-    watchDir(String pathStringLoc, String noOfManuScriptsLoc, String jobIdLoc, String clientIdLoc,AtomicInteger counter) throws IOException, ParseException 
+    watchDir(Map <String,String> jobParam,AtomicInteger counter) throws IOException, ParseException, NumberFormatException 
     {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<WatchKey,Path>();
-        pathString = pathStringLoc;
-        clientId = clientIdLoc;
-        jobId = jobIdLoc;
-        noOfManuScripts = noOfManuScriptsLoc;
+        this.jobParam = jobParam;
+        pathString = jobParam.get("Copyediting");
+        clientId = jobParam.get("clientId");
+        jobId = jobParam.get("jobId");
+        noOfManuScripts = jobParam.get("manuscripts");
+        templatePath = jobParam.get("Template");
+        styleSheetPath = jobParam.get("Standard_stylesheet");
+        importMapPath = jobParam.get("Map_path");
         this.counter = counter;
-        //this.jobFailError = false;
         Path listPath;
-        
         manuScripts = new ArrayList<String>();
-        
-        //function to store template path details, importmap details and standard stylesheet path
-        jobParam();
-        //this.recursive = false;//to avoid checking sub directories ERROR folder
-        //ArrayList<Path> listPath = new ArrayList<Path>();
-        //if (recursive) 
-        //{
-            //for(int i=0; i < listA.size() ;i++)
-            //{
-            	
-            	//listPath.add(Paths.get(pathString));
-            	listPath = Paths.get(pathStringLoc);
-            	register(listPath);
-            	//System.out.format("Scanning \"%s\" ...\n", pathString);
-            	//System.out.println("Done.");
-            	
-            	//consoleLog.log("Scanning \""+pathString+"\" ...\n");
-            	//consoleLog.log("Done.");
-            //}
-        //} 
-        /*else 
-        {
-        	//for(int i=0; i < listA.size();i++)
-        	//{
-        		listPath = Paths.get(pathString);
-            	registerAll(listPath);
-        	//}
-        }*/
-
-        // enable trace after initial registration
+        listPath = Paths.get(pathString);
+        register(listPath);
         this.trace = true;
     }
 
@@ -201,8 +140,6 @@ public class watchDir implements Runnable
     {
     	File folder = new File(pathString);
         File[] listOfFiles = folder.listFiles();
-        //String[] strList = folder.list();
-        //listOfFiles.length
         
         System.out.println("Processing already present files in Job folder...\n");
 		consoleLog.log("Processing already present files in Job folder...\n");
@@ -233,43 +170,33 @@ public class watchDir implements Runnable
 								{}
 							}
 			        		catch (InterruptedException e) 
-			        		{
-								// TODO Auto-generated catch block
-								//e.printStackTrace();
-							}
+			        		{}
 							
 							functionalityCheck(listOfFiles[i].getName());
 						}
-						//System.out.println("jobFailError : "+jobFailError);
-	    				
-	    				if(jobFailErrorFun())
-	    				{
-	    					return;
-	    				}
-						//processedFiles++;
 					}
 					else if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".xlsx") > 0))
 					{
 						System.out.println("xlsx file created at "+listOfFiles[i].getName());
 	    				consoleLog.log("xlsx file created at "+listOfFiles[i].getName()+"\n");
 	    				
-	    				if(!utilities.fileCheck(pathString +"/"+listOfFiles[i].getName()))
+	    				if(!utilities.fileCheck(pathString +listOfFiles[i].getName()))
 	    				{
 	    					System.out.println("Manuscript not found, hence moved to \"ERROR\" folder");
 	        				consoleLog.log("Manuscript not found, hence moved to \"ERROR\" folder");
 	        				
-	        				utilities.fileMove(pathString+"/"+listOfFiles[i].getName(),pathString+"/ERROR/"+listOfFiles[i].getName());
+	        				utilities.fileMove(pathString+listOfFiles[i].getName(),pathString+"ERROR/"+listOfFiles[i].getName());
 	    				}
 					}
 					else if(!listOfFiles[i].getName().equals(".DS_Store"))
 					{
 						//invalid other format files
-			        	File theDir = new File(pathString+"/INVALID_FILES/");
+			        	File theDir = new File(pathString+"INVALID_FILES/");
 			        	if (!theDir.exists()) 
 						{
 			        		theDir.mkdir();
 						}
-			        	utilities.fileMove(pathString+"/"+listOfFiles[i].getName(),pathString+"/INVALID_FILES/"+listOfFiles[i].getName());
+			        	utilities.fileMove(pathString+listOfFiles[i].getName(),pathString+"INVALID_FILES/"+listOfFiles[i].getName());
 						
 			        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
 						Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
@@ -285,13 +212,13 @@ public class watchDir implements Runnable
 					//Move manuscripts to error folder
 					if(!(listOfFiles[i].getName().compareToIgnoreCase("ERROR") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("INVALID_FILES") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("Equations") == 0))
 		        	{
-						File theDir = new File(pathString+"/INVALID_FILES/");
+						File theDir = new File(pathString+"INVALID_FILES/");
 		        	
 			        	if (!theDir.exists()) 
 						{
 			        		theDir.mkdir();
 						}
-			        	utilities.recurMove(new File(pathString+"/"+listOfFiles[i].getName()), new File (pathString+"/INVALID_FILES/"+listOfFiles[i].getName()));
+			        	utilities.recurMove(new File(pathString+listOfFiles[i].getName()), new File (pathString+"INVALID_FILES/"+listOfFiles[i].getName()));
 						
 			        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
 						Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
@@ -311,7 +238,7 @@ public class watchDir implements Runnable
      * @throws IOException 
      * @throws ParseException 
      */
-    int processEvents() throws IOException, ParseException, InterruptedException
+    int processEvents() throws IOException, ParseException, InterruptedException, NumberFormatException
     {
     	boolean initFlag = false;
     	
@@ -442,10 +369,7 @@ public class watchDir implements Runnable
             				Pattern p = Pattern.compile(REGEX);
             				Matcher m = p.matcher(fileNameWoExtn);   // get a matcher object
             				
-            				System.out.println("chap_name:"+fileNameWoExtn);
             				System.out.println("Manuscript name match:"+m.matches());
-            				
-            				consoleLog.log("chap_name:"+fileNameWoExtn);
             				consoleLog.log("Manuscript name match:"+m.matches()+"\n");
             				
             				try 
@@ -461,6 +385,9 @@ public class watchDir implements Runnable
             				
 	            			if(m.matches() && (utilities.getFileExtension(createdFile).equals("docx") || utilities.getFileExtension(createdFile).equals("xlsx")))
 	                    	{
+	            				System.out.println("chap_name:"+fileNameWoExtn);
+	            				consoleLog.log("chap_name:"+fileNameWoExtn);
+	            				
 	            				if(m.matches() && utilities.getFileExtension(createdFile).equals("docx"))
 	            				{
 		            				//System.out.print("Docx file created at ");
@@ -478,14 +405,9 @@ public class watchDir implements Runnable
 		            					System.out.println("Duplicate Manuscripts file present in Job Folder.\n");
 		            					consoleLog.log("Duplicate Manuscripts file present in Job Folder.\n");
 		            				}
-		            				System.out.println("jobFailError : "+jobFailErrorFun());
+		            				//System.out.println("jobFailError : "+jobFailErrorFun());
 		            				
 		            				//template path or stylesheet path or map path is missing
-		            				if(jobFailErrorFun())
-		            				{
-		            					System.out.println("Job Fail Error");
-		            					return 5;
-		            				}
 		            				if(processedFiles == Integer.parseInt(noOfManuScripts))
 		            	            {
 		            					//if other docx files present
@@ -505,12 +427,12 @@ public class watchDir implements Runnable
 		            				System.out.format("%s\n", child);
 		            				consoleLog.log("xlsx file created at "+child+"\n");
 		            				
-		            				if(!utilities.fileCheck(pathString +"/"+child.getFileName().toString()))
+		            				if(!utilities.fileCheck(pathString +child.getFileName().toString()))
 		            				{
 		            					System.out.println("Manuscript not found, hence moved to \"ERROR\" folder");
 		                				consoleLog.log("Manuscript not found, hence moved to \"ERROR\" folder");
 		                				
-		                				utilities.fileMove(pathString+"/"+child.getFileName().toString(),pathString+"/ERROR/"+child.getFileName().toString());
+		                				utilities.fileMove(pathString+child.getFileName().toString(),pathString+"ERROR/"+child.getFileName().toString());
 		            				}
 	            				}
 	                    	}
@@ -518,12 +440,12 @@ public class watchDir implements Runnable
             				{
 	            				System.out.println(child.getFileName().toString()+" is a Invalid file.");
             					//Move manuscripts to error folder
-            		        	File theDir = new File(pathString+"/INVALID_FILES/");
+            		        	File theDir = new File(pathString+"INVALID_FILES/");
             		        	if (!theDir.exists()) 
             					{
             		        		theDir.mkdir();
             					}
-            		        	utilities.fileMove(pathString+"/"+child.getFileName().toString(),pathString+"/INVALID_FILES/"+child.getFileName().toString());
+            		        	utilities.fileMove(pathString+child.getFileName().toString(),pathString+"/INVALID_FILES/"+child.getFileName().toString());
             		        	
             		        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", child.getFileName().toString());
             					Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
@@ -640,16 +562,16 @@ public class watchDir implements Runnable
 	           // Path listPath;
     			//int processStatus;
     			
-    			if(!new File(pathString+"/ERROR/").exists())
+    			File theDir = new File(pathString+"ERROR/");
+    			
+    			System.out.println("ERROR folder : "+theDir.toString());
+    			
+	        	while (!theDir.exists()) 
 				{
-					File theDir = new File(pathString+"/ERROR/");
-		        	if (!theDir.exists()) 
-					{
-		        		theDir.mkdir();
-					}
+	        		theDir.mkdir();
 				}
-        		
-        		postValidation postVal = new postValidation(pathString+"/ERROR/", jobId, clientId, counter);
+				
+        		postValidation postVal = new postValidation(jobParam,counter);
 				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
 				postValThread.start();
     			
@@ -679,14 +601,14 @@ public class watchDir implements Runnable
 								TimeUnit.SECONDS.sleep(1);
 							}
 							System.out.println("pathString status:"+!new File(pathString).exists());
-	    		               while(!new File(pathString).exists())
-	    		               {
-	    		            	   //System.out.println("Waiting to connect.....");
-	    		            	   TimeUnit.SECONDS.sleep(5);
-	    		               }
-	    		               register(Paths.get(pathString));
-							   System.out.println("Register:"+pathString);
-							   continue job_continue;
+							while(!new File(pathString).exists())
+							{
+								//System.out.println("Waiting to connect.....");
+								TimeUnit.SECONDS.sleep(5);
+							}
+							register(Paths.get(pathString));
+							System.out.println("Register:"+pathString);
+							continue job_continue;
 	    		            //}
 			    			//System.out.println("Process status:"+processStatus);
 			    			//consoleLog.log("Process status:"+processStatus);
@@ -739,7 +661,7 @@ public class watchDir implements Runnable
 	         	DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
 	        	String dateString2 = dateFormat2.format(new Date()).toString();
 	         	
-	         	if((processStatus == 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)) && (!jobFailErrorFun()))
+	         	if((processStatus == 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)))
 	    		{
 	         		obj.put("status","COMPLETED");
 	    			//JOB successfully finished
@@ -756,7 +678,7 @@ public class watchDir implements Runnable
 //	             	utilities.delete(new File(pathString+"/ERROR/"));
 //	             	utilities.delete(new File(pathString+"/INVALID/"));
 	    		}
-	    		else
+	    		/*else
 	    		{
 	    			//Job failed due to Template path or stylesheet path or map path
 	    			obj.put("status","FAILED");
@@ -769,9 +691,9 @@ public class watchDir implements Runnable
 	             	
 	//        		System.out.println("URL response : "+webResponse);
 	//             	consoleLog.log("URL response : "+webResponse);
-	    		}
+	    		}*/
 	         	
-	         	String jsonText = JSONValue.toJSONString(obj);  
+	         	String jsonText = JSONValue.toJSONString(obj);
 	    		//System.out.println(jsonText);
 	         	//jobStatus update
 	         	System.out.println("Job status URL:\"http://"+url_request.serverIp+"/maestro/updateJobStatus\", type:\"PUT\" and content:\""+jsonText+"\"");
@@ -784,11 +706,11 @@ public class watchDir implements Runnable
 	         	job j1 = new job();
 	         	j1.job_update(jobId);
 	         	
-	         	if((processStatus == 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)) && (!jobFailErrorFun()))
+	         	if((processStatus == 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)))
 	    		{
 		         	//deleting "ERROR" folder
-	             	utilities.delete(new File(pathString+"/ERROR/"));
-	             	utilities.delete(new File(pathString+"/INVALID_FILES/"));
+	             	//utilities.delete(new File(pathString+"/ERROR/"));
+	             	//utilities.delete(new File(pathString+"/INVALID_FILES/"));
 	    		}
 			//}
     	}
@@ -809,7 +731,7 @@ public class watchDir implements Runnable
 	
 	private boolean functionalityCheck(String file) throws IOException,FileNotFoundException, ParseException, InterruptedException
 	{
-		boolean styleSheetfileStatus = false, contentModellingStatus = false, jsxProcessStatus = false, eqnFolderStatus = false;// 0 > failed,0 = success
+		boolean styleSheetfileStatus = false, contentModellingStatus = false, jsxProcessStatus = false, eqnFolderStatus = false, tempFileStatus = false;// 0 > failed,0 = success
 		String chName = file,eqnStatus,preEditStatus,stageCleanUp,docVal,structuringVal,postVal,postConv,inDStyleMap = "",wdExportMap="";
 		chName = chName.substring(0,chName.indexOf(".docx"));
 		
@@ -840,8 +762,8 @@ public class watchDir implements Runnable
 		//http://172.16.1.25:8080/maestro/getValStageDetails?jobId=9781482298697_Yu&clientId=TF_HSS&chapter=9781138598928_Willard+Bohn_BM01
     	String preEditResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getValStageDetails?"+urlParams,"GET","");        		
         
-    	consoleLog.log("preEditResponse:"+json_pretty_print(preEditResponse)+"\n");
-        System.out.println("preEditResponse:"+json_pretty_print(preEditResponse)+"\n");
+    	consoleLog.log("preEditResponse:"+utilities.json_pretty_print(preEditResponse)+"\n");
+        System.out.println("preEditResponse:"+utilities.json_pretty_print(preEditResponse)+"\n");
         
         if((preEditResponse != null) && (!preEditResponse.isEmpty()) && (!preEditResponse.equals("")))
 		{
@@ -908,8 +830,8 @@ public class watchDir implements Runnable
     		
         	String eqnResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/getChapterEquation?"+urlParams,"GET","");        		
             
-        	System.out.println("eqnResponse:"+json_pretty_print(eqnResponse)+"\n");
-        	consoleLog.log("eqnResponse:"+json_pretty_print(eqnResponse)+"\n");
+        	System.out.println("eqnResponse:"+utilities.json_pretty_print(eqnResponse)+"\n");
+        	consoleLog.log("eqnResponse:"+utilities.json_pretty_print(eqnResponse)+"\n");
             
             if((eqnResponse != null) && (!eqnResponse.isEmpty()) && (!eqnResponse.equals("")))
     		{
@@ -922,16 +844,16 @@ public class watchDir implements Runnable
 			    
 			    if(eqnStatus.equals("true"))
 			    {
-			    	if(new File(pathString+"/Equations/"+chName).isDirectory())
+			    	if(new File(pathString+"EQUATIONS/"+chName).isDirectory())
 			    	{
-			    		consoleLog.log("This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
-			    		System.out.println("This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
+			    		consoleLog.log("This chapter has \"Equations\" and equations are present in "+pathString+"/EQUATIONS/"+chName+"\n");
+			    		System.out.println("This chapter has \"Equations\" and equations are present in "+pathString+"/EQUATIONS/"+chName+"\n");
 			    		eqnFolderStatus = true;
 			    	}
 			    	else
 			    	{
-			    		consoleLog.log("This chapter has \"Equations\" but equations are not present in "+pathString+"/Equations/"+chName+"\n");
-			    		System.out.println("This chapter has \"Equations\" and equations are not present in "+pathString+"/Equations/"+chName+"\n");
+			    		consoleLog.log("This chapter has \"Equations\" but equations are not present in "+pathString+"/EQUATIONS/"+chName+"\n");
+			    		System.out.println("This chapter has \"Equations\" and equations are not present in "+pathString+"/EQUATIONS/"+chName+"\n");
 			    		eqnFolderStatus = false;
 			    		
 			    		//Equatons missing
@@ -942,15 +864,47 @@ public class watchDir implements Runnable
 			    }
 			    else if(eqnStatus.equals("false"))
 			    {
-			    	consoleLog.log("This chapter does not have \"Equations\"\n");
-		    		System.out.println("This chapter does not have \"Equations\"\n");
+			    	consoleLog.log("This chapter does not have \"EQUATIONS\"\n");
+		    		System.out.println("This chapter does not have \"EQUATIONS\"\n");
 		    		eqnFolderStatus = true;
 			    }
     		}
         }
         
-        //condition for inDesign to initiate or not
+        //check template exists for the manuscripts
         if(styleSheetfileStatus && contentModellingStatus && eqnFolderStatus)
+        {
+        	if(jobParam.get("templateName").equals(""))
+        	{
+        		File tempDir = new File(jobParam.get("Template"));
+        		File[] listOfFiles = tempDir.listFiles();
+        		for(int i=0; i < listOfFiles.length; i++)
+        		{
+        			if(listOfFiles[i].isFile() && (FilenameUtils.getExtension(listOfFiles[i].toString()).equals("idml")))
+        			{
+        				String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
+        				String tempFile = FilenameUtils.getBaseName(listOfFiles[i].toString());
+        				String idmlSuffix = tempFile.substring(tempFile.lastIndexOf('_'),tempFile.lastIndexOf('_')+3);
+        				templateName = tempFile.substring(0,tempFile.lastIndexOf('_'));
+        				
+        				System.out.println("templateName:"+templateName);
+        				
+        				if(mnsSuffix.equals(idmlSuffix))
+	        				tempFileStatus = true;
+    				}
+        		}
+        	}
+        	else
+        	{
+        		String mnsSuffix = chName.substring(chName.lastIndexOf('_'),3);
+        		String tempFile = jobParam.get("Template") + jobParam.get("templateName")+mnsSuffix+".idml";
+        		if(new File(tempFile).exists())
+        			tempFileStatus = true;
+        	}
+        }
+        
+        //condition for inDesign to initiate or not
+        if(styleSheetfileStatus && contentModellingStatus && eqnFolderStatus && tempFileStatus)
         {
 	        if(inDStyleMap.equals("true"))
 	        {
@@ -964,30 +918,27 @@ public class watchDir implements Runnable
 				System.out.println("Stylesheet file present and PreEditStatus stage passed.\n");
 				
 				
-				if(!jobFailErrorFun())
-	    		{
-			        while(counter.get() != 0)
-			        {
-			        	TimeUnit.SECONDS.sleep(1);
-			        }
-	
-			        counter.incrementAndGet();
-		        	utilities.delete(new File(System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls"));
-		        	
-		        	//template path, mapping path and stylesheet path 
-		        	//String jobParams[] = job.getDocParam(jobId, clientId);
-		        	if(JavaApplescriptTest(chName,pathString+"/"+chName+".xlsx"))
-		        	{
-		        		//jsx process passed
-		        		jsxProcessStatus = true;
-		        	}
-		        	else
-		        	{
-		        		consoleLog.log("Failed in InDesign style mapping stage.\n");
-			    		System.out.println("Failed in InDesign style mapping stage.\n");
-		        	}
-		        	counter.decrementAndGet();
-		    	}
+				while(counter.get() != 0)
+		        {
+		        	TimeUnit.SECONDS.sleep(1);
+		        }
+
+		        counter.incrementAndGet();
+	        	utilities.delete(new File(System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls"));
+	        	
+	        	//template path, mapping path and stylesheet path 
+	        	//String jobParams[] = job.getDocParam(jobId, clientId);
+	        	if(JavaApplescriptTest(chName,pathString+"/"+chName+".xlsx"))
+	        	{
+	        		//jsx process passed
+	        		jsxProcessStatus = true;
+	        	}
+	        	else
+	        	{
+	        		consoleLog.log("Failed in InDesign style mapping stage.\n");
+		    		System.out.println("Failed in InDesign style mapping stage.\n");
+	        	}
+	        	counter.decrementAndGet();
 			}
         }
 	    
@@ -999,14 +950,14 @@ public class watchDir implements Runnable
 		else
 		{
 			//Move manuscripts to error folder
-        	File theDir = new File(pathString+"/ERROR/");
-        	if (!theDir.exists()) 
+        	File theDir = new File(pathString+"ERROR/");
+        	while (!theDir.exists()) 
 			{
         		theDir.mkdir();
 			}
-        	utilities.fileMove(pathString+"/"+chName+".docx",pathString+"/ERROR/"+chName+".docx");
+        	utilities.fileMove(pathString+"/"+chName+".docx",pathString+"ERROR/"+chName+".docx");
 			if(utilities.fileCheck(pathString +"/"+chName+".xlsx"))
-				utilities.fileMove(pathString+"/"+chName+".xlsx",pathString+"/ERROR/"+chName+".xlsx");
+				utilities.fileMove(pathString+"/"+chName+".xlsx",pathString+"ERROR/"+chName+".xlsx");
 			//processedFiles--;
 		}
 		
@@ -1061,8 +1012,8 @@ public class watchDir implements Runnable
 			consoleLog.log("InDesign Processing.....");
 			
 			result = utilities.osascript_call(command);
-			System.out.println("Applescript response:"+json_pretty_print(result));
-			consoleLog.log("Applescript response:"+json_pretty_print(result));
+			System.out.println("Applescript response:"+utilities.json_pretty_print(result));
+			consoleLog.log("Applescript response:"+utilities.json_pretty_print(result));
 			if((result != null) && (!result.isEmpty()) && (!result.equals("")))
 			{
 				JSONParser parser = new JSONParser();
@@ -1089,8 +1040,8 @@ public class watchDir implements Runnable
 			        		consoleLog.log("URL : http://"+url_request.serverIp+"/maestro/updateChapterTemplateStatus" + ", type : \"PUT\" and content : \""+JSONValue.toJSONString(obj)+"\"");
 			        		String urlResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/updateChapterTemplateStatus","PUT",JSONValue.toJSONString(obj));
 			        		
-			        		System.out.println("Response:"+json_pretty_print(urlResponse));
-			        		consoleLog.log("Response:"+json_pretty_print(urlResponse));
+			        		System.out.println("Response:"+utilities.json_pretty_print(urlResponse));
+			        		consoleLog.log("Response:"+utilities.json_pretty_print(urlResponse));
 			        		//consoleLog.log("Response:"+url.putUrlRequest());
 			        		
 			        		JSONObject obj1=new JSONObject();
@@ -1112,8 +1063,8 @@ public class watchDir implements Runnable
 			        		consoleLog.log("URL : http://"+url_request.serverIp+"/maestro/updateStatus, type : \"PUT\" and content : "+JSONValue.toJSONString(obj1)+"\"");
 			        		urlResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/updateStatus","PUT",JSONValue.toJSONString(obj1));
 			        		
-			        		consoleLog.log("Response:"+json_pretty_print(urlResponse)+"\n");
-			        		System.out.println("Response:"+json_pretty_print(urlResponse));
+			        		consoleLog.log("Response:"+utilities.json_pretty_print(urlResponse)+"\n");
+			        		System.out.println("Response:"+utilities.json_pretty_print(urlResponse));
 			        		
 			        		//String chName;
 			        		
@@ -1183,25 +1134,15 @@ public class watchDir implements Runnable
     			Thread mailThread9 = new Thread(mailObj, "Mail Thread for CRC Team");
             	mailThread9.start();
 			}
-			//reader.close();
 		 } 
 		 catch (Exception e) 
 		 {
-		     //e.printStackTrace();
 			consoleLog.log(e.toString());
-//			switch(e.toString().substring(0,e.toString().indexOf(":")))
-//			{
-//				case "java.nio.file.NoSuchFileException":
-//				{
-//					System.out.println("Javascript error");
-//				}
-//				break;
-//			}	
 		 }
 		 return appleScriptStatus;
 	 }
 	 
-	private static String json_pretty_print(String json)
+	/*private static String json_pretty_print(String json)
 	{
 		if(!json.isEmpty())
 		{
@@ -1213,9 +1154,9 @@ public class watchDir implements Runnable
 		}
 		else
 			return "";
-	}
+	}*/
 	 //templatePath, mapPath and used styles path details check
-	 void jobParam()
+	 /*void jobParam()
 	 {
 		 try
 		 {
@@ -1310,7 +1251,7 @@ public class watchDir implements Runnable
 			 e.printStackTrace();
 		 }
 		 return;
-	 }
+	 }*/
 	 
 	private boolean isCompletelyWritten(File file) throws InterruptedException
     {
@@ -1327,122 +1268,10 @@ public class watchDir implements Runnable
         return false;
     }
 	 
-	 boolean jobFailErrorFun() throws IOException, InterruptedException
-	 {
-		boolean jobFailError = false; 
-		try
-		{
-			while(counter.get() != 0)
-	        {
-	        	TimeUnit.SECONDS.sleep(1);
-	        }
-
-	        counter.incrementAndGet();
-			/*String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
-			TimeUnit.SECONDS.sleep(1);
-			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-			TimeUnit.SECONDS.sleep(1);
-			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-			TimeUnit.SECONDS.sleep(1);
-			
-			//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-			//String osResp = utilities.serverMount();
-			System.out.println("(job fail validation)osResp1:" + osResp1+", jobId:"+jobId);
-			consoleLog.log("(job fail validation)Mount response1:" + osResp1+", jobId:"+jobId);
-			
-			System.out.println("(job fail validation)osResp2:" + osResp2+", jobId:"+jobId);
-			consoleLog.log("(job fail validation)Mount response2:" + osResp2+", jobId:"+jobId);
-			
-			System.out.println("(job fail validation)osResp3:" + osResp3+", jobId:"+jobId);
-			consoleLog.log("(job fail validation)Mount response3:" + osResp3+", jobId:"+jobId);
-			
-			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
-			{*/
-				Main.mountError = false;
-				String errParam = "";
-				
-				//S
-				//System.out.println("templatePath:"+this.templatePath);
-				if((templatePath == null) || templatePath.equals("") || !utilities.folderCheck(templatePath))
-				{
-					errParam = "\n* Template Path is invalid";
-				}
-				if((importMapPath == null) || importMapPath.equals("") || !utilities.folderCheck(importMapPath)) 
-				{
-					errParam = (errParam.isEmpty() ? "" : errParam+",\n")  + "* Maestro Map Path is invalid";
-				}
-				if((styleSheetPath == null) || styleSheetPath.equals("") || !utilities.fileCheck(styleSheetPath))
-	    		{
-					errParam = (errParam.isEmpty() ? "" : errParam+",\n")  + "* Standard StyleSheetPath is invalid";
-	    		}
-				
-				if(!errParam.isEmpty())
-				{
-					//System.out.println("Job failed due to StyleSheetPath or Mapping Path or Template Path");
-					//consoleLog.log("Job failed due to StyleSheetPath or Mapping Path or Template Path");
-					
-					jobFailError = true;
-					errParam = errParam  + ".\n\n";
-					
-					//sample : sendMail("CRC Team", "JOB_FAIL", "9781138556850_Ilyas", "", errParam);
-					mail mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "JOB_FAIL", jobId, "", errParam);
-					//mailObj.mailProcess();
-					Thread mailThread4 = new Thread(mailObj, "Mail Thread for CRC Team");
-					mailThread4.start();
-					
-					mailObj = new mail(URLEncoder.encode("Pre-editing", "UTF-8"), "JOB_FAIL", jobId, "", errParam);
-					Thread mailThread5 = new Thread(mailObj, "Mail Thread for CRC Team");
-					mailThread5.start();
-				}
-			/*}
-			else
-			{
-				if(!Main.mountError)
-				{
-					// mail to netops
-					consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
-					// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
-					//mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
-					// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
-					//Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
-					//mailThread.start();
-					Main.mountError = true;
-				}
-			}*/
-			counter.decrementAndGet();
-		}
-		catch (IOException e) 
-    	{
-			e.printStackTrace();
-			try 
-			{
-				consoleLog.log(e.toString());
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			}
-		}
-    	catch (ParseException e) 
-    	{
-			e.printStackTrace();
-			try 
-			{
-				consoleLog.log(e.toString());
-			} 
-			catch (IOException e1) 
-			{
-				e1.printStackTrace();
-			}
-		}
-		
-		return jobFailError;
-	 }
-	 
-	 void suspend() 
-	 {
-		 suspended = true;
-	 }
+	void suspend() 
+	{
+		suspended = true;
+	}
 	   
 	void resume() 
 	{
@@ -1450,31 +1279,3 @@ public class watchDir implements Runnable
 		//notify();
 	}
 }
-	
-//	 private boolean fileMove(String fromFolder,String toFolder)
-//	 {
-//		 boolean status = false;
-//		 try 
-//		{
-//			File folder = new File("/Users/comp/Desktop/test1/");
-//			File[] listOfFiles = folder.listFiles();
-//			for (int i = 0; i < listOfFiles.length; i++) 
-//			{
-//				if (listOfFiles[i].isFile()) 
-//				{
-//					//System.out.println("File " + listOfFiles[i].getName());
-//					Files.move(Paths.get("/Users/comp/Desktop/test1/"+listOfFiles[i].getName()), Paths.get("/Users/comp/Desktop/test files/"+listOfFiles[i].getName()), StandardCopyOption.REPLACE_EXISTING);
-//			    }
-//				else if (listOfFiles[i].isDirectory()) 
-//				{
-//					System.out.println("Directory " + listOfFiles[i].getName());
-//			    }
-//			}
-//		}
-//		catch (IOException e) 
-//		{
-//			e.printStackTrace();
-//		}
-//		return status;
-//	 }
-//}

@@ -492,4 +492,18 @@ public class utilities
 	    else 
 	    	return "";
 	}
+	
+	static String json_pretty_print(String json)
+	{
+		if(!json.isEmpty())
+		{
+			json = json.replace("{","{\n    ");
+			json = json.replace(",",",\n    ");
+			json = json.replace("}","\n}");
+			//System.out.println("JSON:"+json);
+			return json;
+		}
+		else
+			return "";
+	}
 }
