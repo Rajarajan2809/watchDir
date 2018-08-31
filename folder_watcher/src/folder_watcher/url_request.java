@@ -12,9 +12,9 @@ public class url_request
 {
 	//private String urlQuery,type,content;
 
-	//static String serverIp = "172.16.4.112:8088";//testing server
+	static String serverIp = "172.16.4.112:8088";//testing server
 	//static String serverIp = "172.16.1.25:8080";//production server
-	static String serverIp = "172.16.1.55";//testing server2
+	//static String serverIp = "172.16.1.55";//testing server2
 	
 	url_request()
     {
@@ -114,7 +114,7 @@ public class url_request
 			//System.out.println("URL response code:"+connection.getResponseCode());
 			
 			 String temp,webCurResp= "";
-			if(connection.getResponseCode() == 200)
+			if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
 			{
 			    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			    while ((temp = in.readLine()) != null)

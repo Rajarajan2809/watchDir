@@ -442,10 +442,8 @@ public class watchDir implements Runnable
             				Pattern p = Pattern.compile(REGEX);
             				Matcher m = p.matcher(fileNameWoExtn);   // get a matcher object
             				
-            				System.out.println("chap_name:"+fileNameWoExtn);
             				System.out.println("Manuscript name match:"+m.matches());
             				
-            				consoleLog.log("chap_name:"+fileNameWoExtn);
             				consoleLog.log("Manuscript name match:"+m.matches()+"\n");
             				
             				try 
@@ -461,6 +459,8 @@ public class watchDir implements Runnable
             				
 	            			if(m.matches() && (utilities.getFileExtension(createdFile).equals("docx") || utilities.getFileExtension(createdFile).equals("xlsx")))
 	                    	{
+	            				System.out.println("chap_name:"+fileNameWoExtn);
+	            				consoleLog.log("chap_name:"+fileNameWoExtn);
 	            				if(m.matches() && utilities.getFileExtension(createdFile).equals("docx"))
 	            				{
 		            				//System.out.print("Docx file created at ");

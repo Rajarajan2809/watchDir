@@ -1,6 +1,3 @@
-//06-Jun-18
-1. "JOB FAILED" case changed,
-2. "JOB INPROGRESS" case finished only when all files are processed successfully, 
-3. if files are not processed the manuscripts are moved to "ERROR" folder and waits for files till successful file completeion,
+VERSION 7.0 22-AUG-18
 
-//03
+VERSION 7.1 24-AUG-18
