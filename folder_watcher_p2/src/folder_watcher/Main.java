@@ -106,11 +106,11 @@ public class Main
 			try
 			{
 				String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
-				//TimeUnit.SECONDS.sleep(15);
+				TimeUnit.SECONDS.sleep(15);
 				String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-				//TimeUnit.SECONDS.sleep(15);
+				TimeUnit.SECONDS.sleep(15);
 				String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-				//TimeUnit.SECONDS.sleep(15);
+				TimeUnit.SECONDS.sleep(15);
 				
 				if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
 				{
@@ -216,7 +216,7 @@ public class Main
 									String genSSPath 		= jobMap.get("Standard_stylesheet");
 									String eqnPath 			= copyEditPath + "EQUATIONS/";*/
 									
-									jobMap.put("equation",jobMap.get("Copyediting") + "EQUATIONS/");							
+									jobMap.put("equation",jobMap.get("Copyediting") + "Equations/");							
 									
 									//equation folder creation
 									File theDir = new File(jobMap.get("equation"));
@@ -485,124 +485,127 @@ public class Main
 				TimeUnit.SECONDS.sleep(50);
 				// String eXcept = e.toString().substring(0,e.toString().indexOf(":"));
 				// e.printStackTrace();
-
-				switch (e.toString().substring(0, e.toString().indexOf(":"))) 
+				
+				if(e.toString().indexOf(":") != -1)
 				{
-					case "java.nio.file.NoSuchFileException": 
+					switch (e.toString().substring(0, e.toString().indexOf(":"))) 
 					{
-						/*System.out.println("Directory does not exists");
-						consoleLog.log("Directory does not exists");
-						
-						String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
-						String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-						String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-						
-						//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-						//String osResp = utilities.serverMount();
-						System.out.println("osResp1:" + osResp1);
-						consoleLog.log("Mount response1:" + osResp1);
-						
-						System.out.println("osResp2:" + osResp2);
-						consoleLog.log("Mount response2:" + osResp2);
-						
-						System.out.println("osResp3:" + osResp3);
-						consoleLog.log("Mount response3:" + osResp3);
-						
-						if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
+						case "java.nio.file.NoSuchFileException": 
 						{
-							// Directory not exists
-							System.out.println(e.toString().substring(e.toString().lastIndexOf(":")+1));
+							/*System.out.println("Directory does not exists");
+							consoleLog.log("Directory does not exists");
 							
-							//System.out.println(new File(e.toString().substring(e.toString().lastIndexOf(":")+1)).exists());
-							mail mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "DIRECTORY", currentJob, "", e.toString().substring(e.toString().lastIndexOf(":")+1));
-							Thread mailThread = new Thread(mailObj, "Mail Thread for file/directory");
-							mailThread.start();
-							// mailObj.mailProcess("Template","DIRECTORY_NOT_EXISTS","DIRECTORY","", "");
-							// mailObj.mailProcess(URLEncoder.encode("CRC Team",
-							// "UTF-8"),"DIRECTORY_NOT_EXISTS","DIRECTORY","",
-							// e.toString().substring(e.toString().indexOf(":"),e.toString().indexOf("\n")));
-						} 
-						else 
-						{
-							System.out.println("SMB Share Mount error");
-							consoleLog.log("SMB Share Mount error");
-							// sample : sendMail("Net-ops", "", "MOUNT", "", "");
-							//mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", "");
-							//Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
-							//mailThread.start();
-						}*/
-					}
-					break;
-
-					case "java.net.SocketException": 
-					{
-						System.out.println("socket connection refuse error");
-						consoleLog.log("socket connection refuse error");
-						// sample : sendMail("Net-ops", "", "DB", "", "");
-						mail mailObj = new mail("Net-ops", "ERROR", "DB", "", "");
-						Thread mailThread = new Thread(mailObj, "Mail Thread for Socket");
-						mailThread.start();
-					}
-				// break;
-
-					case "java.net.ConnectException": 
-					{
-						consoleLog.log("connection refuse error\n");
-						System.out.println("connection refuse error\n");
-	
-						if (mailTriggNet) 
-						{
-							mail mailObj = new mail("Net-ops", "ERROR", "DB", "", "");
-							Thread mailThread = new Thread(mailObj, "Mail Thread for DB Error");
-							mailThread.start();
+							String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
+							String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
+							String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 							
-							//flag for single mail while offline
-							mailTriggNet = false;
+							//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
+							//String osResp = utilities.serverMount();
+							System.out.println("osResp1:" + osResp1);
+							consoleLog.log("Mount response1:" + osResp1);
 							
-//							String mailIdJson = utilities.fileRead("maestroqs_support.json");
-//							if ((mailIdJson != null) && (!mailIdJson.isEmpty()) && (!mailIdJson.equals(""))) 
-//							{
-//								JSONParser parser = new JSONParser();
-//								Object preEditObj = parser.parse(mailIdJson);
-//								JSONObject jo = (JSONObject) preEditObj;
-//								String mailIds = (String) jo.get("mail_id");
-//	
-//								// sample : sendMail("Net-ops", "", "DB", "", "");
-//								// mail mailObj = new mail("Net-ops", "", "DB", "", "");
-//								ArrayList<String> mail_id = mail.mailIdParse(mailIds);
-//								for (int i = 0; i < mail_id.size(); i++) 
-//								{
-//									mail mailObj = new mail("Net-ops", "ERROR", "DB", "", "");
-//									Thread mailThread = new Thread(mailObj, "Mail Thread for DB Error");
-//									mailThread.start();
-//									//mail.sendMail("Net-ops", "ERROR", "DB", "", "");
-//									// Thread mailThread = new Thread(mailObj, "Mail Thread"+Integer.toString(i));
-//									// mailThread.start();
-//								}
-//							} 
-//							else 
-//							{
-//								consoleLog.log("JSON Parse failed for JSON on maestroqs_support.json\n\n");
-//								System.out.println("JSON Parse failed for JSON on maestroqs_support.json");
-//							}
+							System.out.println("osResp2:" + osResp2);
+							consoleLog.log("Mount response2:" + osResp2);
+							
+							System.out.println("osResp3:" + osResp3);
+							consoleLog.log("Mount response3:" + osResp3);
+							
+							if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
+							{
+								// Directory not exists
+								System.out.println(e.toString().substring(e.toString().lastIndexOf(":")+1));
+								
+								//System.out.println(new File(e.toString().substring(e.toString().lastIndexOf(":")+1)).exists());
+								mail mailObj = new mail(URLEncoder.encode("CRC Team", "UTF-8"), "DIRECTORY", currentJob, "", e.toString().substring(e.toString().lastIndexOf(":")+1));
+								Thread mailThread = new Thread(mailObj, "Mail Thread for file/directory");
+								mailThread.start();
+								// mailObj.mailProcess("Template","DIRECTORY_NOT_EXISTS","DIRECTORY","", "");
+								// mailObj.mailProcess(URLEncoder.encode("CRC Team",
+								// "UTF-8"),"DIRECTORY_NOT_EXISTS","DIRECTORY","",
+								// e.toString().substring(e.toString().indexOf(":"),e.toString().indexOf("\n")));
+							} 
+							else 
+							{
+								System.out.println("SMB Share Mount error");
+								consoleLog.log("SMB Share Mount error");
+								// sample : sendMail("Net-ops", "", "MOUNT", "", "");
+								//mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+								//Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
+								//mailThread.start();
+							}*/
 						}
-						// mailObj.mailProcess("Net-ops","ERROR","DB","");
+						break;
+	
+						case "java.net.SocketException": 
+						{
+							System.out.println("socket connection refuse error");
+							consoleLog.log("socket connection refuse error");
+							// sample : sendMail("Net-ops", "", "DB", "", "");
+							mail mailObj = new mail("Net-ops", "ERROR", "DB", "", "");
+							Thread mailThread = new Thread(mailObj, "Mail Thread for Socket");
+							mailThread.start();
+						}
+					// break;
+	
+						case "java.net.ConnectException": 
+						{
+							consoleLog.log("connection refuse error\n");
+							System.out.println("connection refuse error\n");
+		
+							if (mailTriggNet) 
+							{
+								mail mailObj = new mail("Net-ops", "ERROR", "DB", "", "");
+								Thread mailThread = new Thread(mailObj, "Mail Thread for DB Error");
+								mailThread.start();
+								
+								//flag for single mail while offline
+								mailTriggNet = false;
+								
+	//							String mailIdJson = utilities.fileRead("maestroqs_support.json");
+	//							if ((mailIdJson != null) && (!mailIdJson.isEmpty()) && (!mailIdJson.equals(""))) 
+	//							{
+	//								JSONParser parser = new JSONParser();
+	//								Object preEditObj = parser.parse(mailIdJson);
+	//								JSONObject jo = (JSONObject) preEditObj;
+	//								String mailIds = (String) jo.get("mail_id");
+	//	
+	//								// sample : sendMail("Net-ops", "", "DB", "", "");
+	//								// mail mailObj = new mail("Net-ops", "", "DB", "", "");
+	//								ArrayList<String> mail_id = mail.mailIdParse(mailIds);
+	//								for (int i = 0; i < mail_id.size(); i++) 
+	//								{
+	//									mail mailObj = new mail("Net-ops", "ERROR", "DB", "", "");
+	//									Thread mailThread = new Thread(mailObj, "Mail Thread for DB Error");
+	//									mailThread.start();
+	//									//mail.sendMail("Net-ops", "ERROR", "DB", "", "");
+	//									// Thread mailThread = new Thread(mailObj, "Mail Thread"+Integer.toString(i));
+	//									// mailThread.start();
+	//								}
+	//							} 
+	//							else 
+	//							{
+	//								consoleLog.log("JSON Parse failed for JSON on maestroqs_support.json\n\n");
+	//								System.out.println("JSON Parse failed for JSON on maestroqs_support.json");
+	//							}
+							}
+							// mailObj.mailProcess("Net-ops","ERROR","DB","");
+						}
+						break;
+	
+						case "java.lang.IndexOutOfBoundsException": 
+						{
+							System.out.println("IndexOutOfBoundsException error");
+							consoleLog.log("IndexOutOfBoundsException error");
+						}
+						break;
+	
+						case "java.lang.NullException": 
+						{
+							System.out.println("null error");
+							consoleLog.log("null error");
+						}
+						break;
 					}
-					break;
-
-					case "java.lang.IndexOutOfBoundsException": 
-					{
-						System.out.println("IndexOutOfBoundsException error");
-						consoleLog.log("IndexOutOfBoundsException error");
-					}
-					break;
-
-					case "java.lang.NullException": 
-					{
-						System.out.println("null error");
-						consoleLog.log("null error");
-					}
-					break;
 				}
 			}
 			// time interval between two url requests
@@ -620,7 +623,7 @@ public class Main
 		jobMap.put("Map_path", "");
 		jobMap.put("Standard_stylesheet", "");
 		JSONParser jsonParser = new JSONParser();
-		
+		String errParam = "";
 		/*System.out.println("serialNo :"+serialNo);
 		System.out.println("jobId :"+jobId);
 		System.out.println("clientId :"+clientId);
@@ -639,6 +642,7 @@ public class Main
 			files.add("templ_dir.json");
 		else
 			jobMap.put("Template", "");
+		
 		//String[] files = {"dir.json"};
 		
 		for(String file1 : files)
@@ -728,12 +732,14 @@ public class Main
 							            }
 						            	else
 						            	{
-							            	System.out.println("client is null.");
+						            		errParam = errParam + "\n* " + templateType+" is invalid.";
+						            		System.out.println("client is null.");
 							            	break;
 						            	}
 						            }
 						            else
 						            {
+						            	errParam = errParam + "\n* " + clientId+" is invalid.";
 						            	System.out.println("title is null.");
 						            	break;
 						            }
@@ -741,6 +747,7 @@ public class Main
 				            }
 				            else
 				            {
+				            	errParam = errParam + "\n* " + me.getKey()+" is invalid.";
 				            	System.out.println("type is null.");
 				            	break;
 				            }
@@ -769,18 +776,21 @@ public class Main
 								}
 								else
 								{
+									errParam = errParam + "\n* " + templateName +" is invalid.";
 									System.out.println("stdTemplPath is null.");
 					            	break;
 								}
 							}
 							else
 							{
+								errParam = errParam + "\n* " + clientId +" is invalid.";
 								System.out.println("tempName is null.");
 				            	break;
 							}
 						}
 						else
 						{
+							errParam = errParam + "\n* \"templ_dir.json\" is invalid.";
 							System.out.println("object is null.");
 			            	break;
 						}
@@ -801,6 +811,7 @@ public class Main
 	            e.printStackTrace();
 	        }
 		}
+		jobMap.put("error", errParam);
 		return jobMap;
 	}
 }

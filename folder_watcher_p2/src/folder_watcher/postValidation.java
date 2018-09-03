@@ -3,8 +3,12 @@ package folder_watcher;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +26,10 @@ public class postValidation implements Runnable
 	String pathString, jobId, clientId,templateName, templatePath;
 	int errFlag,NoOfManuscripts;
 	private AtomicInteger postValCounter;
+	private Map <String,String>jobParams;
 	postValidation(Map <String,String>jobParams, AtomicInteger postValCounter)
 	{
+		this.jobParams = jobParams;
 		this.pathString = jobParams.get("Copyediting");
 		this.jobId = jobParams.get("jobId");
 		this.clientId = jobParams.get("clientId");
@@ -60,6 +66,52 @@ public class postValidation implements Runnable
 			//job_restart:
 			while(j1.job_status(jobId))//while(j1.job_status(jobId))
 			{
+				if(jobParams.size() > 0)
+				{
+					boolean templateStatus = jobParams.get("templateName").equals("");
+					Set< Map.Entry< String,String> > st = jobParams.entrySet();
+					for (Map.Entry< String,String> me:st)
+					{
+						//me.getKey();
+						//System.out.println(me.getKey()+"\n");
+						
+						if((me.getKey().equals("Template") && templateStatus) || me.getKey().equals("Composition") || me.getKey().equals("Map_path") || me.getKey().equals("Graphics"))
+						{
+							//System.out.println(me.getKey() + " : " + me.getValue());
+							List<String> folderList = new ArrayList<>();
+							String folderThisLoop = me.getValue();
+							
+							if(!new File(folderThisLoop).exists())
+							{
+								DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
+								String dateString2 = dateFormat2.format(new Date()).toString();
+								System.out.println( me.getKey()+" deleted / renamed at "+dateString2 + ".\n\n");
+								consoleLog.log( me.getKey()+" folder deleted / renamed at "+dateString2 + ".\n\n");
+							}
+							
+							while(!new File(folderThisLoop).exists())
+		            		{
+								String folderName = (new File(folderThisLoop)).getName();
+		            			folderList.add(folderName);
+		            			//System.out.println("parent:"+folderName);
+		            			folderThisLoop = (new File(folderThisLoop).getParentFile()).getPath();
+		            			//folderList.add(folderName);
+		            		}
+		            		
+		            		for(int i=folderList.size()-1; i != -1; i--)
+		            		{
+		            			folderThisLoop = folderThisLoop+"/"+folderList.get(i);
+		            			File theDir1 = new File(folderThisLoop);
+		            			//System.out.println("f1:"+theDir.getPath());
+		            			while (!theDir1.exists()) 
+		            			{
+		                    		theDir1.mkdir();
+		            			}
+		                    }
+						}
+					}
+				}
+				
 				while(postValCounter.get() != 0)
 		        {
 					TimeUnit.SECONDS.sleep(1);

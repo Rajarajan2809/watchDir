@@ -244,7 +244,7 @@ public class watchDir implements Runnable
     	
 		for (;;) 
         {
-        	if(initFlag == false)
+			if(initFlag == false)
         	{
         		try 
         		{
@@ -264,24 +264,23 @@ public class watchDir implements Runnable
 				{
 					return 1;
 				}*/
-        		
-        		if(processedFiles == Integer.parseInt(noOfManuScripts))
-	            {
-					//if other docx files present
-	            	if(manuScripts.size() == Integer.parseInt(noOfManuScripts))
-	            	{
-	            		System.out.println("Job finished.\n");
-    					consoleLog.log("Job finished.\n");
-	            		//System.out.println("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
-	            		//consoleLog.log("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
-	            		return 2;
-	            	}
-	            }
+        	}	
+    		if(processedFiles == Integer.parseInt(noOfManuScripts))
+            {
+				//if other docx files present
+            	if(manuScripts.size() == Integer.parseInt(noOfManuScripts))
+            	{
+            		System.out.println("Job finished.\n");
+					consoleLog.log("Job finished.\n");
+            		//System.out.println("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
+            		//consoleLog.log("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
+            		return 2;
+            	}
+            }
         		
         		//this prints when job started watching folder
         		//System.out.println("Watch Folder initiated......\n");
 				//consoleLog.log("Watch Folder initiated......\n");
-        	}
         	//pre change check
         	if(processedFiles == Integer.parseInt(noOfManuScripts))
             {
@@ -546,35 +545,16 @@ public class watchDir implements Runnable
 		//boolean procStatus = false;
     	try 
     	{
-//    		if(pathString.indexOf("ERROR") != -1)
-//    		{
-//    			//TimeUnit.SECONDS.sleep(2);
-//    			System.out.println("pathString:"+pathString);
-//    			//postValidation(pathString);
-//    		}
-//    		else
-//    		{
     			int processStatus;
-    			//watch thread job
-	    	    //this.jobId = jobId;
-	            //this.noOfManuScripts = noOfManuScripts;
-	            //this.counter = counter;
-	           // Path listPath;
-    			//int processStatus;
-    			
     			File theDir = new File(pathString+"ERROR/");
-    			
     			System.out.println("ERROR folder : "+theDir.toString());
-    			
 	        	while (!theDir.exists()) 
 				{
 	        		theDir.mkdir();
 				}
-				
         		postValidation postVal = new postValidation(jobParam,counter);
 				Thread postValThread = new Thread(postVal, "Watch Thread for \"ERROR\" folder.");
 				postValThread.start();
-    			
     			job_continue:
     				//infinite loop to connect to disk
     			while(true)
@@ -589,6 +569,7 @@ public class watchDir implements Runnable
 	    					//TimeUnit.SECONDS.sleep(5);
 	    		            //synchronized(this) 
 	    		            //{
+	    					
 	    					System.out.println("Waiting to connect.....\n");
 	    					consoleLog.log("Waiting to connect.....\n");
 							while(suspended) 
@@ -600,56 +581,81 @@ public class watchDir implements Runnable
 								}
 								TimeUnit.SECONDS.sleep(1);
 							}
-							System.out.println("pathString status:"+!new File(pathString).exists());
-							while(!new File(pathString).exists())
+							
+							if(!new File(pathString).exists())
+							{
+								DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
+								String dateString2 = dateFormat2.format(new Date()).toString();
+								System.out.println("Maestro ready folder deleted / renamed at "+dateString2 + ".\n\n");
+								consoleLog.log("Maestro ready folder deleted / renamed at "+dateString2 + ".\n\n");
+							}
+							
+							//System.out.println("pathString status:"+!new File(pathString).exists());
+							List<String> folderCreate = new ArrayList<>();
+							
+							folderCreate.add(pathString);
+							folderCreate.add(pathString+"ERROR/");
+							folderCreate.add(pathString+"Equations/");
+							folderCreate.add(pathString+"INVALID_FILES/");
+							
+							//while(!new File(pathString).exists() || !new File(pathString+"ERROR/").exists() || !new File(pathString+"Equations/").exists())
+							for(int j=folderCreate.size()-1; j != -1; j--)
 							{
 								//System.out.println("Waiting to connect.....");
 								TimeUnit.SECONDS.sleep(5);
+								
+								List<String> folderList = new ArrayList<>();
+								String folderThisLoop = folderCreate.get(j);
+								//Equations
+								while(!new File(folderThisLoop).exists())
+			            		{
+			            			String folderName = (new File(folderThisLoop)).getName();
+			            			folderList.add(folderName);
+			            			//System.out.println("parent:"+folderName);
+			            			folderThisLoop = (new File(folderThisLoop).getParentFile()).getPath();
+			            			//folderList.add(folderName);
+			            		}
+			            		
+			            		for(int i=folderList.size()-1; i != -1; i--)
+			            		{
+			            			folderThisLoop = folderThisLoop+"/"+folderList.get(i);
+			            			File theDir1 = new File(folderThisLoop);
+			            			//System.out.println("f1:"+theDir.getPath());
+			            			while (!theDir1.exists()) 
+			            			{
+			                    		theDir1.mkdir();
+			            			}
+			                    }
+								/*theDir = new File(pathString+"Equations/");
+				    			//System.out.println("ERROR folder : "+theDir.toString());
+					        	while (!theDir.exists()) 
+								{
+					        		theDir.mkdir();
+								}
+					        	
+					        	//error folder
+					        	theDir = new File(pathString+"ERROR/");
+				    			//System.out.println("ERROR folder : "+theDir.toString());
+					        	while (!theDir.exists()) 
+								{
+					        		theDir.mkdir();
+								}
+					        	
+					        	//invalid files
+					        	theDir = new File(pathString+"INVALID_FILES/");
+				    			//System.out.println("ERROR folder : "+theDir.toString());
+					        	while (!theDir.exists()) 
+								{
+					        		theDir.mkdir();
+								}*/
 							}
 							register(Paths.get(pathString));
 							System.out.println("Register:"+pathString);
 							continue job_continue;
-	    		            //}
-			    			//System.out.println("Process status:"+processStatus);
-			    			//consoleLog.log("Process status:"+processStatus);
-			    			/*String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
-			    			String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-			    			String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-			    			
-			    			//String osResp4 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-			    			//String osResp = utilities.serverMount();
-			    			System.out.println("(job restart validation)osResp1:" + osResp1);
-			    			consoleLog.log("(job restart validation)Mount response1:" + osResp1);
-			    			
-			    			System.out.println("(job restart validation)osResp2:" + osResp2);
-			    			consoleLog.log("(job restart validation)Mount response2:" + osResp2);
-			    			
-			    			System.out.println("(job restart validation)osResp3:" + osResp3);
-			    			consoleLog.log("(job restart validation)Mount response3:" + osResp3);
-			    			
-			    			if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
-			    			{*/
-//								register(Paths.get(pathString));
-//								System.out.println("Register:"+pathString);
-//								continue job_continue;
-							/*}
-							else
-							{
-								// mail to netops
-								consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
-								// smaple : sendMail("Net-ops","rajarajan@codemantra.in", "", "MOUNT", "", "");
-								//mail m = new mail("Net-ops", "ERROR", "MOUNT", "", "");
-								// m.mailProcess("Net-ops", "ERROR", "MOUNT", "", "");
-								//Thread mailThread = new Thread(m, "Mail Thread for Template path mount");
-								//mailThread.start();
-							}*/
-	    				}
+	    		        }
 	    				//successful job finish
 	    				else
 	    					break;
-    				
-    				
-    				
     			}
         		
     			JSONObject obj=new JSONObject();
@@ -844,16 +850,16 @@ public class watchDir implements Runnable
 			    
 			    if(eqnStatus.equals("true"))
 			    {
-			    	if(new File(pathString+"EQUATIONS/"+chName).isDirectory())
+			    	if(new File(pathString+"Equations/"+chName).isDirectory())
 			    	{
-			    		consoleLog.log("This chapter has \"Equations\" and equations are present in "+pathString+"/EQUATIONS/"+chName+"\n");
-			    		System.out.println("This chapter has \"Equations\" and equations are present in "+pathString+"/EQUATIONS/"+chName+"\n");
+			    		consoleLog.log("This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
+			    		System.out.println("This chapter has \"Equations\" and equations are present in "+pathString+"/Equations/"+chName+"\n");
 			    		eqnFolderStatus = true;
 			    	}
 			    	else
 			    	{
-			    		consoleLog.log("This chapter has \"Equations\" but equations are not present in "+pathString+"/EQUATIONS/"+chName+"\n");
-			    		System.out.println("This chapter has \"Equations\" and equations are not present in "+pathString+"/EQUATIONS/"+chName+"\n");
+			    		consoleLog.log("This chapter has \"Equations\" but equations are not present in "+pathString+"/Equations/"+chName+"\n");
+			    		System.out.println("This chapter has \"Equations\" and equations are not present in "+pathString+"/Equations/"+chName+"\n");
 			    		eqnFolderStatus = false;
 			    		
 			    		//Equatons missing
@@ -864,8 +870,8 @@ public class watchDir implements Runnable
 			    }
 			    else if(eqnStatus.equals("false"))
 			    {
-			    	consoleLog.log("This chapter does not have \"EQUATIONS\"\n");
-		    		System.out.println("This chapter does not have \"EQUATIONS\"\n");
+			    	consoleLog.log("This chapter does not have \"Equations\"\n");
+		    		System.out.println("This chapter does not have \"Equations\"\n");
 		    		eqnFolderStatus = true;
 			    }
     		}

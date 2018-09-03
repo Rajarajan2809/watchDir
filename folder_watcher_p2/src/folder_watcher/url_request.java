@@ -12,9 +12,9 @@ public class url_request
 {
 	//private String urlQuery,type,content;
 
-	static String serverIp = "172.16.4.112:8088";//testing server
+	//static String serverIp = "172.16.4.112:8088";//testing server
 	//static String serverIp = "172.16.1.25:8080";//production server
-	//static String serverIp = "172.16.1.55";//testing server2
+	static String serverIp = "172.16.1.55";//testing server2
 	
 	url_request()
     {
@@ -132,66 +132,69 @@ public class url_request
 		catch (Exception e) 
 		{
 			//e.printStackTrace();
-			switch(e.toString().substring(0,e.toString().indexOf(":")))
+			if(e.toString().indexOf(":") != -1)
 			{
-				case "java.nio.file.NoSuchFileException":
+				switch(e.toString().substring(0,e.toString().indexOf(":")))
 				{
-					//System.out.println("(Polling Process) Directory does not exists");
-					//consoleLog.log("(Polling Process) Exception:Directory to scan does not exists in SMB Server.");
-				}
-				break;
-				
-				case "java.net.SocketException":
-				{
-					//System.out.println("(Polling Process) connection refuse error");
-					//consoleLog.log("(Polling Process) Exception:Could not able to connect to API Server.");
-				}
-				break;
-				
-				case "java.net.ConnectException":
-				{
-					//consoleLog.log("(Polling Process url) connection refuse error");
-					//System.out.println("(Polling Process url) Exception:Could not able to connect to API Server.");
+					case "java.nio.file.NoSuchFileException":
+					{
+						//System.out.println("(Polling Process) Directory does not exists");
+						//consoleLog.log("(Polling Process) Exception:Directory to scan does not exists in SMB Server.");
+					}
+					break;
 					
-					//if(mailTriggNet)
-					//{
-						//utilities U = new utilities();
-//						String mailIdJson = utilities.fileRead("maestroqs_support.json");
-//						JSONParser parser = new JSONParser();
-//						Object preEditObj = parser.parse(mailIdJson);
-//				        JSONObject jo = (JSONObject) preEditObj;
-//		    		    String mailIds = (String) jo.get("mail_id");
-//		    		    
-//		    		    mail mailObj = new mail();
-//		    		    ArrayList<String> mail_id = mail.mailIdParse(mailIds);
-//						for(int i=0; i < mail_id.size();i++)
-//						{
-//							mailObj.sendMail("Net-ops",mail_id.get(i),"ERROR","DB","","");
-//						}
-						//mailTriggNet = false;
-					//}
-					//mailObj.mailProcess("Net-ops","ERROR","DB","");
-				}
-				break;
-				
-				case "java.lang.IndexOutOfBoundsException":
-				{
-					//System.out.println("(Polling Process) Error in sending mail.");
-					//consoleLog.log("(Polling Process) Error in sending mail.");
-				}
-				break;
-				
-				case "java.lang.NullException":
-				{
-					//System.out.println("(Polling Process) Exception: sending mail.");
-					//consoleLog.log("(Polling Process) Exception: sending mail.");
-				}
-				break;
-				
-				case "org.json.simple.parser.ParseException":
-				{
-					//System.out.println("(Polling Process) Exception: Invaid JSON in mail configuration.");
-					//consoleLog.log("(Polling Process) Exception: Invaid JSON in mail configuration.");
+					case "java.net.SocketException":
+					{
+						//System.out.println("(Polling Process) connection refuse error");
+						//consoleLog.log("(Polling Process) Exception:Could not able to connect to API Server.");
+					}
+					break;
+					
+					case "java.net.ConnectException":
+					{
+						//consoleLog.log("(Polling Process url) connection refuse error");
+						//System.out.println("(Polling Process url) Exception:Could not able to connect to API Server.");
+						
+						//if(mailTriggNet)
+						//{
+							//utilities U = new utilities();
+	//						String mailIdJson = utilities.fileRead("maestroqs_support.json");
+	//						JSONParser parser = new JSONParser();
+	//						Object preEditObj = parser.parse(mailIdJson);
+	//				        JSONObject jo = (JSONObject) preEditObj;
+	//		    		    String mailIds = (String) jo.get("mail_id");
+	//		    		    
+	//		    		    mail mailObj = new mail();
+	//		    		    ArrayList<String> mail_id = mail.mailIdParse(mailIds);
+	//						for(int i=0; i < mail_id.size();i++)
+	//						{
+	//							mailObj.sendMail("Net-ops",mail_id.get(i),"ERROR","DB","","");
+	//						}
+							//mailTriggNet = false;
+						//}
+						//mailObj.mailProcess("Net-ops","ERROR","DB","");
+					}
+					break;
+					
+					case "java.lang.IndexOutOfBoundsException":
+					{
+						//System.out.println("(Polling Process) Error in sending mail.");
+						//consoleLog.log("(Polling Process) Error in sending mail.");
+					}
+					break;
+					
+					case "java.lang.NullException":
+					{
+						//System.out.println("(Polling Process) Exception: sending mail.");
+						//consoleLog.log("(Polling Process) Exception: sending mail.");
+					}
+					break;
+					
+					case "org.json.simple.parser.ParseException":
+					{
+						//System.out.println("(Polling Process) Exception: Invaid JSON in mail configuration.");
+						//consoleLog.log("(Polling Process) Exception: Invaid JSON in mail configuration.");
+					}
 				}
 			}
 		}

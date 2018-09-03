@@ -89,14 +89,14 @@ public class mail implements Runnable
 		{
 			System.out.println("(Thread Process) group:"+group);
 			//System.out.println("(Thread Process) mail_id:"+mail_id);
-			System.out.println("(Thread Process) chName:"+subject);
+			System.out.println("(Thread Process) subject:"+subject);
 			System.out.println("(Thread Process) status:"+status);
 			System.out.println("(Thread Process) attachment:"+attachment+"\n");
 			System.out.println("(Thread Process) errParam:"+errParam+"\n");
 			
 			consoleLog.log("(Thread Process) group:"+group);
 			//System.out.println("(Thread Process) mail_id:"+mail_id);
-			consoleLog.log("(Thread Process) chName:"+subject);
+			consoleLog.log("(Thread Process) subject:"+subject);
 			consoleLog.log("(Thread Process) status:"+status);
 			consoleLog.log("(Thread Process) attachment:"+attachment+"\n");
 			consoleLog.log("(Thread Process) errParam:"+errParam+"\n");
@@ -149,7 +149,7 @@ public class mail implements Runnable
 				}	
 			}
 			
-			if(subject.equals("DB") || ((mailGrpResponse != null) && (mailGrpResponse.isEmpty()) && (mailGrpResponse.equals(""))))
+			if(subject.equals("DB") || ((mailGrpResponse.equals(""))))
 			{
 				//API server error
 				//sendMail("Net-ops","ERROR","DB","","");
@@ -516,66 +516,69 @@ public class mail implements Runnable
 		catch (Exception e) 
 		{
 			//e.printStackTrace();
-			switch(e.toString().substring(0,e.toString().indexOf(":")))
+			if(e.toString().indexOf(":")!= -1)
 			{
-				case "java.nio.file.NoSuchFileException":
+				switch(e.toString().substring(0,e.toString().indexOf(":")))
 				{
-					System.out.println("(Thread Process) Directory does not exists");
-					consoleLog.log("(Thread Process) Exception:Directory to scan does not exists in SMB Server.");
-				}
-				break;
-				
-				case "java.net.SocketException":
-				{
-					System.out.println("(Thread Process) connection refuse error");
-					consoleLog.log("(Thread Process) Exception:Could not able to connect to API Server.");
-				}
-				break;
-				
-				case "java.net.ConnectException":
-				{
-					consoleLog.log("(Thread Process) connection refuse error");
-					System.out.println("(Thread Process) Exception:Could not able to connect to API Server.");
-					
-					//if(mailTriggNet)
+					case "java.nio.file.NoSuchFileException":
 					{
-						//utilities U = new utilities();
-//						String mailIdJson = utilities.fileRead("maestroqs_support.json");
-//						JSONParser parser = new JSONParser();
-//						Object preEditObj = parser.parse(mailIdJson);
-//				        JSONObject jo = (JSONObject) preEditObj;
-//		    		    String mailIds = (String) jo.get("mail_id");
-//		    		    
-//		    		    mail mailObj = new mail();
-//		    		    ArrayList<String> mail_id = mail.mailIdParse(mailIds);
-//						for(int i=0; i < mail_id.size();i++)
-//						{
-//							mailObj.sendMail("Net-ops",mail_id.get(i),"ERROR","DB","","");
-//						}
-						//mailTriggNet = false;
+						System.out.println("(Thread Process) Directory does not exists");
+						consoleLog.log("(Thread Process) Exception:Directory to scan does not exists in SMB Server.");
 					}
-					//mailObj.mailProcess("Net-ops","ERROR","DB","");
-				}
-				break;
-				
-				case "java.lang.IndexOutOfBoundsException":
-				{
-					System.out.println("(Thread Process) Error in sending mail.");
-					consoleLog.log("(Thread Process) Error in sending mail.");
-				}
-				break;
-				
-				case "java.lang.NullException":
-				{
-					System.out.println("(Thread Process) Exception: sending mail.");
-					consoleLog.log("(Thread Process) Exception: sending mail.");
-				}
-				break;
-				
-				case "org.json.simple.parser.ParseException":
-				{
-					System.out.println("(Thread Process) Exception: Invaid JSON in mail configuration.");
-					consoleLog.log("(Thread Process) Exception: Invaid JSON in mail configuration.");
+					break;
+					
+					case "java.net.SocketException":
+					{
+						System.out.println("(Thread Process) connection refuse error");
+						consoleLog.log("(Thread Process) Exception:Could not able to connect to API Server.");
+					}
+					break;
+					
+					case "java.net.ConnectException":
+					{
+						consoleLog.log("(Thread Process) connection refuse error");
+						System.out.println("(Thread Process) Exception:Could not able to connect to API Server.");
+						
+						//if(mailTriggNet)
+						{
+							//utilities U = new utilities();
+	//						String mailIdJson = utilities.fileRead("maestroqs_support.json");
+	//						JSONParser parser = new JSONParser();
+	//						Object preEditObj = parser.parse(mailIdJson);
+	//				        JSONObject jo = (JSONObject) preEditObj;
+	//		    		    String mailIds = (String) jo.get("mail_id");
+	//		    		    
+	//		    		    mail mailObj = new mail();
+	//		    		    ArrayList<String> mail_id = mail.mailIdParse(mailIds);
+	//						for(int i=0; i < mail_id.size();i++)
+	//						{
+	//							mailObj.sendMail("Net-ops",mail_id.get(i),"ERROR","DB","","");
+	//						}
+							//mailTriggNet = false;
+						}
+						//mailObj.mailProcess("Net-ops","ERROR","DB","");
+					}
+					break;
+					
+					case "java.lang.IndexOutOfBoundsException":
+					{
+						System.out.println("(Thread Process) Error in sending mail.");
+						consoleLog.log("(Thread Process) Error in sending mail.");
+					}
+					break;
+					
+					case "java.lang.NullException":
+					{
+						System.out.println("(Thread Process) Exception: sending mail.");
+						consoleLog.log("(Thread Process) Exception: sending mail.");
+					}
+					break;
+					
+					case "org.json.simple.parser.ParseException":
+					{
+						System.out.println("(Thread Process) Exception: Invaid JSON in mail configuration.");
+						consoleLog.log("(Thread Process) Exception: Invaid JSON in mail configuration.");
+					}
 				}
 			}
 		}
