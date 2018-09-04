@@ -128,6 +128,7 @@ public class watchDir implements Runnable
         templatePath = jobParam.get("Template");
         styleSheetPath = jobParam.get("Standard_stylesheet");
         importMapPath = jobParam.get("Map_path");
+        templateName = jobParam.get("templateName");
         this.counter = counter;
         Path listPath;
         manuScripts = new ArrayList<String>();
@@ -146,89 +147,94 @@ public class watchDir implements Runnable
 		if(folder.exists())
 		{
 			for (int i = 0; i < listOfFiles.length; i++) 
-			{			
-				if (listOfFiles[i].isFile()) 
+			{
+				if(processedFiles < Integer.parseInt(noOfManuScripts))
 				{
-					System.out.println("Extension:"+utilities.getFileExtension(listOfFiles[i]));
-					System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
-					
-					String REGEX = jobId+"_CH\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_PT\\d\\d";
-					
-					//regex matching
-					Pattern p = Pattern.compile(REGEX);
-					Matcher m = p.matcher(utilities.getFileNameWithoutExtension(listOfFiles[i]));   // get a matcher object
-	    				
-					if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".docx") > 0))
+					if (listOfFiles[i].isFile()) 
 					{
-						//System.out.println("File " + listOfFiles[i].getName());
+						System.out.println("Extension:"+utilities.getFileExtension(listOfFiles[i]));
+						System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
 						
-						if(!manuScripts.contains(listOfFiles[i].getName()))
+						String REGEX = jobId+"_CH\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_PT\\d\\d";
+						
+						//regex matching
+						Pattern p = Pattern.compile(REGEX);
+						Matcher m = p.matcher(utilities.getFileNameWithoutExtension(listOfFiles[i]));   // get a matcher object
+		    				
+						if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".docx") > 0))
 						{
-							try 
-			        		{
-								while(!isCompletelyWritten(listOfFiles[i]))
-								{}
-							}
-			        		catch (InterruptedException e) 
-			        		{}
+							//System.out.println("File " + listOfFiles[i].getName());
 							
-							functionalityCheck(listOfFiles[i].getName());
+							if(!manuScripts.contains(listOfFiles[i].getName()))
+							{
+								try 
+				        		{
+									while(!isCompletelyWritten(listOfFiles[i]))
+									{}
+								}
+				        		catch (InterruptedException e) 
+				        		{}
+								
+								functionalityCheck(listOfFiles[i].getName());
+							}
 						}
-					}
-					else if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".xlsx") > 0))
-					{
-						System.out.println("xlsx file created at "+listOfFiles[i].getName());
-	    				consoleLog.log("xlsx file created at "+listOfFiles[i].getName()+"\n");
-	    				
-	    				if(!utilities.fileCheck(pathString +listOfFiles[i].getName()))
-	    				{
-	    					System.out.println("Manuscript not found, hence moved to \"ERROR\" folder");
-	        				consoleLog.log("Manuscript not found, hence moved to \"ERROR\" folder");
-	        				
-	        				utilities.fileMove(pathString+listOfFiles[i].getName(),pathString+"ERROR/"+listOfFiles[i].getName());
-	    				}
-					}
-					else if(!listOfFiles[i].getName().equals(".DS_Store"))
-					{
-						//invalid other format files
-			        	File theDir = new File(pathString+"INVALID_FILES/");
-			        	if (!theDir.exists()) 
+						else if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".xlsx") > 0))
 						{
-			        		theDir.mkdir();
+							System.out.println("xlsx file created at "+listOfFiles[i].getName());
+		    				consoleLog.log("xlsx file created at "+listOfFiles[i].getName()+"\n");
+		    				
+		    				if(!utilities.fileCheck(pathString +listOfFiles[i].getName()))
+		    				{
+		    					System.out.println("Manuscript not found, hence moved to \"ERROR\" folder");
+		        				consoleLog.log("Manuscript not found, hence moved to \"ERROR\" folder");
+		        				
+		        				utilities.fileMove(pathString+listOfFiles[i].getName(),pathString+"ERROR/"+listOfFiles[i].getName());
+		    				}
 						}
-			        	utilities.fileMove(pathString+listOfFiles[i].getName(),pathString+"INVALID_FILES/"+listOfFiles[i].getName());
-						
-			        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
-						Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
-			        	mailThread6.start();
+						else if(!listOfFiles[i].getName().equals(".DS_Store"))
+						{
+							//invalid other format files
+				        	File theDir = new File(pathString+"INVALID_FILES/");
+				        	if (!theDir.exists()) 
+							{
+				        		theDir.mkdir();
+							}
+				        	utilities.fileMove(pathString+listOfFiles[i].getName(),pathString+"INVALID_FILES/"+listOfFiles[i].getName());
+							
+				        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
+							Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
+				        	mailThread6.start();
+				        	
+							//xlsx and docx files does not match regex
+							System.out.println("Waiting for more files1...");
+							consoleLog.log("Waiting for more files1...");
+						}
+					}
+					else if (listOfFiles[i].isDirectory()) 
+					{
+						//Move manuscripts to error folder
+						if(!(listOfFiles[i].getName().compareToIgnoreCase("ERROR") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("INVALID_FILES") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("Equations") == 0))
+			        	{
+							File theDir = new File(pathString+"INVALID_FILES/");
 			        	
+				        	if (!theDir.exists()) 
+							{
+				        		theDir.mkdir();
+							}
+				        	utilities.recurMove(new File(pathString+listOfFiles[i].getName()), new File (pathString+"INVALID_FILES/"+listOfFiles[i].getName()));
+							
+				        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
+							Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
+				        	mailThread6.start();
+				        	
+				        	System.out.println("Waiting for more files2...");
+							consoleLog.log("Waiting for more files2...");
+			        	}
 						//xlsx and docx files does not match regex
-						System.out.println("Waiting for more files1...");
-						consoleLog.log("Waiting for more files1...");
 					}
 				}
-				else if (listOfFiles[i].isDirectory()) 
-				{
-					//Move manuscripts to error folder
-					if(!(listOfFiles[i].getName().compareToIgnoreCase("ERROR") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("INVALID_FILES") == 0) && !(listOfFiles[i].getName().compareToIgnoreCase("Equations") == 0))
-		        	{
-						File theDir = new File(pathString+"INVALID_FILES/");
-		        	
-			        	if (!theDir.exists()) 
-						{
-			        		theDir.mkdir();
-						}
-			        	utilities.recurMove(new File(pathString+listOfFiles[i].getName()), new File (pathString+"INVALID_FILES/"+listOfFiles[i].getName()));
-						
-			        	mailObj = new mail("Pre-editing", "INVALID", jobId, "", listOfFiles[i].getName());
-						Thread mailThread6 = new Thread(mailObj, "Mail Thread for Pre editing Team");
-			        	mailThread6.start();
-			        	
-			        	System.out.println("Waiting for more files2...");
-						consoleLog.log("Waiting for more files2...");
-		        	}
-					//xlsx and docx files does not match regex
-				}
+				else
+					return;
 			}
 		}
     }
@@ -270,24 +276,25 @@ public class watchDir implements Runnable
 				//if other docx files present
             	if(manuScripts.size() == Integer.parseInt(noOfManuScripts))
             	{
-            		System.out.println("Job finished.\n");
-					consoleLog.log("Job finished.\n");
+            		
             		//System.out.println("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
             		//consoleLog.log("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
-            		return 2;
             	}
+            	System.out.println("Job finished.\n");
+				consoleLog.log("Job finished.\n");
+        		return 2;
             }
         		
-        		//this prints when job started watching folder
-        		//System.out.println("Watch Folder initiated......\n");
-				//consoleLog.log("Watch Folder initiated......\n");
+    		//this prints when job started watching folder
+    		//System.out.println("Watch Folder initiated......\n");
+			//consoleLog.log("Watch Folder initiated......\n");
         	//pre change check
-        	if(processedFiles == Integer.parseInt(noOfManuScripts))
+        	/*if(processedFiles == Integer.parseInt(noOfManuScripts))
             {
         		return 3;
         		//if(getExtension(pathString,".docx").length == Integer.parseInt(noOfManuScripts))
         			//break;
-            }
+            }*/
             // wait for key to be signaled
             WatchKey key;
             try 
@@ -412,12 +419,13 @@ public class watchDir implements Runnable
 		            					//if other docx files present
 		            	            	if(manuScripts.size() == Integer.parseInt(noOfManuScripts))
 		            	            	{
-		            	            		System.out.println("Job finished.\n");
-			            					consoleLog.log("Job finished.\n");
-		            	            		//System.out.println("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
-		            	            		//consoleLog.log("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
-		            	            		return 6;
+		            	            		
 		            	            	}
+		            	            	System.out.println("Job finished.\n");
+		            					consoleLog.log("Job finished.\n");
+	            	            		//System.out.println("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
+	            	            		//consoleLog.log("Job terminated due to TemplatePath or mapPath or styleSheetPath location missing or incorrect.");
+	            	            		return 6;
 		            	            }
 		            			}
 	            				else if(m.matches() && utilities.getFileExtension(createdFile).equals("xlsx"))
@@ -667,7 +675,7 @@ public class watchDir implements Runnable
 	         	DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
 	        	String dateString2 = dateFormat2.format(new Date()).toString();
 	         	
-	         	if((processStatus == 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)))
+	         	if((processStatus != 7) && (manuScripts.size() == Integer.parseInt(noOfManuScripts)) && (processedFiles == Integer.parseInt(noOfManuScripts)))
 	    		{
 	         		obj.put("status","COMPLETED");
 	    			//JOB successfully finished
@@ -902,8 +910,9 @@ public class watchDir implements Runnable
         	}
         	else
         	{
-        		String mnsSuffix = chName.substring(chName.lastIndexOf('_'),3);
+        		String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
         		String tempFile = jobParam.get("Template") + jobParam.get("templateName")+mnsSuffix+".idml";
+        		System.out.println("tempFile:"+tempFile);
         		if(new File(tempFile).exists())
         			tempFileStatus = true;
         	}
