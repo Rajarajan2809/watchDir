@@ -3,7 +3,7 @@ package folder_watcher;
 import java.io.File;
 //import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
+//import java.net.InetAddress;
 //import java.net.ConnectException;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
@@ -47,11 +47,13 @@ public class mail implements Runnable
 		this.errParam = errParam;
 	}
 	
-	public static String sendPingRequest(String ipAddress) throws UnknownHostException, IOException
+	public static String sendPingRequest(String ipAddress) throws UnknownHostException, IOException, InterruptedException
 	{
-		InetAddress geek = InetAddress.getByName(ipAddress);
+		Process p1 = java.lang.Runtime.getRuntime().exec("ping -c5 -t5 "+ipAddress);
+        int returnVal = p1.waitFor();
+        boolean reachable = (returnVal==0);
 		//System.out.println("Sending Ping Request to " + ipAddress);
-		if (geek.isReachable(5000))
+		if (reachable)
 			return "online";
 		else
 			return "offline";
@@ -107,7 +109,7 @@ public class mail implements Runnable
 			Properties props = new Properties();
 			props.put("mail.smtp.auth", "true");
 			//props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.host", "172.16.1.5");
+			props.put("mail.smtp.host", "mail.codemantra.in");
 			//props.put("mail.smtp.port", 587);
 	
 			Session session = Session.getInstance(props,
@@ -193,7 +195,7 @@ public class mail implements Runnable
 			{
 				if(status.equals("JOB_SUCCESS"))
 					message.setSubject(subject+" - SUCCESS");
-				else if(status.equals("JOB_FAIL") || status.equals("API") || status.equals("STYLESHEET") || status.equals("DIRECTORY"))
+				else if(status.equals("JOB_FAIL") || status.equals("API") || status.equals("STYLESHEET") || status.equals("DIRECTORY") || status.equals("TEMPLATE ERROR"))
 					message.setSubject(subject+" - ERROR");
 				else
 					message.setSubject(subject+" - "+status);
@@ -225,10 +227,19 @@ public class mail implements Runnable
 	        				mailMessage = "Dear All,\n\n"+
 									subject+"\n" +
 								"--------------------------------------------\n\n" +
-				 				"The Used stylesheet file for this manuscript is Invalid.\n\n" +
+								errParam + "\n\n" +
 				 				"\nThanks & Regards,\n" +
 				 				"Maestro Queuing System";
 	        			}
+	        		}
+	        		else if(status.equals("TEMPLATE ERROR"))
+	        		{
+	        			mailMessage = "Dear All,\n\n"+
+								subject+"\n" +
+							"--------------------------------------------\n\n" +
+							errParam + "\n\n" +
+			 				"\nThanks & Regards,\n" +
+			 				"Maestro Queuing System";
 	        		}
 	        		else if(status.equals("SUCCESS"))
 	        		{

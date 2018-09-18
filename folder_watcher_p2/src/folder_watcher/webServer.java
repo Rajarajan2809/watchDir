@@ -109,13 +109,13 @@ class MyHandler implements HttpHandler
 			//System.out.println(iterator.next());
 			jobs.add(iterator.next());
 		}*/
-		obj.put("status", "Server is online");
 		obj.put("jobs", jobs);
+		obj.put("status", "Server is online");
 		
 		//System.out.print(obj.toJSONString());
 		String jobData = obj.toJSONString();
 		
-		System.out.println("jobData : "+jobData);
+		//System.out.println("jobData : "+jobData);
 		
 		if(jobData.equals(""))
 			jobData = "No jobs found";

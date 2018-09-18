@@ -8,3 +8,13 @@ v2.1 released
 
 * validation parametrs aded,
 * template file checking
+
+//06-Sep-18
+* File movement after Post validation and client side word export map validation,
+* File suffixes updated for regex in watch folder and Error folder,
+
+//14-Sep-18
+* New file suffixes included for manuscript name validation in maestroready depending on InDesign template suffixes. 
+
+//18-Sep-18
+* mail server updated.

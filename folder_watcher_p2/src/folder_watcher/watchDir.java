@@ -83,7 +83,12 @@ public class watchDir implements Runnable
     private boolean trace = false;
     private final AtomicInteger counter;
     private int processedFiles = 0;
-    private String pathString, noOfManuScripts, jobId, clientId, templatePath, styleSheetPath, importMapPath, templateName;
+    private String pathString, noOfManuScripts, jobId;
+	private final String clientId;
+	private String templatePath;
+	private String styleSheetPath;
+	private String importMapPath;
+	private String templateName;
     private ArrayList<String> manuScripts;
     mail mailObj;
     job j1;
@@ -155,13 +160,13 @@ public class watchDir implements Runnable
 						System.out.println("Extension:"+utilities.getFileExtension(listOfFiles[i]));
 						System.out.println("File/Folder Status:"+listOfFiles[i].isFile());
 						
-						String REGEX = jobId+"_CH\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_PT\\d\\d";
+						//String REGEX = jobId+"_PT\\d\\d|"+jobId+"_ST\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_CH\\d\\d|"+jobId+"_INTRO|"+jobId+"_CON|"+jobId+"_APP\\d\\d|";
 						
 						//regex matching
-						Pattern p = Pattern.compile(REGEX);
-						Matcher m = p.matcher(utilities.getFileNameWithoutExtension(listOfFiles[i]));   // get a matcher object
+						//Pattern p = Pattern.compile(REGEX);
+						//Matcher m = p.matcher(utilities.getFileNameWithoutExtension(listOfFiles[i]));   // get a matcher object
 		    				
-						if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".docx") > 0))
+						if(fileNameRegex(jobId,listOfFiles[i]) && (listOfFiles[i].getName().lastIndexOf(".docx") > 0))
 						{
 							//System.out.println("File " + listOfFiles[i].getName());
 							
@@ -178,7 +183,7 @@ public class watchDir implements Runnable
 								functionalityCheck(listOfFiles[i].getName());
 							}
 						}
-						else if(m.matches() && (listOfFiles[i].getName().lastIndexOf(".xlsx") > 0))
+						else if(fileNameRegex(jobId,listOfFiles[i]) && (listOfFiles[i].getName().lastIndexOf(".xlsx") > 0))
 						{
 							System.out.println("xlsx file created at "+listOfFiles[i].getName());
 		    				consoleLog.log("xlsx file created at "+listOfFiles[i].getName()+"\n");
@@ -369,14 +374,14 @@ public class watchDir implements Runnable
             				String fileNameWoExtn = utilities.getFileNameWithoutExtension(createdFile);
                 			//System.out.println(child.getFileName().toString()+" is a file.");
                 			//System.out.println("Extension: "+extension);
-            				String REGEX = jobId+"_CH\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_PT\\d\\d";
+            				//String REGEX = jobId+"_PT\\d\\d|"+jobId+"_ST\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_CH\\d\\d|"+jobId+"_INTRO|"+jobId+"_CON|"+jobId+"_APP\\d\\d|";
             				
             				//regex matching
-            				Pattern p = Pattern.compile(REGEX);
-            				Matcher m = p.matcher(fileNameWoExtn);   // get a matcher object
+            				//Pattern p = Pattern.compile(REGEX);
+            				//Matcher m = p.matcher(fileNameWoExtn);   // get a matcher object
             				
-            				System.out.println("Manuscript name match:"+m.matches());
-            				consoleLog.log("Manuscript name match:"+m.matches()+"\n");
+            				System.out.println("Manuscript name match:"+fileNameRegex(jobId,createdFile)+" for "+createdFile.toString());
+            				consoleLog.log("Manuscript name match:"+fileNameRegex(jobId,createdFile)+"\n");
             				
             				try 
 			        		{
@@ -389,12 +394,12 @@ public class watchDir implements Runnable
 								//e.printStackTrace();
 							}
             				
-	            			if(m.matches() && (utilities.getFileExtension(createdFile).equals("docx") || utilities.getFileExtension(createdFile).equals("xlsx")))
+	            			if(fileNameRegex(jobId,createdFile) && (utilities.getFileExtension(createdFile).equals("docx") || utilities.getFileExtension(createdFile).equals("xlsx")))
 	                    	{
 	            				System.out.println("chap_name:"+fileNameWoExtn);
 	            				consoleLog.log("chap_name:"+fileNameWoExtn);
 	            				
-	            				if(m.matches() && utilities.getFileExtension(createdFile).equals("docx"))
+	            				if(fileNameRegex(jobId,createdFile) && utilities.getFileExtension(createdFile).equals("docx"))
 	            				{
 		            				//System.out.print("Docx file created at ");
 		            				//System.out.format("%s\n", child);
@@ -428,7 +433,7 @@ public class watchDir implements Runnable
 	            	            		return 6;
 		            	            }
 		            			}
-	            				else if(m.matches() && utilities.getFileExtension(createdFile).equals("xlsx"))
+	            				else if(fileNameRegex(jobId,createdFile) && utilities.getFileExtension(createdFile).equals("xlsx"))
 	            				{
 	            					System.out.print("xlsx file created at ");
 		            				System.out.format("%s\n", child);
@@ -888,33 +893,135 @@ public class watchDir implements Runnable
         //check template exists for the manuscripts
         if(styleSheetfileStatus && contentModellingStatus && eqnFolderStatus)
         {
+        	Pattern pattern = Pattern.compile("^"+jobId);
+    		Matcher matcher = pattern.matcher(chName);
+    		String suffix="";
+    		
+    		if(matcher.find())
+    		{
+    			//System.out.println("Found match at: "  + matcher.start() + " to " + matcher.end());
+    			suffix = chName.substring(matcher.end(),chName.length());
+        	
+    			if(clientId.equals("TF_HSS"))
+    			{	
+	    			switch(suffix)
+	    			{
+		    			case "_BM":
+						case "_BM_GLO":
+						case "_BM_ACK":
+						case "_BM_REF":
+						case "_BM_BIB":
+						case "_BM_IDX":
+						case "_BM_SIDX":
+						case "_BM_AIDX":
+						case "_BM_NOTE":
+						case "_BM_CI":
+						case "_BM_AFWD":
+						case "_BM_ATA":
+						case "_BM_NOC":
+						case "_BM_SAMPLE":
+						{
+	    					suffix = "_BM";
+	    				}
+	    				break;
+	    					
+						case "_FM":
+						case "_FM_LOC":
+						case "_FM_ATA":
+						case "_FM_NOC":
+						case "_FM_SERS":
+						case "_FM_DED":
+						case "_FM_ACK":
+						//case "_FM_REF":
+						case "_FM_INTRO":
+						case "_FM_LOF":
+						case "_FM_LOT":
+						case "_FM_CPY":
+						case "_FM_PREF":
+						case "_FM_FRWD":
+						case "_FM_TOC":
+						case "_FM_SAMPLE":
+	    					suffix = "_FM";
+	    				break;
+	    				
+						case "_INTRO":
+						case "_SAMPLE":
+						case "_CON":
+							suffix = "_CH";
+	    				break;
+							
+	    				default:
+	    				{
+	    					if(suffix.matches("^_CH\\d\\d"))
+	    						suffix = "_CH";
+	    					else if(suffix.matches("^_PT\\d\\d|^_ST\\d\\d"))
+	    						suffix = "_PT";
+	    					else if(suffix.matches("|^_APP\\d\\d"))
+	    						suffix = "_BM";
+	    					
+	    				}
+	    				break;
+	    			}
+    			}
+    		}
+        	
         	if(jobParam.get("templateName").equals(""))
         	{
-        		File tempDir = new File(jobParam.get("Template"));
-        		File[] listOfFiles = tempDir.listFiles();
-        		for(int i=0; i < listOfFiles.length; i++)
+        		if(new File(jobParam.get("Template")).exists())
         		{
-        			if(listOfFiles[i].isFile() && (FilenameUtils.getExtension(listOfFiles[i].toString()).equals("idml")))
-        			{
-        				String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
-        				String tempFile = FilenameUtils.getBaseName(listOfFiles[i].toString());
-        				String idmlSuffix = tempFile.substring(tempFile.lastIndexOf('_'),tempFile.lastIndexOf('_')+3);
-        				templateName = tempFile.substring(0,tempFile.lastIndexOf('_'));
-        				
-        				System.out.println("templateName:"+templateName);
-        				
-        				if(mnsSuffix.equals(idmlSuffix))
-	        				tempFileStatus = true;
-    				}
+	        		File tempDir = new File(jobParam.get("Template"));
+	        		File[] listOfFiles = tempDir.listFiles();
+	        		
+	        		System.out.println("templateName:"+templateName);
+	        		
+	        		for(int i=0; i < listOfFiles.length; i++)
+	        		{
+	        			if(listOfFiles[i].isFile() && (FilenameUtils.getExtension(listOfFiles[i].toString()).equals("idml")))
+	        			{
+	        				//String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
+	        				String tempFile = FilenameUtils.getBaseName(listOfFiles[i].toString());
+	        				String idmlSuffix = tempFile.substring(tempFile.lastIndexOf('_'),tempFile.lastIndexOf('_')+3);
+	        				templateName = tempFile.substring(0,tempFile.lastIndexOf('_'));
+	        				
+	        				if(suffix.equals(idmlSuffix))
+	        				{
+		        				tempFileStatus = true;
+		        				break;
+	        				}
+	    				}
+	        		}
+        		}
+        		else
+        		{
+        			System.out.println("Template path ("+jobParam.get("Template")+ "does not exists.");
+        			consoleLog.log("Template path ("+jobParam.get("Template")+ "does not exists.");
+        			
+        			mail mailObj = new mail("Template","TEMPLATE ERROR",jobId,"", "* Template Name : "+templateName+"\n * Standard Template path is Invalid. ("+ jobParam.get("Template") + ")");
+        			//mailObj.mailProcess("Template","JOB_SUCCESS","jobId","", "");
+        			Thread mailThread = new Thread(mailObj, "Mail Thread for template error");
+        			mailThread.start();
         		}
         	}
         	else
         	{
-        		String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
-        		String tempFile = jobParam.get("Template") + jobParam.get("templateName")+mnsSuffix+".idml";
-        		System.out.println("tempFile:"+tempFile);
-        		if(new File(tempFile).exists())
-        			tempFileStatus = true;
+        		if(new File(jobParam.get("Template")).exists())
+        		{
+	        		//String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
+	        		String tempFile = jobParam.get("Template") + jobParam.get("templateName")+suffix+".idml";
+	        		System.out.println("tempFile:"+tempFile);
+	        		if(new File(tempFile).exists())
+	        			tempFileStatus = true;
+        		}
+        		else
+        		{
+        			System.out.println("Template path ("+jobParam.get("Template")+ "does not exists.");
+        			consoleLog.log("Template path ("+jobParam.get("Template")+ "does not exists.");
+        			
+        			mail mailObj = new mail("Template","TEMPLATE ERROR",jobId,"", "* Template Name : "+templateName+"\n * Standard Template path is Invalid. ("+ jobParam.get("Template") + ")");
+        			//mailObj.mailProcess("Template","JOB_SUCCESS","jobId","", "");
+        			Thread mailThread = new Thread(mailObj, "Mail Thread for template error");
+        			mailThread.start();
+        		}
         	}
         }
         
@@ -1115,17 +1222,17 @@ public class watchDir implements Runnable
 			        		String attachment = "";
 			        		
 			        		//check for attachment
-			        		if(utilities.fileCheck(System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls"))
+			        		if(new File(System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls").exists())
 			        		{	
 			        			attachment = System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName+"_InDTReport.xls";
-			        			mailObj = new mail("Template","ERROR",chName,attachment, "");
+			        			mailObj = new mail("Template","ERROR",chName,attachment, templateStatus);
 				    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
 				    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
 				            	mailThread10.start();
 			        		}
 			        		else
 			        		{
-			        			mailObj = new mail("Pre-editing","ERROR",chName,attachment, "");
+			        			mailObj = new mail("Template","ERROR",chName,attachment, templateStatus); //Template
 				    			//mailObj.mailProcess("Template","ERROR",chName.substring(0,chName.indexOf(".docx")),System.getProperty ("user.home")+"/Desktop/Maestro_QS/"+chName.substring(0,chName.indexOf(".docx"))+"_InDTReport.xls", "");
 				    			Thread mailThread10 = new Thread(mailObj, "Mail Thread for Template Team");
 				            	mailThread10.start();
@@ -1292,5 +1399,69 @@ public class watchDir implements Runnable
 	{
 		suspended = false;
 		//notify();
+	}
+	
+	private boolean fileNameRegex(String jobId, File file)
+	{
+		boolean status = false;
+		String fileName = FilenameUtils.getBaseName(file.toString()),suffix="";
+		Pattern pattern = Pattern.compile("^"+jobId);
+		Matcher matcher = pattern.matcher(fileName);
+		
+		if(matcher.find())
+		{
+			//System.out.println("Found match at: "  + matcher.start() + " to " + matcher.end());
+			suffix = fileName.substring(matcher.end(),fileName.length());
+			//System.out.println("suffix : "+suffix);
+			if(clientId.equals("TF_HSS"))
+			{
+				switch(suffix)
+				{
+					case "_BM":
+					case "_BM_GLO":
+					case "_BM_ACK":
+					case "_BM_REF":
+					case "_BM_BIB":
+					case "_BM_IDX":
+					case "_BM_SIDX":
+					case "_BM_AIDX":
+					case "_BM_NOTE":
+					case "_BM_CI":
+					case "_BM_AFWD":
+					case "_BM_ATA":
+					case "_BM_NOC":
+					case "_BM_SAMPLE":
+					case "_FM":
+					case "_FM_LOC":
+					case "_FM_ATA":
+					case "_FM_NOC":
+					case "_FM_SERS":
+					case "_FM_DED":
+					case "_FM_ACK":
+					//case "_FM_REF":
+					case "_FM_INTRO":
+					case "_FM_LOF":
+					case "_FM_LOT":
+					case "_FM_CPY":
+					case "_FM_PREF":
+					case "_FM_FRWD":
+					case "_FM_TOC":
+					case "_FM_SAMPLE":
+					case "_INTRO":
+					case "_CON":
+					case "_SAMPLE":
+						status = true;
+						break;
+						
+					default:
+					{
+						if(suffix.matches("^_CH\\d\\d|^_BM_APP\\d\\d|^_PT\\d\\d|^_ST\\d\\d"))
+							status = true;
+						break;
+					}
+				}
+			}
+		}
+		return status;
 	}
 }

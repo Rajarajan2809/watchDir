@@ -119,79 +119,49 @@ public class postValidation implements Runnable
 
 				postValCounter.incrementAndGet();
 				File folder = new File(pathString);
-				//System.out.println("pathString : "+pathString);
-				//System.out.println("jobFolder : "+jobFolder);
-//		        System.out.println("Exists:"+folder.exists());
-//		        System.out.println("errFlag(jobId:"+jobId+"):"+errFlag);
-//		        consoleLog.log("errFlag:"+errFlag);
-//		        System.out.println("folder:"+folder+"\n\n");
-		        //boolean folderError = false;
-		        
-		        //System.out.println("\"ERROR\" folder does not exist for job : "+jobId+".");
-        		//consoleLog.log("\"ERROR\" folder does not exist for job : "+jobId+".");
-		        //TimeUnit.SECONDS.sleep(1);
-		        //String osResp1 = utilities.mountDisk("172.16.1.2", "Copyediting", "maestroqs@cmpl.in", "M@est0123");
-		        //TimeUnit.SECONDS.sleep(1);
-        		//String osResp2 = utilities.mountDisk("172.16.1.21", "comp_template", "maestroqs@cmpl.in", "M@est0123");
-        		//TimeUnit.SECONDS.sleep(1);
-    			//String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
-    			//TimeUnit.SECONDS.sleep(1);
-    			
-//    			System.out.println("(post validation)(jobId:"+jobId+")osResp1:" + osResp1);
-//    			consoleLog.log("(post validation)(jobId:"+jobId+")Mount response1:" + osResp1);
-//    			
-//    			System.out.println("(post validation)(jobId:"+jobId+")osResp2:" + osResp2);
-//    			consoleLog.log("(post validation)Mount response2:" + osResp2);
-//    			
-//    			System.out.println("(post validation)(jobId:"+jobId+")osResp3:" + osResp3);
-//    			consoleLog.log("(post validation)Mount response3:" + osResp3);
-    			
-    			//if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
-    			//{
-    				//TimeUnit.SECONDS.sleep(6);
-//    				System.out.println("Disk mounted.");
-//	        		consoleLog.log("Disk mounted.");
-	        		if(!new File(pathString).exists())
+        		if(!new File(pathString).exists())
+				{
+					File theDir = new File(pathString);
+		        	if (!theDir.exists()) 
 					{
-						File theDir = new File(pathString);
-			        	if (!theDir.exists()) 
-						{
-			        		theDir.mkdir();
-						}
+		        		theDir.mkdir();
 					}
+				}
 		        
-			        if(folder.exists() && !Main.mountError)
-			        {
-			        	if(errFlag == 2)
-			        	{
+		        if(folder.exists() && !Main.mountError)
+		        {
+		        	if(errFlag == 2)
+		        	{
 //			        		System.out.println("Server mounted.....................");
 //			        		mail mailObj = new mail("Net-ops", "SUCCESS", "MOUNT", "", "");
 //							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
 //							mailThread.start();
-			        	}
-			        	errFlag = 1;
-			        	File[] listOfFiles = folder.listFiles();
-			        	//TimeUnit.SECONDS.sleep(3);
-			        	
-			        	//System.out.println("listOfFiles.length:"+listOfFiles.length);
-			        	
-			        	
-						for (int i = 0; i < listOfFiles.length; i++)
+		        	}
+		        	errFlag = 1;
+		        	File[] listOfFiles = folder.listFiles();
+		        	//TimeUnit.SECONDS.sleep(3);
+		        	
+		        	//System.out.println("listOfFiles.length:"+listOfFiles.length);
+		        	
+		        	
+					for (int i = 0; i < listOfFiles.length; i++)
+					{
+						TimeUnit.SECONDS.sleep(2);
+						//System.out.println("Files List:"+listOfFiles[i].getName());
+						if (listOfFiles[i].isFile()) 
 						{
-							TimeUnit.SECONDS.sleep(2);
-							//System.out.println("Files List:"+listOfFiles[i].getName());
-							if (listOfFiles[i].isFile()) 
+							//String REGEX = jobId+"_PT\\d\\d|"+jobId+"_ST\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_CH\\d\\d|"+jobId+"_INTRO|"+jobId+"_CON|"+jobId+"_APP\\d\\d|";
+							
+							//regex matching
+							//Pattern p = Pattern.compile(REGEX);
+							//Matcher m = p.matcher(FilenameUtils.getBaseName(listOfFiles[i].getName()));   // get a matcher object
+			    			
+							//System.out.println("mnName : "+listOfFiles[i].getName());
+							//System.out.println("extn : "+FilenameUtils.getExtension(listOfFiles[i].getName()));
+							
+							if(fileNameRegex(jobId, listOfFiles[i]))
 							{
-								String REGEX = jobId+"_CH\\d\\d|"+jobId+"_FM\\d\\d|"+jobId+"_BM\\d\\d|"+jobId+"_RM\\d\\d|"+jobId+"_PT\\d\\d";
-								
-								//regex matching
-								Pattern p = Pattern.compile(REGEX);
-								Matcher m = p.matcher(FilenameUtils.getBaseName(listOfFiles[i].getName()));   // get a matcher object
-				    			
-								//System.out.println("mnName : "+listOfFiles[i].getName());
-								//System.out.println("extn : "+FilenameUtils.getExtension(listOfFiles[i].getName()));
-								
-								if(m.matches() && (FilenameUtils.getExtension(listOfFiles[i].getName()).equals("docx")))
+								if((FilenameUtils.getExtension(listOfFiles[i].getName()).equals("docx")))
 								{
 									String chName =  utilities.getFileNameWithoutExtension(listOfFiles[i]);
 									String urlParams = "jobId="+URLEncoder.encode(jobId,"UTF-8")+"&clientId="+URLEncoder.encode(clientId,"UTF-8")+"&chapter="+URLEncoder.encode(chName,"UTF-8");
@@ -218,7 +188,7 @@ public class postValidation implements Runnable
 							        	if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())))
 							        		values = docParams.get(FilenameUtils.getBaseName(listOfFiles[i].getName()));
 							        		
-							            if((exportMap != null) && (!exportMap.isEmpty()))
+							            if((exportMap != null) && (!exportMap.isEmpty()) && (inddImportMap != null) && (!inddImportMap.isEmpty()))
 									    {
 									    	if(exportMap.equals("true"))
 									        {
@@ -238,111 +208,175 @@ public class postValidation implements Runnable
 									    	else
 									    		values.add(exportMap);
 									    	//System.out.println("prev value:"+values.get(0));
-									    }
 								        
-							            if(exportMap.equals("true"))
-							            {
-							            	if(templateName.equals(""))
-							            	{
-							            		File tempDir = new File(templatePath);
+								            if(exportMap.equals("true"))
+								            {
+								            	Pattern pattern = Pattern.compile("^"+jobId);
+							            		Matcher matcher = pattern.matcher(chName);
+							            		String suffix="";
 							            		
-							            		//System.out.println("Template path(Error) : "+templatePath);
-							            		
-							            		File[] listOfFiles1 = tempDir.listFiles();
-							            		for(int j=0; j < listOfFiles1.length; j++)
+							            		if(matcher.find())
 							            		{
-							            			if(listOfFiles1[j].isFile() && (FilenameUtils.getExtension(listOfFiles1[j].toString()).equals("idml")))
+							            			//System.out.println("Found match at: "  + matcher.start() + " to " + matcher.end());
+							            			suffix = chName.substring(matcher.end(),chName.length());
+							            			if(clientId.equals("TF_HSS"))
 							            			{
-							            				String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
-							            				String tempFile = FilenameUtils.getBaseName(listOfFiles1[j].toString());
-							            				String idmlSuffix = tempFile.substring(tempFile.lastIndexOf('_'),tempFile.lastIndexOf('_')+3);
-							            				//String templateName = tempFile.substring(0,tempFile.lastIndexOf('_'));
-							            				
-							            				//System.out.println("templateName:"+templateName);
-							            				
-							            				if(mnsSuffix.equals(idmlSuffix))
-							            				{
-							            					tempFileStatus = "true";
-							            				}
-							        				}
+								            			switch(suffix)
+								            			{
+									            			case "_BM":
+															case "_BM_GLO":
+															case "_BM_ACK":
+															case "_BM_REF":
+															case "_BM_BIB":
+															case "_BM_IDX":
+															case "_BM_SIDX":
+															case "_BM_AIDX":
+															case "_BM_NOTE":
+															case "_BM_CI":
+															case "_BM_AFWD":
+															case "_BM_ATA":
+															case "_BM_NOC":
+															case "_BM_SAMPLE":
+															{
+										    					suffix = "_BM";
+										    				}
+										    				break;
+										    					
+															case "_FM":
+															case "_FM_LOC":
+															case "_FM_ATA":
+															case "_FM_NOC":
+															case "_FM_SERS":
+															case "_FM_DED":
+															case "_FM_ACK":
+															//case "_FM_REF":
+															case "_FM_INTRO":
+															case "_FM_LOF":
+															case "_FM_LOT":
+															case "_FM_CPY":
+															case "_FM_PREF":
+															case "_FM_FRWD":
+															case "_FM_TOC":
+															case "_FM_SAMPLE":
+										    					suffix = "_FM";
+										    				break;
+										    				
+															case "_INTRO":
+															case "_SAMPLE":
+															case "_CON":
+																suffix = "_CH";
+										    				break;
+																
+										    				default:
+										    				{
+										    					if(suffix.matches("^_CH\\d\\d"))
+										    						suffix = "_CH";
+										    					else if(suffix.matches("^_PT\\d\\d|^_ST\\d\\d"))
+										    						suffix = "_PT";
+										    					else if(suffix.matches("|^_APP\\d\\d"))
+										    						suffix = "_BM";
+										    				}
+										    				break;
+								            			}
+							            			}
 							            		}
-							            	}
-							            	else
-							            	{
-							            		String mnsSuffix = chName.substring(chName.lastIndexOf('_'));
-							            		String tempFile = templatePath + templateName+mnsSuffix+".idml";
-							            		if(new File(tempFile).exists())
-							            			tempFileStatus = "true";
-							            	}
-							            	if(tempFileStatus.equals("true"))
-									        {
-									    		if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() > 0) && (values.get(1).equals("false")))
-									    		{
-									    			utilities.fileMove(pathString+chName+".docx",jobFolder+chName+".docx");
-										        	if(utilities.fileCheck(pathString +chName+".xlsx"))
-										        		utilities.fileMove(pathString +chName+".xlsx",jobFolder+chName+".xlsx");
-									    		}
-									        }
-									    	if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() == 3))
-									    		values.set(1,tempFileStatus);
-									    	else
-									    		values.add(tempFileStatus);
-							            }
+								            	
+								            	//System.out.println("export map:"+exportMap);
+								            	if(templateName.equals(""))
+								            	{
+								            		File tempDir = new File(templatePath);
+								            		
+								            		//System.out.println("Template path(Error) : "+templatePath);
+								            		
+								            		File[] listOfFiles1 = tempDir.listFiles();
+								            		for(int j=0; j < listOfFiles1.length; j++)
+								            		{
+								            			if(listOfFiles1[j].isFile() && (FilenameUtils.getExtension(listOfFiles1[j].toString()).equals("idml")))
+								            			{
+								            				//String mnsSuffix = chName.substring(chName.lastIndexOf('_'),chName.lastIndexOf('_')+3);
+								            				String tempFile = FilenameUtils.getBaseName(listOfFiles1[j].toString());
+								            				String idmlSuffix = tempFile.substring(tempFile.lastIndexOf('_'),tempFile.lastIndexOf('_')+3);
+								            				//String templateName = tempFile.substring(0,tempFile.lastIndexOf('_'));
+								            				
+								            				//System.out.println("templateName:"+templateName);
+								            				
+								            				if(suffix.equals(idmlSuffix))
+								            				{
+								            					tempFileStatus = "true";
+								            					break;
+								            				}
+								        				}
+								            		}
+								            	}
+								            	else
+								            	{
+								            		String tempFile = templatePath + templateName+suffix+".idml";
+								            		if(new File(tempFile).exists())
+								            			tempFileStatus = "true";
+								            	}
+								            	
+								            	if(tempFileStatus.equals("true"))
+										        {
+										    		if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() > 0) && (values.get(1).equals("false")))
+										    		{
+										    			utilities.fileMove(pathString+chName+".docx",jobFolder+chName+".docx");
+											        	if(utilities.fileCheck(pathString +chName+".xlsx"))
+											        		utilities.fileMove(pathString +chName+".xlsx",jobFolder+chName+".xlsx");
+										    		}
+										        }
+										    	if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() == 3))
+										    		values.set(1,tempFileStatus);
+										    	else
+										    		values.add(tempFileStatus);
+								            }
 							            
-									    if(exportMap.equals("true") && tempFileStatus.equals("true") && (inddImportMap != null) && (!inddImportMap.isEmpty()))
-									    {
-									    	if(inddImportMap.equals("true"))
-									    	{
-									    		if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() > 0) && (values.get(2).equals("false")))
-									    		{
-										    		utilities.fileMove(pathString+chName+".docx",jobFolder+chName+".docx");
-										    		if(utilities.fileCheck(pathString +chName+".xlsx"))
-										    			utilities.fileMove(pathString +chName+".xlsx",jobFolder+chName+".xlsx");
-									    		}
-									    	}
-									    	if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() == 3))
-									    		values.set(2,inddImportMap);
-									    	else
-									    		values.add(inddImportMap);
-									    	//values.set(1,exportMap);
-											docParams.put(FilenameUtils.getBaseName(listOfFiles[i].getName()), values);
+										    if(exportMap.equals("true") && tempFileStatus.equals("true"))
+										    {
+										    	//System.out.println("tempFileStatus:"+tempFileStatus);
+										    	if(inddImportMap.equals("true"))
+										    	{
+										    		//System.out.println("inddImportMap:"+inddImportMap);
+										    		if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() > 0))
+										    		{
+											    		utilities.fileMove(pathString+chName+".docx",jobFolder+chName+".docx");
+											    		if(utilities.fileCheck(pathString +chName+".xlsx"))
+											    			utilities.fileMove(pathString +chName+".xlsx",jobFolder+chName+".xlsx");
+										    		}
+										    	}
+										    	if(docParams.containsKey(FilenameUtils.getBaseName(listOfFiles[i].getName())) && (values.size() == 3))
+										    		values.set(2,inddImportMap);
+										    	else
+										    		values.add(inddImportMap);
+										    	//values.set(1,exportMap);
+												docParams.put(FilenameUtils.getBaseName(listOfFiles[i].getName()), values);
+										    }
+								            docParams.put(FilenameUtils.getBaseName(listOfFiles[i].getName()), values);
+								            //System.out.println();
 									    }
-							            docParams.put(FilenameUtils.getBaseName(listOfFiles[i].getName()), values);
 								    }
 								}
+								else
+								{
+									if(!(FilenameUtils.getExtension(listOfFiles[i].getName()).equals("xlsx")))
+									{
+										//System.out.println("Invalid extension ("+FilenameUtils.getExtension(listOfFiles[i].getName())+").");
+										//consoleLog.log("Invalid extension ("+FilenameUtils.getExtension(listOfFiles[i].getName())+").");
+									}
+								}
 							}
-							TimeUnit.SECONDS.sleep(1);
+							else
+							{
+								File theDir1 = new File(jobFolder+"INVALID_FILES/");
+								if(!theDir1.exists())
+								{
+									theDir1.mkdir();
+								}
+								utilities.fileMove(pathString+listOfFiles[i].getName(),jobFolder+"INVALID_FILES/"+listOfFiles[i].getName());
+							}
 						}
-			        }
-		      /*  }
-		        else
-				{
-		        	if(errFlag == 1)
-		        	{
-		        			errFlag = 2;
-		    				String errorShare="";
-		    				if(!osResp1.equals("Disk Found"))
-		    					errorShare = "Copyediting(172.16.1.2)";
-		    				
-		    				if(!osResp2.equals("Disk Found"))
-		    					errorShare = errorShare.isEmpty() ? "comp_template(172.16.1.21)" : errorShare + ",comp_template(172.16.1.21)";
-		    				
-		    				if(!osResp3.equals("Disk Found"))
-		    					errorShare = errorShare.isEmpty() ? "COMP(172.16.1.21)" : errorShare + "and COMP(172.16.1.21)";
-		    				
-		    				System.out.println("SMB Share Mount error");
-							consoleLog.log("SMB Share Mount error");
-							// sample : sendMail("Net-ops", "", "MOUNT", "", "");
-//							mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", errorShare);
-//							Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
-//							mailThread.start();
-		        	}
-//		        	if(job.jobFailErrorFun(jobId,clientId))
-//					{
-//						
-//    				}
-				}*/
-		        //System.out.println("loop finished.");
+						TimeUnit.SECONDS.sleep(1);
+					}
+		        }
 				//TimeUnit.MILLISECONDS.sleep(1000);
 		        postValCounter.decrementAndGet();
 		        TimeUnit.SECONDS.sleep(1);
@@ -378,6 +412,71 @@ public class postValidation implements Runnable
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean fileNameRegex(String jobId, File file)
+	{
+		boolean status = false;
+		String fileName = FilenameUtils.getBaseName(file.toString()),suffix="";
+		Pattern pattern = Pattern.compile("^"+jobId);
+		Matcher matcher = pattern.matcher(fileName);
+		
+		if(matcher.find())
+		{
+			//System.out.println("Found match at: "  + matcher.start() + " to " + matcher.end());
+			suffix = fileName.substring(matcher.end(),fileName.length());
+			//System.out.println("suffix : "+suffix);
+
+			if(clientId.equals("TF_HSS"))
+			{
+				switch(suffix)
+				{
+					case "_BM":
+					case "_BM_GLO":
+					case "_BM_ACK":
+					case "_BM_REF":
+					case "_BM_BIB":
+					case "_BM_IDX":
+					case "_BM_SIDX":
+					case "_BM_AIDX":
+					case "_BM_NOTE":
+					case "_BM_CI":
+					case "_BM_AFWD":
+					case "_BM_ATA":
+					case "_BM_NOC":
+					case "_BM_SAMPLE":
+					case "_FM":
+					case "_FM_LOC":
+					case "_FM_ATA":
+					case "_FM_NOC":
+					case "_FM_SERS":
+					case "_FM_DED":
+					case "_FM_ACK":
+					//case "_FM_REF":
+					case "_FM_INTRO":
+					case "_FM_LOF":
+					case "_FM_LOT":
+					case "_FM_CPY":
+					case "_FM_PREF":
+					case "_FM_FRWD":
+					case "_FM_TOC":
+					case "_FM_SAMPLE":
+					case "_INTRO":
+					case "_CON":
+					case "_SAMPLE":
+						status = true;
+						break;
+						
+					default:
+					{
+						if(suffix.matches("^_CH\\d\\d|^_BM_APP\\d\\d|^_PT\\d\\d|^_ST\\d\\d"))
+							status = true;
+						break;
+					}
+				}
+			}
+		}
+		return status;
 	}
 	
 //	private static String json_pretty_print(String json)

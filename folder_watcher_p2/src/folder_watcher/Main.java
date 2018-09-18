@@ -69,11 +69,12 @@ public class Main
 	 */
 	
 	public volatile static boolean mountError = false;
+	static DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) throws IOException, InterruptedException, ParseException, ConnectException,StringIndexOutOfBoundsException 
 	{
-		DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
+		//DateFormat dateFormat2 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
 		String dateString2 = dateFormat2.format(new Date()).toString();
 		consoleLog.log("--------------------------------------------------------");
 		System.out.println("Maestro Queuing System started at " + dateString2 + "...\n");
@@ -85,7 +86,7 @@ public class Main
 		File file = new File("jobs.txt");
 		
 		mount_thread m1 = new mount_thread();
-		Thread mountThread = new Thread(m1, "Thread to initiate the web server.");
+		Thread mountThread = new Thread(m1, "Thread to kill ip not connected error.");
 		mountThread.start();
 		
 		if (file.exists() && !file.isDirectory()) 
@@ -268,193 +269,212 @@ public class Main
 									//consoleLog.log("newJob :" + newJob.get(i));
 									//System.out.println("newJob :" + newJob.get(i));
 									
-									
-									//copy edit path validation
-									if((jobMap.get("Copyediting") != null) && (!jobMap.get("Copyediting").equals("")))
+									if(jobMap.get("error").equals(""))
 									{
-										//template path validation
-										if((jobMap.get("Template") != null) && (!jobMap.get("Template").equals("")))
+										//copy edit path validation
+										if((jobMap.get("Copyediting") != null) && (!jobMap.get("Copyediting").equals("")))
 										{
-											//composition path validation
-											if((jobMap.get("Composition") != null) && (!jobMap.get("Composition").equals("")))
+											//template path validation
+											if((jobMap.get("Template") != null))// && (!jobMap.get("Template").equals("")))
 											{
-												//graphics path validation
-												if((jobMap.get("Graphics") != null) && (!jobMap.get("Graphics").equals("")))
+												//composition path validation
+												if((jobMap.get("Composition") != null) && (!jobMap.get("Composition").equals("")))
 												{
-													//Map path validation
-													if((jobMap.get("Map_path") != null) && (!jobMap.get("Map_path").equals("")))
+													//graphics path validation
+													if((jobMap.get("Graphics") != null) && (!jobMap.get("Graphics").equals("")))
 													{
 														//Map path validation
-														if((jobMap.get("Standard_stylesheet") != null) && (!jobMap.get("Standard_stylesheet").equals("")))
+														if((jobMap.get("Map_path") != null) && (!jobMap.get("Map_path").equals("")))
 														{
-															jobMap.put("equation",jobMap.get("Copyediting") + "Equations/");							
-															
-															//copyedit path creation
-															recursiveFolderCreate(jobMap.get("Copyediting"));
-															
-															//Template path creation
-															recursiveFolderCreate(jobMap.get("Template"));
-															
-															//Composition path creation
-															recursiveFolderCreate(jobMap.get("Composition"));
-															
-															//Graphics path creation
-															recursiveFolderCreate(jobMap.get("Graphics"));
-															
-															//equation folder creation
-															recursiveFolderCreate(jobMap.get("equation"));
-															
-									            			consoleLog.log("eqnPath :" + jobMap.get("equation") + "\n");
-															System.out.println("eqnPath :" + jobMap.get("equation") + "\n");
-															
-															//eqn path validation
-															if((jobMap.get("equation") != null) && (!jobMap.get("equation").equals("")))
+															//Map path validation
+															if((jobMap.get("Standard_stylesheet") != null) && (!jobMap.get("Standard_stylesheet").equals("")))
 															{
-																String REGEX = "[\\s\\S]+[\\/\\\\]+[\\d]{9}_[\\w\\s\\S]+[\\/\\\\]+[\\d]{2}_MaestroReady+[\\/\\\\]{0,1}{1}$|[\\s\\S]+[\\/\\\\]+[\\d]{13}_[\\w\\s\\S]+[\\/\\\\]+[\\d]{2}_MaestroReady+[\\/\\\\]{0,1}{1}$";
-																//regex matching
-																Pattern p = Pattern.compile(REGEX);
-																Matcher m = p.matcher(jobMap.get("Copyediting"));   // get a matcher object
-																if(m.matches())
+																jobMap.put("equation",jobMap.get("Copyediting") + "Equations/");							
+																
+																//copyedit path creation
+																recursiveFolderCreate(jobMap.get("Copyediting"));
+																
+																//Template path creation
+																if(templateName.get(i).equals(""))
+																	recursiveFolderCreate(jobMap.get("Template"));
+																
+																//Composition path creation
+																recursiveFolderCreate(jobMap.get("Composition"));
+																
+																//Graphics path creation
+																recursiveFolderCreate(jobMap.get("Graphics"));
+																
+																//equation folder creation
+																recursiveFolderCreate(jobMap.get("equation"));
+																
+										            			consoleLog.log("eqnPath :" + jobMap.get("equation") + "\n");
+																System.out.println("eqnPath :" + jobMap.get("equation") + "\n");
+																
+																//eqn path validation
+																if((jobMap.get("equation") != null) && (!jobMap.get("equation").equals("")))
 																{
-																	j1.job_insert(jobId.get(i));
-																	//System.out.println("newJob:" + newJob.get(i));
-																	// pathFolder = System.getProperty ("user.home")+"/Desktop/MaestroReady";
-																	// new job or already failed job
-																	if (!newJob.get(i))
+																	String REGEX = "[\\s\\S]+[\\/\\\\]+[\\d]{9}_[\\w\\s\\S]+[\\/\\\\]+[\\d]{2}_MaestroReady+[\\/\\\\]{0,1}{1}$|[\\s\\S]+[\\/\\\\]+[\\d]{13}_[\\w\\s\\S]+[\\/\\\\]+[\\d]{2}_MaestroReady+[\\/\\\\]{0,1}{1}$";
+																	//regex matching
+																	Pattern p = Pattern.compile(REGEX);
+																	Matcher m = p.matcher(jobMap.get("Copyediting"));   // get a matcher object
+																	if(m.matches())
 																	{
-																		//utilities.folderMove(pathFolder + "/ERROR", pathFolder);
-																		//utilities.delete(new File(pathFolder + "/ERROR"));
-																	}
-																	// consoleLog.log("Watch thread created.");
-																	consoleLog.log("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\nSerial No. : \"" + serialNo.get(i) + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
-																	System.out.println("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\nSerial No. : \"" + serialNo.get(i) + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
-																	
-			//														mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", "");
-			//														Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
-			//														mailThread.start();
-																	
-																	//Map< String,Integer> jobMap = new HashMap< String,Integer>();
-																	
-																	System.out.println("Home:"+System.getProperty ("user.home")+"\\Desktop\\Maestro_QS");
-																	
-																	JSONObject pathUpdateJson = new JSONObject();
-																	pathUpdateJson.put("jobId", jobId.get(i));
-																	pathUpdateJson.put("clientId", clientId.get(i));
-																	
-																	/*String copyEditPath = jobMap.get("Copyediting");
-																	copyEditPath = copyEditPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
-																	copyEditPath = copyEditPath.replace('/', '\\');
-																	pathUpdateJson.put("copyEditPath", copyEditPath);*/
-																	
-																	pathUpdateJson.put("copyEditPath", jobMap.get("Copyediting"));
-																	
-																	/*String graphicsPath = jobMap.get("Graphics");
-																	graphicsPath = graphicsPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
-																	graphicsPath = graphicsPath.replace('/', '\\');
-																	pathUpdateJson.put("graphicsPath", graphicsPath);*/
-																	
-																	pathUpdateJson.put("graphicsPath", jobMap.get("Graphics"));
-																	
-																	String gssPath = jobMap.get("Standard_stylesheet");
-																	gssPath = gssPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.21"); //\\Volumes
-																	gssPath = gssPath.replace('/', '\\');
-																	pathUpdateJson.put("styleSheetPath", gssPath);
-																	
-																	//pathUpdateJson.put("styleSheetPath", jobMap.get("Standard_stylesheet"));
-																	
-																	/*String eqnPath = jobMap.get("equation");
-																	eqnPath = eqnPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
-																	eqnPath = eqnPath.replace('/', '\\');
-																	pathUpdateJson.put("equationsPath", eqnPath);*/
-																	
-																	pathUpdateJson.put("equationsPath", jobMap.get("equation"));
-																	
-																	/*System.out.println("copyEditPath:"+jobMap.get("Copyediting"));
-																	System.out.println("graphicsPath:"+jobMap.get("Graphics"));
-																	System.out.println("mapPath:"+jobMap.get("Map_path"));
-																	System.out.println("genSSPath:"+jobMap.get("Standard_stylesheet"));
-																	System.out.println("eqnPath:"+jobMap.get("equation"));*/
-																	
-																	String mapPath = jobMap.get("Map_path");
-																	mapPath = mapPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "\\\\172.16.1.21"); //\\Volumes
-																	mapPath = mapPath.replace('/', '\\');
-																	pathUpdateJson.put("mappingPath", mapPath);
-																	//pathUpdateJson.put("mappingPath", jobMap.get("Map_path"));
-																	
-																	pathUpdateJson.put("templatePath", jobMap.get("Template"));
-																	
-																	String jsonText = JSONValue.toJSONString(pathUpdateJson);
-																	System.out.println("jsonText:\n"+utilities.json_pretty_print(jsonText));
-																	//String updateResponse = "";
-																	String updateResponse = url_request.urlRequestProcess("http://" + url_request.serverIp + "/maestro/updateJobPath", "PUT", jsonText);
-																	System.out.println("updateResponse:"+utilities.json_pretty_print(updateResponse));
-																	
-																	if ((updateResponse != null) && (!updateResponse.isEmpty()) && (!updateResponse.equals("")))
-																	{
-																		System.out.println("job params updated.\n\n");
+																		j1.job_insert(jobId.get(i));
+																		//System.out.println("newJob:" + newJob.get(i));
+																		// pathFolder = System.getProperty ("user.home")+"/Desktop/MaestroReady";
+																		// new job or already failed job
+																		if (!newJob.get(i))
+																		{
+																			//utilities.folderMove(pathFolder + "/ERROR", pathFolder);
+																			//utilities.delete(new File(pathFolder + "/ERROR"));
+																		}
+																		// consoleLog.log("Watch thread created.");
+																		consoleLog.log("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\nSerial No. : \"" + serialNo.get(i) + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
+																		System.out.println("Job initiated for Job id : \"" + jobId.get(i) + "\",\nclientId : \"" + clientId.get(i) + "\",\nSerial No. : \"" + serialNo.get(i) + "\" and \nNo of manuscripts : \"" + noOfManuScripts.get(i) + "\"\n");
+																		
+				//														mail mailObj = new mail("Net-ops", "ERROR", "MOUNT", "", "");
+				//														Thread mailThread = new Thread(mailObj, "Mail Thread for Mount");
+				//														mailThread.start();
+																		
+																		//Map< String,Integer> jobMap = new HashMap< String,Integer>();
+																		
+																		System.out.println("Home:"+System.getProperty ("user.home")+"\\Desktop\\Maestro_QS");
+																		
+																		JSONObject pathUpdateJson = new JSONObject();
+																		pathUpdateJson.put("jobId", jobId.get(i));
+																		pathUpdateJson.put("clientId", clientId.get(i));
+																		
+																		/*String copyEditPath = jobMap.get("Copyediting");
+																		copyEditPath = copyEditPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		copyEditPath = copyEditPath.replace('/', '\\');
+																		pathUpdateJson.put("copyEditPath", copyEditPath);*/
+																		
+																		pathUpdateJson.put("copyEditPath", jobMap.get("Copyediting"));
+																		
+																		/*String graphicsPath = jobMap.get("Graphics");
+																		graphicsPath = graphicsPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		graphicsPath = graphicsPath.replace('/', '\\');
+																		pathUpdateJson.put("graphicsPath", graphicsPath);*/
+																		
+																		pathUpdateJson.put("graphicsPath", jobMap.get("Graphics"));
+																		
+																		String gssPath = jobMap.get("Standard_stylesheet");
+																		gssPath = gssPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.21"); //\\Volumes
+																		gssPath = gssPath.replace('/', '\\');
+																		pathUpdateJson.put("styleSheetPath", gssPath);
+																		
+																		//pathUpdateJson.put("styleSheetPath", jobMap.get("Standard_stylesheet"));
+																		
+																		/*String eqnPath = jobMap.get("equation");
+																		eqnPath = eqnPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		eqnPath = eqnPath.replace('/', '\\');
+																		pathUpdateJson.put("equationsPath", eqnPath);*/
+																		
+																		pathUpdateJson.put("equationsPath", jobMap.get("equation"));
+																		
+																		/*System.out.println("copyEditPath:"+jobMap.get("Copyediting"));
+																		System.out.println("graphicsPath:"+jobMap.get("Graphics"));
+																		System.out.println("mapPath:"+jobMap.get("Map_path"));
+																		System.out.println("genSSPath:"+jobMap.get("Standard_stylesheet"));
+																		System.out.println("eqnPath:"+jobMap.get("equation"));*/
+																		
+																		String mapPath = jobMap.get("Map_path");
+																		mapPath = mapPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "\\\\172.16.1.21"); //\\Volumes
+																		mapPath = mapPath.replace('/', '\\');
+																		pathUpdateJson.put("mappingPath", mapPath);
+																		//pathUpdateJson.put("mappingPath", jobMap.get("Map_path"));
+																		
+																		pathUpdateJson.put("templatePath", jobMap.get("Template"));
+																		
+																		String jsonText = JSONValue.toJSONString(pathUpdateJson);
+																		System.out.println("jsonText:\n"+utilities.json_pretty_print(jsonText));
+																		//String updateResponse = "";
+																		String updateResponse = url_request.urlRequestProcess("http://" + url_request.serverIp + "/maestro/updateJobPath", "PUT", jsonText);
+																		System.out.println("updateResponse:"+utilities.json_pretty_print(updateResponse));
+																		
+																		if ((updateResponse != null) && (!updateResponse.isEmpty()) && (!updateResponse.equals("")))
+																		{
+																			System.out.println("job params updated.\n\n");
+																		}
+																		else
+																			System.out.println("job params not updated.\n\n");
+																		
+																		jobMap.put("jobId",jobId.get(i));
+																		jobMap.put("clientId",clientId.get(i));
+																		jobMap.put("serialNo",serialNo.get(i));
+																		jobMap.put("manuscripts",noOfManuScripts.get(i));
+																		jobMap.put("templateName",templateName.get(i));
+																		jobMap.put("templateType",templateType.get(i));
+																		
+																		//job start
+																		watchDir watchObj = new watchDir(jobMap, shared);
+																		Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
+																		watchThread1.start();
+																		//listPath.add(Paths.get(copyEditPath));
 																	}
 																	else
-																		System.out.println("job params not updated.\n\n");
-																	
-																	jobMap.put("jobId",jobId.get(i));
-																	jobMap.put("clientId",clientId.get(i));
-																	jobMap.put("serialNo",serialNo.get(i));
-																	jobMap.put("manuscripts",noOfManuScripts.get(i));
-																	jobMap.put("templateName",templateName.get(i));
-																	jobMap.put("templateType",templateType.get(i));
-																	
-																	//job start
-																	watchDir watchObj = new watchDir(jobMap, shared);
-																	Thread watchThread1 = new Thread(watchObj, "Watch Thread for Parent folder" + Integer.toString(i));
-																	watchThread1.start();
-																	//listPath.add(Paths.get(copyEditPath));
+																	{
+																		consoleLog.log("\"Copyedit folder\" format is Invalid.\n");
+																		System.out.println("\"Copyedit folder\" format is Invalid.\n");
+																		jobFailFun(jobId.get(i), clientId.get(i), "Pre-editing" , "* \"Copyedit folder\" format is Invalid for this job feed.\n", "JOB_FAIL");
+																	}
 																}
 																else
 																{
-																	consoleLog.log("Job folder format didn't pass REGEX\n");
-																	System.out.println("Job folder format didn't pass REGEX\n");
+																	consoleLog.log("\"equation path\" is Invalid.\n");
+																	System.out.println("\"equation path\" is Invalid.\n");
+																	jobFailFun(jobId.get(i), clientId.get(i), "Pre-editing" ,"* \"equation path\" is Invalid for this job feed.\n", "JOB_FAIL");
 																}
 															}
 															else
 															{
-																consoleLog.log("equation path is either NULL or Invalid\n");
-																System.out.println("equation path is either NULL or Invalid\n");
+																consoleLog.log("\"Stylesheet path\" is Invalid for this job feed.\n");
+																System.out.println("\"Stylesheet path\" is Invalid for this job feed.\n");
+																jobFailFun(jobId.get(i), clientId.get(i), "Pre-editing" ,"* \"Stylesheet path\" is Invalid for this job feed.\n", "JOB_FAIL");
 															}
 														}
 														else
 														{
-															consoleLog.log("Stylesheet path is either NULL or Invalid\n");
-															System.out.println("Stylesheet path is either NULL or Invalid\n");
+															consoleLog.log("\"map path\" is Invalid for this job feed.\n");
+															System.out.println("\"map path\" is Invalid for this job feed.\n");
+															jobFailFun(jobId.get(i), clientId.get(i), "Template" ,"* \"map path\" is Invalid for this job feed.\n", "TEMPLATE ERROR");
 														}
 													}
 													else
 													{
-														consoleLog.log("map path is either NULL or Invalid\n");
-														System.out.println("map path is either NULL or Invalid\n");
+														consoleLog.log("\"graphics path\" is Invalid for this job feed.\n");
+														System.out.println("\"graphics path\" is Invalid for this job feed.\n");
+														jobFailFun(jobId.get(i), clientId.get(i), "Graphics" ,"* \"graphics path\" is Invalid for this job feed.\n","JOB_FAIL");
+														jobFailFun(jobId.get(i), clientId.get(i), "Pre-editing" ,"* \"graphics path\" is Invalid for this job feed.\n","JOB_FAIL");
 													}
 												}
 												else
 												{
-													consoleLog.log("graphics path is either NULL or Invalid\n");
-													System.out.println("graphics path is either NULL or Invalid\n");
+													consoleLog.log("\"composition path\" is Invalid for this job feed.\n");
+													System.out.println("\"composition path\" is Invalid for this job feed.\n");
+													jobFailFun(jobId.get(i), clientId.get(i), "CRC Team" ,"* \"composition path\" is Invalid for this job feed.\n", "ERROR");
 												}
 											}
 											else
 											{
-												consoleLog.log("composition path is either NULL or Invalid\n");
-												System.out.println("composition path is either NULL or Invalid\n");
+												consoleLog.log("\"template path\" is Invalid for this job feed.\n");
+												System.out.println("\"template path\" is Invalid for this job feed.\n");
+												jobFailFun(jobId.get(i), clientId.get(i), "Template" ,"* \"template path\" is Invalid for this job feed.\n", "TEMPLATE ERROR");
 											}
 										}
 										else
 										{
-											consoleLog.log("template path is either NULL or Invalid\n");
-											System.out.println("template path is either NULL or Invalid\n");
+											consoleLog.log("\"Copyedit path\" is Invalid for this job feed.\n");
+											System.out.println("Copyedit path is Invalid for this job feed.\n");
+											jobFailFun(jobId.get(i), clientId.get(i), "Pre-editing" ,"* \"Copyedit path\" is Invalid for this job feed.\n", "JOB_FAIL");
 										}
 									}
 									else
 									{
-										consoleLog.log("Copyedit path is either NULL or Invalid\n");
-										System.out.println("Copyedit path is either NULL or Invalid\n");
+										consoleLog.log(jobMap.get("error"));
+										System.out.println(jobMap.get("error"));
+										//only template name mismatches hence mail only for template team
+										jobFailFun(jobId.get(i), clientId.get(i), "Pre-editing" ,jobMap.get("error"), "JOB_FAIL");
 									}
 								}
 							}
@@ -465,8 +485,8 @@ public class Main
 						if (mailTriggNet) // mail trigger once
 						{
 							dateString2 = dateFormat2.format(new Date()).toString();
-							consoleLog.log(dateString2+"Invalid JSON received from API in \"getJobList\" query.\n");
-							System.out.println(dateString2+"Invalid JSON received from API in \"getJobList\" query.\n");
+							consoleLog.log(dateString2+" Invalid/empty JSON received from API in \"getJobList\" query.\n");
+							System.out.println(dateString2+" Invalid/empty JSON received from API in \"getJobList\" query.\n");
 							// mail to netops
 							consoleLog.log("MOUNT ERROR mail sent to group \"netops\"");
 							mail m = new mail("Net-ops", "ERROR", "DB", "", "");
@@ -759,23 +779,23 @@ public class Main
 							            }
 						            	else
 						            	{
-						            		errParam = errParam + "\n* " + templateType+" is invalid.";
-						            		System.out.println("client is null.");
+						            		errParam = errParam + "* " + templateType+" is invalid for this job feed.";
+						            		//System.out.println("client is null.");
 							            	break;
 						            	}
 						            }
 						            else
 						            {
-						            	errParam = errParam + "\n* " + clientId+" is invalid.";
-						            	System.out.println("title is null.");
+						            	errParam = errParam + "* " + clientId+" is invalid for this job feed.";
+						            	//System.out.println("title is null.");
 						            	break;
 						            }
 				            	}
 				            }
 				            else
 				            {
-				            	errParam = errParam + "\n* " + me.getKey()+" is invalid.";
-				            	System.out.println("type is null.");
+				            	errParam = errParam + "* " + me.getKey()+" is invalid for this job feed.";
+				            	//System.out.println("type is null.");
 				            	break;
 				            }
 						}
@@ -795,30 +815,35 @@ public class Main
 								{
 									stdTemplPath = System.getProperty ("user.home") + stdTemplPath.replace("Volumes", "Desktop/Maestro_QS");
 									//System.out.println("stdTemplPath:"+stdTemplPath);
-									if(new File(stdTemplPath).exists())
+									jobMap.put("Template", stdTemplPath);
+									if(!new File(stdTemplPath).exists())
 				            		{
-										jobMap.put("Template", stdTemplPath);
+										mail mailObj = new mail("Template","TEMPLATE ERROR",jobId,"", "* Template Name : "+templateName+"\n * Standard Template path is Invalid. ("+stdTemplPath+ ")");
+					        			//mailObj.mailProcess("Template","JOB_SUCCESS","jobId","", "");
+					        			Thread mailThread = new Thread(mailObj, "Mail Thread for template error");
+					        			mailThread.start();
 										//System.out.println("Template : "+jobMap.get("Template"));
 				            		}
 								}
 								else
 								{
-									errParam = errParam + "\n* " + templateName +" is invalid.";
-									System.out.println("stdTemplPath is null.");
+									jobMap.put("Template", "");
+									errParam = errParam + "* Template(" + templateName +") is invalid for this job feed.\n";
+									//System.out.println("stdTemplPath is null.");
 					            	break;
 								}
 							}
 							else
 							{
-								errParam = errParam + "\n* " + clientId +" is invalid.";
-								System.out.println("tempName is null.");
+								errParam = errParam + "* " + clientId +" is invalid for this job feed.\n";
+								//System.out.println("tempName is null.");
 				            	break;
 							}
 						}
 						else
 						{
-							errParam = errParam + "\n* \"templ_dir.json\" is invalid.";
-							System.out.println("object is null.");
+							errParam = errParam + "* \"templ_dir.json\" is invalid for this job feed.\n";
+							//System.out.println("object is null.");
 			            	break;
 						}
 					}
@@ -828,7 +853,7 @@ public class Main
 			catch (FileNotFoundException e) 
 			{
 	            e.printStackTrace();
-	        } 
+	        }
 			catch (IOException e) 
 			{
 	            e.printStackTrace();
@@ -862,10 +887,40 @@ public class Main
 			tempPath = tempPath+"/"+folderList.get(i);
 			File theDir = new File(tempPath);
 			//System.out.println("f1:"+theDir.getPath());
-			while (!theDir.exists()) 
+			while (!theDir.exists())
 			{
         		theDir.mkdir();
 			}
         }
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void jobFailFun(String jobId, String clientId,String mail_group,String errParam, String status) throws IOException
+	{
+		//Job failed due to Template path or stylesheet path or map path
+		String dateString2 = dateFormat2.format(new Date()).toString();
+		
+		if(status.equals("JOB_FAIL"))
+		{
+			JSONObject obj=new JSONObject();
+			obj.put("jobId",jobId);
+			obj.put("clientId",clientId);
+			obj.put("status","FAILED");
+			String jsonText = JSONValue.toJSONString(obj);  
+			
+	     	consoleLog.log("URL : \"http://"+url_request.serverIp+"/maestro/updateJobStatus\", type : \"PUT\" and content : \""+jsonText+"\"");
+			String webResponse = url_request.urlRequestProcess("http://"+url_request.serverIp+"/maestro/updateJobStatus","PUT",jsonText);
+	
+			System.out.println("URL response : "+webResponse);
+	     	consoleLog.log("URL response : "+webResponse);
+	     	
+	     	System.out.println("Job failed, because "+ errParam +", for jobId : "+jobId+" and clientId : "+clientId + " at "+dateString2);
+			consoleLog.log("Job failed, because "+ errParam +", for jobId : "+jobId+" and clientId : "+clientId + " at "+dateString2);
+		}
+     	
+     	mail mailObj = new mail(mail_group,status,jobId,"", errParam);
+		//mailObj.mailProcess("Template","JOB_SUCCESS","jobId","", "");
+		Thread mailThread = new Thread(mailObj, "Mail Thread for Job failed");
+		mailThread.start();
 	}
 }
