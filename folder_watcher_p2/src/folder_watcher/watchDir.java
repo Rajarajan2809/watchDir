@@ -991,12 +991,13 @@ public class watchDir implements Runnable
 	    				}
 	        		}
         		}
-        		else
+        		
+        		if(!tempFileStatus)
         		{
-        			System.out.println("Template path ("+jobParam.get("Template")+ "does not exists.");
-        			consoleLog.log("Template path ("+jobParam.get("Template")+ "does not exists.");
+        			System.out.println("Template file does not exists for this manuscript("+chName+").");
+        			consoleLog.log("Template file does not exists for this manuscript("+chName+").");
         			
-        			mail mailObj = new mail("Template","TEMPLATE ERROR",jobId,"", "* Template Name : "+templateName+"\n * Standard Template path is Invalid. ("+ jobParam.get("Template") + ")");
+        			mail mailObj = new mail("Template","TEMPLATE ERROR",jobId,"", "Template file does not exists for this manuscript("+chName+").");
         			//mailObj.mailProcess("Template","JOB_SUCCESS","jobId","", "");
         			Thread mailThread = new Thread(mailObj, "Mail Thread for template error");
         			mailThread.start();

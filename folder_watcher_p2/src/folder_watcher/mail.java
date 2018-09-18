@@ -506,7 +506,7 @@ public class mail implements Runnable
 				 message.setText(mailMessage);  
 			
 			//consoleLog.log("Mail content:"+mailMessage);
-			while(sendPingRequest("172.16.1.5").equals("offline"))
+			while(sendPingRequest("www.google.com").equals("offline"))
 			{
 				TimeUnit.SECONDS.sleep(1);
 				//mail ip is offline
