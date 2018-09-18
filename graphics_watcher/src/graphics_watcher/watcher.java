@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.*;
 
+import graphics_watcher.mount_thread;
 import graphics_watcher.consoleLog;
 import graphics_watcher.mail;
 import graphics_watcher.utilities;
@@ -45,6 +46,11 @@ public class watcher
 		AtomicInteger shared = new AtomicInteger(0);
 		boolean mailTriggNet = true;
 		String currentJob = "";
+		
+		mount_thread m1 = new mount_thread();
+		Thread mountThread = new Thread(m1, "Thread to kill ip not connected error.");
+		mountThread.start();
+		
 		try 
 		{
 			// store list of paths in
