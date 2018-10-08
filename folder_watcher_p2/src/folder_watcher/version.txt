@@ -18,3 +18,7 @@ v2.1 released
 
 //18-Sep-18
 * mail server updated.
+
+//25-Sep-18
+* 172.16.1.2 & 172.16.1.21 path updated,
+* _BM_APP01 suffix bug updated.

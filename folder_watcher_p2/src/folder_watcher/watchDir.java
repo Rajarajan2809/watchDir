@@ -956,7 +956,7 @@ public class watchDir implements Runnable
 	    						suffix = "_CH";
 	    					else if(suffix.matches("^_PT\\d\\d|^_ST\\d\\d"))
 	    						suffix = "_PT";
-	    					else if(suffix.matches("|^_APP\\d\\d"))
+	    					else if(suffix.matches("|^_BM_APP\\d\\d"))
 	    						suffix = "_BM";
 	    					
 	    				}
@@ -1413,7 +1413,7 @@ public class watchDir implements Runnable
 		{
 			//System.out.println("Found match at: "  + matcher.start() + " to " + matcher.end());
 			suffix = fileName.substring(matcher.end(),fileName.length());
-			//System.out.println("suffix : "+suffix);
+			System.out.println("suffix : "+suffix);
 			if(clientId.equals("TF_HSS"))
 			{
 				switch(suffix)

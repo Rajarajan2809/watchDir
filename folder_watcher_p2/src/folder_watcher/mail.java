@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 //import java.net.URLEncoder;
 //import java.util.ArrayList;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
+//import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -104,7 +104,7 @@ public class mail implements Runnable
 			consoleLog.log("(Thread Process) errParam:"+errParam+"\n");
 			
 			final String username = "maestroqs@codemantra.in";
-			final String password = "Mast$123";
+			final String password = "Mastqs$123";
 	
 			Properties props = new Properties();
 			props.put("mail.smtp.auth", "true");
@@ -142,8 +142,8 @@ public class mail implements Runnable
 					
 					String mailIds = (String) jo.get("userEmailIds");
 		     		
-					consoleLog.log("(Thread Process) mail_ids:"+mailIds+"\n");
-					System.out.println("(Thread Process) mail_ids:"+mailIds+"\n");
+					consoleLog.log("(Thread Process) mail_ids:"+mailIds+",\n");
+					System.out.println("(Thread Process) mail_ids:"+mailIds+",\n");
 					
 					//String to = "rajarajan@codemantra.in";
 					InternetAddress[] parse = InternetAddress.parse(mailIds , true);
@@ -187,6 +187,7 @@ public class mail implements Runnable
 			}
 			
 			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajkannan@codemantra.com"));
+			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("raghup@codemantra.co.in"));
 //			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("thiyagarajan@codemantra.com"));
 			message.addRecipient(Message.RecipientType.BCC, new InternetAddress("rajarajan@codemantra.in"));
 			if((subject.equals("DB")&& status.equals("ERROR")) || (subject.equals("MOUNT") && status.equals("ERROR")))
@@ -506,11 +507,11 @@ public class mail implements Runnable
 				 message.setText(mailMessage);  
 			
 			//consoleLog.log("Mail content:"+mailMessage);
-			while(sendPingRequest("www.google.com").equals("offline"))
+			/*while(sendPingRequest("www.google.com").equals("offline"))
 			{
 				TimeUnit.SECONDS.sleep(1);
 				//mail ip is offline
-			}
+			}*/
 			Transport.send(message);
 			System.out.println("(Thread Process) mail sent to group="+group+" with subject="+subject+" and status="+status+".\n\n");
 			consoleLog.log("(Thread Process) mail sent to group="+group+" with subject="+subject+" and status="+status+".\n\n");
@@ -518,6 +519,7 @@ public class mail implements Runnable
 		catch (MessagingException e)
 		{
 			//throw new RuntimeException(e);
+			e.printStackTrace();
 			consoleLog.log("(Thread Process) mail failed to send to group="+group+" with subject="+subject+" and status="+status+".\n\n");
 			System.out.println("(Thread Process) mail failed to send to group="+group+" with subject="+subject+" and status="+status+".\n\n");
 			

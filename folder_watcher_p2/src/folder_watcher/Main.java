@@ -112,8 +112,11 @@ public class Main
 				//TimeUnit.SECONDS.sleep(15);
 				String osResp3 = utilities.mountDisk("172.16.1.21", "COMP", "maestroqs@cmpl.in", "M@est0123");
 				//TimeUnit.SECONDS.sleep(15);
+				String osResp4 = utilities.mountDisk("172.16.1.2", "CRC", "maestroqs@cmpl.in", "M@est0123");
+				//TimeUnit.SECONDS.sleep(15);
+				String osResp5 = utilities.mountDisk("172.16.1.2", "T&F", "maestroqs@cmpl.in", "M@est0123");
 				
-				if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found"))) 
+				if ((osResp1.equals("Disk Found")) && (osResp2.equals("Disk Found")) && (osResp3.equals("Disk Found")) && (osResp4.equals("Disk Found")) && (osResp5.equals("Disk Found"))) 
 				{
 					if(!mailTriggNet2)
 					{
@@ -313,6 +316,8 @@ public class Main
 																//eqn path validation
 																if((jobMap.get("equation") != null) && (!jobMap.get("equation").equals("")))
 																{
+																	///Volumes/Copyediting/05_Copyediting/5_T&F-ENCYCLOPEDIA/123456733_QWE/08_MaestroReady/
+																	///Volumes/Copyediting/05_Copyediting/5_HSS/1234567331234_QWE/08_MaestroReady/
 																	String REGEX = "[\\s\\S]+[\\/\\\\]+[\\d]{9}_[\\w\\s\\S]+[\\/\\\\]+[\\d]{2}_MaestroReady+[\\/\\\\]{0,1}{1}$|[\\s\\S]+[\\/\\\\]+[\\d]{13}_[\\w\\s\\S]+[\\/\\\\]+[\\d]{2}_MaestroReady+[\\/\\\\]{0,1}{1}$";
 																	//regex matching
 																	Pattern p = Pattern.compile(REGEX);
@@ -338,39 +343,43 @@ public class Main
 																		
 																		//Map< String,Integer> jobMap = new HashMap< String,Integer>();
 																		
-																		System.out.println("Home:"+System.getProperty ("user.home")+"\\Desktop\\Maestro_QS");
+																		//System.out.println("Home:"+System.getProperty ("user.home")+"\\Desktop\\Maestro_QS");
+																		
 																		
 																		JSONObject pathUpdateJson = new JSONObject();
 																		pathUpdateJson.put("jobId", jobId.get(i));
 																		pathUpdateJson.put("clientId", clientId.get(i));
 																		
-																		/*String copyEditPath = jobMap.get("Copyediting");
-																		copyEditPath = copyEditPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		String copyEditPath = jobMap.get("Copyediting");
+																		//local testing
+																		//copyEditPath = copyEditPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		copyEditPath = copyEditPath.replace("/Volumes", "//172.16.1.2"); //\\Volumes
 																		copyEditPath = copyEditPath.replace('/', '\\');
-																		pathUpdateJson.put("copyEditPath", copyEditPath);*/
+																		pathUpdateJson.put("copyEditPath", copyEditPath);
+																		//pathUpdateJson.put("copyEditPath", jobMap.get("Copyediting"));
 																		
-																		pathUpdateJson.put("copyEditPath", jobMap.get("Copyediting"));
-																		
-																		/*String graphicsPath = jobMap.get("Graphics");
-																		graphicsPath = graphicsPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		String graphicsPath = jobMap.get("Graphics");
+																		//local testing
+																		//graphicsPath = graphicsPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		graphicsPath = graphicsPath.replace("/Volumes", "//172.16.1.2"); //\\Volumes
 																		graphicsPath = graphicsPath.replace('/', '\\');
-																		pathUpdateJson.put("graphicsPath", graphicsPath);*/
-																		
-																		pathUpdateJson.put("graphicsPath", jobMap.get("Graphics"));
+																		pathUpdateJson.put("graphicsPath", graphicsPath);
+																		//pathUpdateJson.put("graphicsPath", jobMap.get("Graphics"));
 																		
 																		String gssPath = jobMap.get("Standard_stylesheet");
-																		gssPath = gssPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.21"); //\\Volumes
+																		//gssPath = gssPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.21"); //\\Volumes
+																		gssPath = gssPath.replace("/Volumes", "//172.16.1.21"); //\\Volumes
 																		gssPath = gssPath.replace('/', '\\');
 																		pathUpdateJson.put("styleSheetPath", gssPath);
-																		
 																		//pathUpdateJson.put("styleSheetPath", jobMap.get("Standard_stylesheet"));
 																		
-																		/*String eqnPath = jobMap.get("equation");
-																		eqnPath = eqnPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		String eqnPath = jobMap.get("equation");
+																		//local testing
+																		//eqnPath = eqnPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "//172.16.1.2"); //\\Volumes
+																		eqnPath = eqnPath.replace("/Volumes", "//172.16.1.2"); //\\Volumes
 																		eqnPath = eqnPath.replace('/', '\\');
-																		pathUpdateJson.put("equationsPath", eqnPath);*/
-																		
-																		pathUpdateJson.put("equationsPath", jobMap.get("equation"));
+																		pathUpdateJson.put("equationsPath", eqnPath);
+																		//pathUpdateJson.put("equationsPath", jobMap.get("equation"));
 																		
 																		/*System.out.println("copyEditPath:"+jobMap.get("Copyediting"));
 																		System.out.println("graphicsPath:"+jobMap.get("Graphics"));
@@ -379,12 +388,18 @@ public class Main
 																		System.out.println("eqnPath:"+jobMap.get("equation"));*/
 																		
 																		String mapPath = jobMap.get("Map_path");
-																		mapPath = mapPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "\\\\172.16.1.21"); //\\Volumes
+																		//mapPath = mapPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "\\\\172.16.1.21"); //\\Volumes
+																		mapPath = mapPath.replace("/Volumes", "//172.16.1.21"); //\\Volumes
 																		mapPath = mapPath.replace('/', '\\');
 																		pathUpdateJson.put("mappingPath", mapPath);
 																		//pathUpdateJson.put("mappingPath", jobMap.get("Map_path"));
 																		
-																		pathUpdateJson.put("templatePath", jobMap.get("Template"));
+																		//pathUpdateJson.put("templatePath", jobMap.get("Template"));
+																		String templPath = jobMap.get("Template");
+																		//mapPath = mapPath.replace(System.getProperty ("user.home")+"/Desktop/Maestro_QS", "\\\\172.16.1.21"); //\\Volumes
+																		templPath = templPath.replace("/Volumes", "//172.16.1.21"); //\\Volumes
+																		templPath = templPath.replace('/', '\\');
+																		pathUpdateJson.put("templatePath", templPath);
 																		
 																		String jsonText = JSONValue.toJSONString(pathUpdateJson);
 																		System.out.println("jsonText:\n"+utilities.json_pretty_print(jsonText));
@@ -715,7 +730,8 @@ public class Main
 				            	{
 				            		String path = (String) type.get(clientId);
 				            		
-				            		path = System.getProperty ("user.home") + path.replace("Volumes", "Desktop/Maestro_QS");
+				            		//local testing
+				            		//path = System.getProperty ("user.home") + path.replace("Volumes", "Desktop/Maestro_QS");
 				            		
 				            		//System.out.println(path);
 				            		
@@ -737,7 +753,8 @@ public class Main
 						            		String path = (String) client.get("path");
 						            		String format = (String) client.get("format");
 						            		
-						            		path = System.getProperty ("user.home") + path.replace("Volumes", "Desktop/Maestro_QS");
+						            		//local testing
+						            		//path = System.getProperty ("user.home") + path.replace("Volumes", "Desktop/Maestro_QS");
 						            		//System.out.println("path:"+path);
 						            		
 						            		if(new File(path).exists())
@@ -813,7 +830,7 @@ public class Main
 								String stdTemplPath = (String) tempName.get(templateName);
 								if(stdTemplPath != null)
 								{
-									stdTemplPath = System.getProperty ("user.home") + stdTemplPath.replace("Volumes", "Desktop/Maestro_QS");
+									//stdTemplPath = System.getProperty ("user.home") + stdTemplPath.replace("Volumes", "Desktop/Maestro_QS");
 									//System.out.println("stdTemplPath:"+stdTemplPath);
 									jobMap.put("Template", stdTemplPath);
 									if(!new File(stdTemplPath).exists())

@@ -273,7 +273,7 @@ public class postValidation implements Runnable
 										    						suffix = "_CH";
 										    					else if(suffix.matches("^_PT\\d\\d|^_ST\\d\\d"))
 										    						suffix = "_PT";
-										    					else if(suffix.matches("|^_APP\\d\\d"))
+										    					else if(suffix.matches("|^_BM_APP\\d\\d"))
 										    						suffix = "_BM";
 										    				}
 										    				break;
